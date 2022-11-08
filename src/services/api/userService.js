@@ -7,6 +7,6 @@ export default class UserService extends ApiProxyService {
 
     getMe(okCallback, koCallback) {
         const path = '/users/me';
-        this.getItem(path, okCallback, koCallback)
+        super.getItem(path, okCallback, koCallback)
     }
 }

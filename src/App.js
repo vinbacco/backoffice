@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 
 import { useDispatch } from 'react-redux'
 import { clearUser, setUser } from 'src/redux/slices/userSlice'
-import UserService from './services/userService'
+import UserService from './services/api/userService'
 import './scss/style.scss'
 
 // Containers

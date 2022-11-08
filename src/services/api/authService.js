@@ -1,7 +1,7 @@
 //GLOBAL
 import axios from 'axios';
 
-const config = require('../environment');
+const config = require('../../environment');
 
 export default class AuthService {
   constructor(baseUrl) {

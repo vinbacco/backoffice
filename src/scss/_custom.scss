@@ -33,3 +33,12 @@ body {
   justify-content: center;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+  user-select: none;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+  user-select: none;
+}

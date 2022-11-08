@@ -1,16 +1,20 @@
 import AbstractService from './abstractService';
 import AuthService from './authService';
 import AuthProxy from './auth/authProxy';
+import utils from './utils/utils';
 
-const config = require('../environment');
+const config = require('../../environment');
 
 export default class ApiProxyService extends AbstractService {
 
-  constructor() {
-    let baseUrl = `${config.API_PATH}${config.API_VERSION}${config.API_ENDPOINT}`;
+  constructor(baseUrl = `${config.API_PATH}${config.API_VERSION}${config.API_ENDPOINT}`) {
     super(baseUrl);
-
     this.authService = new AuthService(baseUrl);
+  }
+
+  getList(path, queryParams = { paginate: 10, page: 1 }, okCallback, koCallback) {
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, queryParams)
+    return AuthProxy(this.authService, super.get.bind(this, pathWithQueryParams, null), okCallback, koCallback);
   }
 
   getItem(path, okCallback, koCallback) {
