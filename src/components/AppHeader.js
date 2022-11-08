@@ -19,16 +19,17 @@ import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import logo from 'src/assets/images/logo/logo_lg.svg'
 
+import { toggleSidebar } from 'src/redux/slices/appSlice'
+
 const AppHeader = () => {
   const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.sidebarShow)
 
   return (
     <CHeader position="sticky" className="mb-4">
       <CContainer fluid>
         <CHeaderToggler
           className="ps-1"
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          onClick={() => dispatch(toggleSidebar())}
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
