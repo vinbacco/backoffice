@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import {
   CAlert,
   CButton,
@@ -19,9 +20,12 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons'
+
 import Logo from '../../../assets/images/logo/logo_lg.svg'
 import AuthService from '../../../services/authService'
 import UserService from 'src/services/userService'
+import { setUser } from 'src/redux/slices/userSlice'
+
 
 const Login = ({ setIsUser }) => {
   const [loginForm, setLoginForm] = useState({
@@ -33,7 +37,8 @@ const Login = ({ setIsUser }) => {
   const [loginError, setLoginError] = useState(null)
   const authService = new AuthService()
   const userService = new UserService()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const onChange = (event) => {
     const newLoginForm = Object.assign({}, loginForm)
@@ -53,7 +58,7 @@ const Login = ({ setIsUser }) => {
         const authData = responseLogin?.data || {}
         window.localStorage.setItem('authFE', JSON.stringify(authData))
         const okGetUser = (responseUserMe) => {
-          console.log(responseUserMe) //TODO: Dove salvare i dati che arrivano? Local storage? Redux? HELP!
+          dispatch(setUser(responseUserMe.data))
           setIsUser(true)
           navigate('/dashboard')
         }

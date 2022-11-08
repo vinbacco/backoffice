@@ -1,8 +1,11 @@
 import { CSpinner } from '@coreui/react'
 import React, { Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
-import './scss/style.scss'
+
+import { useDispatch } from 'react-redux'
+import { clearUser, setUser } from 'src/redux/slices/userSlice'
 import UserService from './services/userService'
+import './scss/style.scss'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -15,15 +18,18 @@ const App = () => {
   const [ appInit, setAppInit ] = useState(false)
   const [ isUser, setIsUser ] = useState(false)
   const userService = new UserService()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const okGetUser = (responseUserMe) => {
-      console.log(responseUserMe) //TODO: Dove salvare i dati che arrivano? Local storage? Redux? HELP!
+      dispatch(setUser(responseUserMe.data))
       setAppInit(true)
       setIsUser(true)
     }
 
     const koGetUser = () => {
+      dispatch(clearUser())
+      window.localStorage.removeItem('authFE')
       setAppInit(true)
     }
 
