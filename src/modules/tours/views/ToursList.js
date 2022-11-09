@@ -52,6 +52,7 @@ const ToursList = () => {
             cantina: item.contact.business_name,
             _cellProps: { id: { scope: 'row' } },
           });
+          
         }))
       },
       (response) => { setData(response.data) }
@@ -72,7 +73,6 @@ const ToursList = () => {
       <CContainer>
         <CForm onSubmit={(e) => {
               e.preventDefault();
-              console.log(e.currentTarget[0].value);
               processData(
                 undefined,
                 undefined,
@@ -91,9 +91,13 @@ const ToursList = () => {
                 placeholder="Inserisci nome del tour"
               />
             </CCol>
-          <CRow>
-            </CRow>  
-            
+          </CRow>
+          <CRow>  
+            <CCol>
+              <CButton type="submit">
+                Filtra
+              </CButton>
+            </CCol>
           </CRow>
         </CForm>
       </CContainer>
