@@ -7,8 +7,12 @@ export default class TourService extends ApiProxyService {
       super();
     }
 
-    getList(paginate = 10, page = 1, okCallback, koCallback) {
+    getList(paginate = 10, page = 1, filters, okCallback, koCallback) {
+      let queryParams = { paginate, page, lookup: '[contact_id,product_category_id]' }
+      if (filters) {
+        queryParams = {...queryParams, ...filters};
+      }
       const path = '/products';
-      super.getList(path, { paginate, page, lookup: '[contact_id,product_category_id]' }, okCallback, koCallback)
+      super.getList(path, queryParams, okCallback, koCallback)
     }
 }

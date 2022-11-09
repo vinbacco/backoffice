@@ -60,7 +60,7 @@ const AppList = ({sectionName, children}) => {
         const currentElementObject = {}
         sectionConfigurations.columns.forEach(currentColumn => {
           if (currentColumn.key === 'index') currentElementObject.index = elementArrayIndex + 1
-          else currentElementObject[currentColumn.key] = appUtils.nestedProperty(currentElement, currentColumn.lookAt)
+          else currentElementObject[currentColumn.key] = appUtils.nestedProperty(currentElement, currentColumn.collectionField)
         })
         currentListContent.push(currentElementObject)
       })
