@@ -12,9 +12,9 @@ import {
 } from '@coreui/react'
 import { Link } from 'react-router-dom'
 
-import OrderService from 'src/services/api/OrderService'
+import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
 
-const OrdersList = () => {
+const ProductCategoriesList = () => {
   const [data, setData] = useState(null);
   const [paginate, setPaginate] = useState(10);
   const [page, setPage] = useState(1);
@@ -22,28 +22,28 @@ const OrdersList = () => {
   // /backoffice/products?paginate=10&page=1&lookup=%5Bcontact_id,product_category_id%5D&%5Ename=Tour%20Bolgheri&??^contact-business_name=vai
   const columns = [
     {
-      key: 'nr',
-      label: 'Numero Ordine',
+      key: 'nome',
+      label: 'Nome',
       _props: { scope: 'col' },
     },
     {
-      key: 'prodotti',
-      label: 'Prodotti',
+      key: 'tipo',
+      label: 'Tipo Prodotto',
       _props: { scope: 'col' },
     }
   ];
   
   const processData = (paginate = 10, page = 1, filters) => {
-    const orderService = new OrderService();
-    orderService.getList(
+    const productCategoriesService = new ProductCategoriesService();
+    productCategoriesService.getList(
       paginate,
       page,
       filters,
       (response) => {
         setData(response.data.map((item) => {
           return ({
-            nr: item.order_number || 'Pending',
-            prodotti: item.products[0].name,
+            nome: item.name,
+            tipo: item.product_type.name,
             _cellProps: { id: { scope: 'row' } },
           });
         }))
@@ -62,14 +62,14 @@ const OrdersList = () => {
 
   return (
     <>
-      <h1>Lista Ordini</h1>
+      <h1>Lista Categorie</h1>
       <CContainer>
         <CForm onSubmit={(e) => {
               e.preventDefault();
               processData(
                 undefined,
                 undefined,
-                {'^product.name': e.currentTarget[0].value}
+                {'^name': e.currentTarget[0].value}
               );
             }
           }
@@ -80,8 +80,8 @@ const OrdersList = () => {
                 type="text"
                 name="name"
                 id="exampleFormControlInput1"
-                label="Nr. Ordine"
-                placeholder="Inserisci nr. ordine"
+                label="Nome"
+                placeholder="Inserisci nome"
               />
             </CCol>
           </CRow>
@@ -98,4 +98,4 @@ const OrdersList = () => {
     </>
   );
 }
-export default OrdersList
+export default ProductCategoriesList;

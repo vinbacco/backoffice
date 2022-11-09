@@ -52,7 +52,6 @@ const ToursList = () => {
             cantina: item.contact.business_name,
             _cellProps: { id: { scope: 'row' } },
           });
-          
         }))
       },
       (response) => { setData(response.data) }
@@ -66,7 +65,7 @@ const ToursList = () => {
   }, [data]);
 
   if (!data) return <p>Loading...</p>
-  
+
   return (
     <>
       <h1>Lista Tour</h1>

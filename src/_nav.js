@@ -22,6 +22,12 @@ const _nav = [
     to: '/tours',
     icon: <CIcon icon={cilTerrain} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Categorie',
+    to: '/categories',
+    icon: <CIcon icon={cilTerrain} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav
