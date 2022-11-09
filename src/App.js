@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { clearUser, setUser } from 'src/redux/slices/userSlice'
 import UserService from './services/api/userService'
 import './scss/style.scss'
+import AppLoadingSpinner from './components/AppLoadingSpinner'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -37,9 +38,7 @@ const App = () => {
   }, [])
 
   const loading = (
-    <div className="spinner-placeholder">
-      <CSpinner color="primary"/>
-    </div>
+    <AppLoadingSpinner />
   )
 
   if( appInit === false) {
