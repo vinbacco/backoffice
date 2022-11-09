@@ -47,7 +47,7 @@ body {
 
 .vinbacco {
   .wrapper {
-    background-color: $white !important;
+    background-color: $wrapper-background !important;
   }
   .sidebar {
     .sidebar-brand {
@@ -55,10 +55,6 @@ body {
     }
     .sidebar-nav {
       background-color: $main;
-    }
-    .nav-link{
-      &.active {
-      }
     }
   }
 }
