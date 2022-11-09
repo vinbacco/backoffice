@@ -5,8 +5,8 @@ import { CImage, CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@
 
 import { AppSidebarNav } from './AppSidebarNav'
 
-import logo from 'src/assets/images/logo/logo_lg.svg'
-import logoSmall from 'src/assets/images/logo/logo_sm.svg'
+import logo from 'src/assets/images/logo/logo_lg_white.svg'
+import logoSmall from 'src/assets/images/logo/logo_sm_white.svg'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'

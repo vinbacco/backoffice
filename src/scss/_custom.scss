@@ -1,3 +1,5 @@
+@import 'vinbacco_variables';
+
 // Here you can add other styles
 @font-face {
   font-family: 'Roboto Rg';
@@ -41,4 +43,22 @@ body {
 .cursor-not-allowed {
   cursor: not-allowed;
   user-select: none;
+}
+
+.vinbacco {
+  .wrapper {
+    background-color: $white !important;
+  }
+  .sidebar {
+    .sidebar-brand {
+      background-color: $main-400;
+    }
+    .sidebar-nav {
+      background-color: $main;
+    }
+    .nav-link{
+      &.active {
+      }
+    }
+  }
 }

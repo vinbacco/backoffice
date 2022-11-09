@@ -13,6 +13,7 @@ import {
 import { Link } from 'react-router-dom'
 
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
+import AppLoadingSpinner from 'src/components/AppLoadingSpinner'
 
 const ProductCategoriesList = () => {
   const [data, setData] = useState(null);
@@ -58,7 +59,7 @@ const ProductCategoriesList = () => {
     }
   }, [data]);
 
-  if (!data) return <p>Loading...</p>
+  if (!data) return <AppLoadingSpinner />
 
   return (
     <>

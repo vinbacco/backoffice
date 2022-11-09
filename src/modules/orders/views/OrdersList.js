@@ -13,6 +13,7 @@ import {
 import { Link } from 'react-router-dom'
 
 import OrderService from 'src/services/api/OrderService'
+import AppLoadingSpinner from 'src/components/AppLoadingSpinner'
 
 const OrdersList = () => {
   const [data, setData] = useState(null);
@@ -58,7 +59,7 @@ const OrdersList = () => {
     }
   }, [data]);
 
-  if (!data) return <p>Loading...</p>
+  if (!data) return <AppLoadingSpinner />
 
   return (
     <>

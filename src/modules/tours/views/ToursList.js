@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom'
 
 import TourService from 'src/services/api/tourService'
 import AppList from 'src/components/list/AppList'
+import AppLoadingSpinner from 'src/components/AppLoadingSpinner'
 
 const ToursListToDo = () => {
   return (
@@ -64,7 +65,7 @@ const ToursList = () => {
     }
   }, [data]);
 
-  if (!data) return <p>Loading...</p>
+  if (!data) return <AppLoadingSpinner />
 
   return (
     <>

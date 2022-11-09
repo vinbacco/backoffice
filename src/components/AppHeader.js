@@ -17,7 +17,7 @@ import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
-import logo from 'src/assets/images/logo/logo_lg.svg'
+import logo from 'src/assets/images/logo/logo_lg_white.svg'
 
 import { toggleSidebar } from 'src/redux/slices/appSlice'
 
