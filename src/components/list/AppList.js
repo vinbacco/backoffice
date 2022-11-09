@@ -45,7 +45,12 @@ const AppList = ({sectionName, children}) => {
       console.log(error)
     }
 
-    sectionConfigurations.mainService.getList(10, 1, okGetList, koGetList)
+    const processMainService = async () => {
+      const mainService = await sectionConfigurations.mainService();
+      mainService.getList(10, 1, okGetList, koGetList);
+    }
+    processMainService().catch(e => console.error(e)) 
+    
   }, [])
 
   const mapListContent = () => {

@@ -2,7 +2,10 @@ import TourService from "../api/tourService";
 
 const siteMap = {
   tours: {
-    mainService: new TourService(),
+    mainService: async () => {
+      const TourService = await import("../api/tourService");
+      return new TourService.default();
+    },
     title: 'Tours',
     columns: [
       // {
@@ -29,7 +32,7 @@ const siteMap = {
         _props: { scope: 'col' },
       }
     ],
-  }
+  },
 }
 
 export default siteMap;
