@@ -57,4 +57,17 @@ body {
       background-color: $main;
     }
   }
+  .list-title {
+    margin-bottom: 20px;
+  }
+  .list-actions {
+    text-align: right;
+    margin-bottom: 15px;
+    & > *:not(:last-child) {
+    margin-right: 15px;
+    }
+  }
+  .pagination {
+    margin: 0;
+  }
 }
