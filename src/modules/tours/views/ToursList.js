@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { CCol, CContainer, CForm, CFormInput, CPagination, CPaginationItem, CRow, CTable } from '@coreui/react'
+import {
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CPagination,
+  CPaginationItem,
+  CRow,
+  CTable,
+  CButton,
+} from '@coreui/react'
 import { Link } from 'react-router-dom'
 
 import TourService from 'src/services/api/tourService'
@@ -42,7 +52,6 @@ const ToursList = () => {
             cantina: item.contact.business_name,
             _cellProps: { id: { scope: 'row' } },
           });
-          
         }))
       },
       (response) => { setData(response.data) }
@@ -61,19 +70,30 @@ const ToursList = () => {
     <>
       <h1>Lista Tour</h1>
       <CContainer>
-        <CForm>
+        <CForm onSubmit={(e) => {
+              e.preventDefault();
+              console.log(e.currentTarget[0].value);
+              processData(
+                undefined,
+                undefined,
+                {'^name': e.currentTarget[0].value}
+              );
+            }
+          }
+        >
           <CRow>
             <CCol>
-            <CFormInput
-              type="text"
-              id="exampleFormControlInput1"
-              label="Nome tour"
-              placeholder="Inserisci nome del tour"
-              onChange={(e) => {
-                console.log(e.target.value)
-              }}  
-            />
+              <CFormInput
+                type="text"
+                name="name"
+                id="exampleFormControlInput1"
+                label="Nome tour"
+                placeholder="Inserisci nome del tour"
+              />
             </CCol>
+          <CRow>
+            </CRow>  
+            
           </CRow>
         </CForm>
       </CContainer>
