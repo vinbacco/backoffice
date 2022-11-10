@@ -13,7 +13,7 @@ import {
 import { Link } from 'react-router-dom'
 
 import OrderService from 'src/services/api/OrderService'
-import AppLoadingSpinner from 'src/components/AppLoadingSpinner'
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner'
 
 const OrdersList = () => {
   const [data, setData] = useState(null);
