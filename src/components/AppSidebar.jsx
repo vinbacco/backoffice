@@ -13,7 +13,7 @@ import logoSmall from 'src/assets/images/logo/logo_sm_white.svg';
 
 // sidebar nav config
 import { setSidebar } from 'src/redux/slices/app.slice';
-import { AppSidebarNav } from './AppSidebarNav';
+import AppSidebarNav from './AppSidebarNav';
 
 import navigation from '../nav';
 

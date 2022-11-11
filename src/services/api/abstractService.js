@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import axios from 'axios';
 
 export default class AbstractService {
@@ -7,7 +8,7 @@ export default class AbstractService {
     });
   }
 
-  static getHeaders(lang) {
+  getHeaders(lang) {
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',

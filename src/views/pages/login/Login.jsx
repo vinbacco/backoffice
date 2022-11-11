@@ -1,4 +1,6 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
@@ -63,7 +65,7 @@ function Login({ setIsUser }) {
         };
 
         const koGetUser = (errorUserMe) => {
-          const errorMessage = errorLogin?.response?.data?.message || 'No message';
+          const errorMessage = errorUserMe?.response?.data?.message || 'No message';
           setLoading(false);
           setValidated(false);
           setLoginError(errorMessage);
@@ -167,5 +169,13 @@ function Login({ setIsUser }) {
     </div>
   );
 }
+
+Login.propTypes = {
+  setIsUser: PropTypes.any,
+};
+
+Login.defaultProps = {
+  setIsUser: null,
+};
 
 export default Login;
