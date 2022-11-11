@@ -23,7 +23,7 @@ import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 
 import AuthService from 'src/services/api/authService';
 import UserService from 'src/services/api/userService';
-import { setUser } from 'src/redux/slices/userSlice';
+import { setUser } from 'src/redux/slices/user.slice';
 import Logo from '../../../assets/images/logo/logo_lg.svg';
 
 function Login({ setIsUser }) {

@@ -7,7 +7,7 @@ export default class AbstractService {
     });
   }
 
-  getHeaders(lang) {
+  static getHeaders(lang) {
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',

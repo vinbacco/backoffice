@@ -1,3 +1,5 @@
+/* eslint-disable no-constructor-return */
+/* eslint-disable global-require */
 class RefreshTokenHandler {
   constructor(refreshTokenConfig) {
     this.refreshTokenConfig = refreshTokenConfig;

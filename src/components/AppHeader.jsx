@@ -18,9 +18,9 @@ import {
 } from '@coreui/icons';
 
 import logo from 'src/assets/images/logo/logo_lg_white.svg';
-import { toggleSidebar } from 'src/redux/slices/appSlice';
+import { toggleSidebar } from 'src/redux/slices/app.slice';
 import { AppBreadcrumb } from './index';
-import { AppHeaderDropdown } from './header/index';
+import AppHeaderDropdown from './header/index';
 
 function AppHeader() {
   const dispatch = useDispatch();

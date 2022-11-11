@@ -11,9 +11,14 @@ export default class ApiProxyService extends AbstractService {
     this.authService = new AuthService(baseUrl);
   }
 
-  getList(path, queryParams = { paginate: 10, page: 1 }, okCallback, koCallback) {
+  getList(path, queryParams, okCallback, koCallback) {
     const pathWithQueryParams = utils.buildPathWithQueryParams(path, queryParams);
-    return AuthProxy(this.authService, super.get.bind(this, pathWithQueryParams, null), okCallback, koCallback);
+    return AuthProxy(
+      this.authService,
+      super.get.bind(this, pathWithQueryParams, null),
+      okCallback,
+      koCallback,
+    );
   }
 
   getItem(path, okCallback, koCallback) {

@@ -2,12 +2,14 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    'jest/globals': true,
   },
   extends: [
     'plugin:react/recommended',
     'airbnb',
   ],
   overrides: [
+    { files: ['src/**/*.slice.js'], rules: { 'no-param-reassign': 'off' } },
   ],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -15,9 +17,10 @@ module.exports = {
   },
   plugins: [
     'react',
+    'jest',
   ],
   rules: {
     'import/no-unresolved': 'off',
-    'import/extensions': 'off'
+    'import/extensions': 'off',
   },
 };

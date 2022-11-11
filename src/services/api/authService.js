@@ -4,35 +4,35 @@ import axios from 'axios';
 const config = require('../../environment');
 
 export default class AuthService {
-  constructor(baseUrl) {
+  constructor() {
     this.axiosInstance = axios.create({
       baseURL: `${config.API_PATH}${config.API_VERSION}${config.API_ENDPOINT}`,
       timeout: 5000,
     });
   }
 
-  getLoginURI() {
+  static getLoginURI() {
     return `${window.location.origin}/login`;
   }
 
-  registerUser(user, executeRecaptcha, okCallback, koCallback, order_id) {
-    this.deleteAuthData();
+  registerUser(user, executeRecaptcha, okCallback, koCallback, orderId) {
+    AuthService.deleteAuthData();
 
     const path = '/users';
     const body = user;
 
     const processRegistration = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      if (order_id) {
-        config.params = { order_id };
+      if (orderId) {
+        callConfig.params = { order_id: orderId };
       }
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -42,25 +42,25 @@ export default class AuthService {
         .then((res) => processRegistration(res))
         .catch(koCallback.bind(this));
     } catch (error) {
-      console.error('error: ', error);
+      throw error('error: ', error);
     }
   }
 
   login = (loginData, okCallback, koCallback) => {
-    this.deleteAuthData();
+    AuthService.deleteAuthData();
     const path = '/users/login';
 
     const body = { ...loginData };
 
     const okCallBack = (res) => {
-      this.refreshTokenSuccessCallback(res.jsonBody);
+      AuthService.refreshTokenSuccessCallback(res.jsonBody);
       if (okCallback) {
         okCallback(res);
       }
     };
 
     const koCallBack = (error) => {
-      this.refreshTokenErrorCallback(error);
+      AuthService.refreshTokenErrorCallback(error);
       if (koCallback) {
         koCallback(error);
       }
@@ -79,13 +79,13 @@ export default class AuthService {
     };
 
     const processPassword = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -102,13 +102,13 @@ export default class AuthService {
     };
 
     const processRenewPassword = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -118,7 +118,7 @@ export default class AuthService {
       .catch(koCallback.bind(this));
   }
 
-  getAuthData() {
+  static getAuthData() {
     const auth = (window.localStorage.getItem('authFE')) ? JSON.parse(window.localStorage.getItem('authFE')) : null;
     if (auth) {
       const tokenObject = {
@@ -135,32 +135,33 @@ export default class AuthService {
     return {};
   }
 
-  setAuthData(auth) {
+  static setAuthData(auth) {
+    const newAuth = { ...auth };
     if (auth) {
-      auth.timestamp = (new Date()).getTime();
+      newAuth.timestamp = (new Date()).getTime();
     }
-    window.localStorage.setItem('authFE', JSON.stringify(auth));
+    window.localStorage.setItem('authFE', JSON.stringify(newAuth));
   }
 
-  deleteAuthData() {
+  static deleteAuthData() {
     window.localStorage.removeItem('authFE');
   }
 
-  isScopeLogged(scope) {
-    const auth = this.getAuthData();
+  static isScopeLogged(scope) {
+    const auth = AuthService.getAuthData();
     if (!auth || !auth.scopes) {
       return false;
     }
     return (auth.scopes.indexOf(scope) >= 0);
   }
 
-  logout() {
-    this.deleteAuthData();
-    window.location.href = this.getLoginURI();
+  static logout() {
+    AuthService.deleteAuthData();
+    window.location.href = AuthService.getLoginURI();
   }
 
   refreshTokenMethod() {
-    const auth = this.getAuthData();
+    const auth = AuthService.getAuthData();
     if (auth) {
       window.localStorage.removeItem('authFE');
 
@@ -174,14 +175,15 @@ export default class AuthService {
     return null;
   }
 
-  refreshTokenSuccessCallback(auth) {
+  static refreshTokenSuccessCallback(auth) {
     if (auth) {
-      auth.timestamp = (new Date()).getTime();
-      window.localStorage.setItem('authFE', JSON.stringify(auth));
+      const newAuth = { ...auth };
+      newAuth.timestamp = (new Date()).getTime();
+      window.localStorage.setItem('authFE', JSON.stringify(newAuth));
     }
   }
 
-  refreshTokenErrorCallback() {
+  static refreshTokenErrorCallback() {
     window.localStorage.removeItem('authFE');
   }
 }

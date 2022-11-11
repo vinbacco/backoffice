@@ -4,7 +4,7 @@ import {
 } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
-import { clearUser, setUser } from 'src/redux/slices/userSlice';
+import { clearUser, setUser } from 'src/redux/slices/user.slice';
 import UserService from './services/api/userService';
 import './scss/style.scss';
 import AppLoadingSpinner from './components/ui/AppLoadingSpinner';
