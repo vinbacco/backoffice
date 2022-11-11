@@ -1,4 +1,4 @@
-//GLOBAL
+// GLOBAL
 import axios from 'axios';
 
 const config = require('../../environment');
@@ -7,12 +7,12 @@ export default class AuthService {
   constructor(baseUrl) {
     this.axiosInstance = axios.create({
       baseURL: `${config.API_PATH}${config.API_VERSION}${config.API_ENDPOINT}`,
-      timeout: 5000
+      timeout: 5000,
     });
   }
 
   getLoginURI() {
-    return window.location.origin + '/login';
+    return `${window.location.origin}/login`;
   }
 
   registerUser(user, executeRecaptcha, okCallback, koCallback, order_id) {
@@ -25,11 +25,11 @@ export default class AuthService {
       const config = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
-        }
+        },
       };
 
       if (order_id) {
-        config.params = { order_id: order_id };
+        config.params = { order_id };
       }
 
       return this.axiosInstance.post(path, body, config)
@@ -40,18 +40,17 @@ export default class AuthService {
     try {
       return executeRecaptcha(path)
         .then((res) => processRegistration(res))
-        .catch(koCallback.bind(this))
+        .catch(koCallback.bind(this));
     } catch (error) {
-      console.error("error: ", error);
+      console.error('error: ', error);
     }
-
-  };
+  }
 
   login = (loginData, okCallback, koCallback) => {
     this.deleteAuthData();
     const path = '/users/login';
 
-    let body = { ...loginData };
+    const body = { ...loginData };
 
     const okCallBack = (res) => {
       this.refreshTokenSuccessCallback(res.jsonBody);
@@ -60,45 +59,45 @@ export default class AuthService {
       }
     };
 
-    let koCallBack = (error) => {
+    const koCallBack = (error) => {
       this.refreshTokenErrorCallback(error);
       if (koCallback) {
         koCallback(error);
       }
-    }
+    };
 
     return this.axiosInstance.post(path, body)
       .then(okCallBack.bind(this))
       .catch(koCallBack.bind(this));
-  }
+  };
 
   resetPassword(username, executeRecaptcha, okCallback, koCallback) {
-    let path = '/users/forgot_password';
-    let body = {
+    const path = '/users/forgot_password';
+    const body = {
       email: username,
-      redirect_url: window.location.href.replace('forgot-password', 'forgotten-password') + '?code={code}'
+      redirect_url: `${window.location.href.replace('forgot-password', 'forgotten-password')}?code={code}`,
     };
 
     const processPassword = (recaptcha) => {
       const config = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
-        }
-      }
+        },
+      };
 
       return this.axiosInstance.post(path, body, config)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
-    }
+    };
 
     return executeRecaptcha(path)
-      .then(res => processPassword(res))
+      .then((res) => processPassword(res))
       .catch(koCallback.bind(this));
   }
 
   renewPassword(code, password, executeRecaptcha, okCallback, koCallback) {
-    let path = '/users/reset_password/' + code;
-    let body = {
+    const path = `/users/reset_password/${code}`;
+    const body = {
       new_password: password,
     };
 
@@ -106,16 +105,16 @@ export default class AuthService {
       const config = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
-        }
-      }
+        },
+      };
 
       return this.axiosInstance.post(path, body, config)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
-    }
+    };
 
     return executeRecaptcha(path)
-      .then(res => processRenewPassword(res))
+      .then((res) => processRenewPassword(res))
       .catch(koCallback.bind(this));
   }
 
@@ -128,7 +127,7 @@ export default class AuthService {
         expiresIn: auth.expires_in,
         scopes: auth.scope,
         tokenType: auth.token_type,
-        timestamp: auth.timestamp
+        timestamp: auth.timestamp,
       };
 
       return tokenObject;
@@ -148,7 +147,7 @@ export default class AuthService {
   }
 
   isScopeLogged(scope) {
-    let auth = this.getAuthData();
+    const auth = this.getAuthData();
     if (!auth || !auth.scopes) {
       return false;
     }
@@ -165,8 +164,8 @@ export default class AuthService {
     if (auth) {
       window.localStorage.removeItem('authFE');
 
-      let path = '/users/refresh';
-      let body = {
+      const path = '/users/refresh';
+      const body = {
         refresh_token: auth.refreshToken,
       };
 
@@ -185,5 +184,4 @@ export default class AuthService {
   refreshTokenErrorCallback() {
     window.localStorage.removeItem('authFE');
   }
-
 }

@@ -1,14 +1,18 @@
-import React from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CPopover, CRow, CCol } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React from 'react';
+import {
+  CButton, CCard, CCardBody, CCardHeader, CPopover, CRow, CCol,
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
-const Popovers = () => {
+function Popovers() {
   return (
     <CRow>
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Popover</strong> <small>Basic example</small>
+            <strong>React Popover</strong>
+            {' '}
+            <small>Basic example</small>
           </CCardHeader>
           <CCardBody>
             <DocsExample href="components/popover">
@@ -28,7 +32,9 @@ const Popovers = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Popover</strong> <small>Four directions</small>
+            <strong>React Popover</strong>
+            {' '}
+            <small>Four directions</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -65,7 +71,7 @@ const Popovers = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
+  );
 }
 
-export default Popovers
+export default Popovers;

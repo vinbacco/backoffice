@@ -1,26 +1,25 @@
 import axios from 'axios';
 
 export default class AbstractService {
-
   constructor(baseUrl) {
     this.axiosInstance = axios.create({
-      baseURL: baseUrl
+      baseURL: baseUrl,
     });
   }
 
   getHeaders(lang) {
-    let headers = {
-      'Accept': 'application/json',
+    const headers = {
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       'Accept-Language': lang,
       'Cache-Control': 'no-cache',
       'x-no-recaptcha': 'vinbacco',
     };
-    
+
     const auth = (window.localStorage.getItem('authFE')) ? JSON.parse(window.localStorage.getItem('authFE')) : null;
 
     if (!!auth && !!auth.access_token) {
-      headers['Authorization'] = ((auth.token_type) ? auth.token_type : 'Bearer') + " " + auth.access_token;
+      headers.Authorization = `${(auth.token_type) ? auth.token_type : 'Bearer'} ${auth.access_token}`;
     }
 
     return headers;

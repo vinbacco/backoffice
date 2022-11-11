@@ -1,14 +1,18 @@
-import React from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CSpinner, CRow } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React from 'react';
+import {
+  CButton, CCard, CCardBody, CCardHeader, CCol, CSpinner, CRow,
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
-const Accordion = () => {
+function Accordion() {
   return (
     <CRow>
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Spinner</strong> <small>Border</small>
+            <strong>React Spinner</strong>
+            {' '}
+            <small>Border</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -18,7 +22,14 @@ const Accordion = () => {
               <CSpinner />
             </DocsExample>
             <p className="text-medium-emphasis small">
-              The border spinner uses <code>currentColor</code> for its <code>border-color</code>.
+              The border spinner uses
+              {' '}
+              <code>currentColor</code>
+              {' '}
+              for its
+              {' '}
+              <code>border-color</code>
+              .
               You can use any of our text color utilities on the standard spinner.
             </p>
             <DocsExample href="components/spinner#colors">
@@ -37,7 +48,9 @@ const Accordion = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Spinner</strong> <small>Growing</small>
+            <strong>React Spinner</strong>
+            {' '}
+            <small>Growing</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -48,7 +61,10 @@ const Accordion = () => {
               <CSpinner variant="grow" />
             </DocsExample>
             <p className="text-medium-emphasis small">
-              Once again, this spinner is built with <code>currentColor</code>, so you can easily
+              Once again, this spinner is built with
+              {' '}
+              <code>currentColor</code>
+              , so you can easily
               change its appearance. Here it is in blue, along with the supported variants.
             </p>
             <DocsExample href="components/spinner#growing-spinner">
@@ -67,11 +83,17 @@ const Accordion = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Spinner</strong> <small>Size</small>
+            <strong>React Spinner</strong>
+            {' '}
+            <small>Size</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add <code>size=&#34;sm&#34;</code> property to make a smaller spinner that can quickly
+              Add
+              {' '}
+              <code>size=&#34;sm&#34;</code>
+              {' '}
+              property to make a smaller spinner that can quickly
               be used within other components.
             </p>
             <DocsExample href="components/spinner#size">
@@ -84,7 +106,9 @@ const Accordion = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Spinner</strong> <small>Buttons</small>
+            <strong>React Spinner</strong>
+            {' '}
+            <small>Buttons</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -114,7 +138,7 @@ const Accordion = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
+  );
 }
 
-export default Accordion
+export default Accordion;

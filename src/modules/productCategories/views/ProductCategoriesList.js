@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   CCol,
   CContainer,
@@ -9,13 +9,13 @@ import {
   CRow,
   CTable,
   CButton,
-} from '@coreui/react'
-import { Link } from 'react-router-dom'
+} from '@coreui/react';
+import { Link } from 'react-router-dom';
 
-import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
-import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner'
+import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
-const ProductCategoriesList = () => {
+function ProductCategoriesList() {
   const [data, setData] = useState(null);
   const [paginate, setPaginate] = useState(10);
   const [page, setPage] = useState(1);
@@ -31,9 +31,9 @@ const ProductCategoriesList = () => {
       key: 'tipo',
       label: 'Tipo Prodotto',
       _props: { scope: 'col' },
-    }
+    },
   ];
-  
+
   const processData = (paginate = 10, page = 1, filters) => {
     const productCategoriesService = new ProductCategoriesService();
     productCategoriesService.getList(
@@ -41,17 +41,15 @@ const ProductCategoriesList = () => {
       page,
       filters,
       (response) => {
-        setData(response.data.map((item) => {
-          return ({
-            nome: item.name,
-            tipo: item.product_type.name,
-            _cellProps: { id: { scope: 'row' } },
-          });
-        }))
+        setData(response.data.map((item) => ({
+          nome: item.name,
+          tipo: item.product_type.name,
+          _cellProps: { id: { scope: 'row' } },
+        })));
       },
-      (response) => { setData(response.data) }
+      (response) => { setData(response.data); },
     );
-  }
+  };
 
   useEffect(() => {
     if (!data) {
@@ -59,21 +57,20 @@ const ProductCategoriesList = () => {
     }
   }, [data]);
 
-  if (!data) return <AppLoadingSpinner />
+  if (!data) return <AppLoadingSpinner />;
 
   return (
     <>
       <h1>Lista Categorie</h1>
       <CContainer>
         <CForm onSubmit={(e) => {
-              e.preventDefault();
-              processData(
-                undefined,
-                undefined,
-                {'^name': e.currentTarget[0].value}
-              );
-            }
-          }
+          e.preventDefault();
+          processData(
+            undefined,
+            undefined,
+            { '^name': e.currentTarget[0].value },
+          );
+        }}
         >
           <CRow>
             <CCol>
@@ -86,7 +83,7 @@ const ProductCategoriesList = () => {
               />
             </CCol>
           </CRow>
-          <CRow>  
+          <CRow>
             <CCol>
               <CButton type="submit">
                 Filtra

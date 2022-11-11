@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   CCard,
   CCardBody,
@@ -18,13 +18,13 @@ import {
   CNavLink,
   CDropdown,
   CButton,
-} from '@coreui/react'
-import { DocsLink } from 'src/components'
+} from '@coreui/react';
+import { DocsLink } from 'src/components';
 
-const CNavbars = () => {
-  const [visible, setVisible] = useState(false)
-  const [isOpenDropdown, setIsOpenDropdown] = useState(false)
-  const [navbarText, setNavbarText] = useState(false)
+function CNavbars() {
+  const [visible, setVisible] = useState(false);
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [navbarText, setNavbarText] = useState(false);
 
   return (
     <>
@@ -94,7 +94,7 @@ const CNavbars = () => {
             <CNavbarToggler
               inNavbar
               onClick={() => {
-                setNavbarText(!navbarText)
+                setNavbarText(!navbarText);
               }}
             />
             <CNavbarBrand>NavbarBrand</CNavbarBrand>
@@ -114,7 +114,7 @@ const CNavbars = () => {
             <CNavbarToggler
               inNavbar
               onClick={() => {
-                setIsOpenDropdown(!isOpenDropdown)
+                setIsOpenDropdown(!isOpenDropdown);
               }}
             />
             <CCollapse show={isOpenDropdown} navbar>
@@ -168,7 +168,7 @@ const CNavbars = () => {
         </CCardBody>
       </CCard>
     </>
-  )
+  );
 }
 
-export default CNavbars
+export default CNavbars;

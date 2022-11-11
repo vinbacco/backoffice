@@ -1,9 +1,9 @@
-import TourService from "../api/tourService";
+import TourService from '../api/tourService';
 
 const siteMap = {
   tours: {
     mainService: async () => {
-      const TourService = await import("../api/tourService");
+      const TourService = await import('../api/tourService');
       return new TourService.default();
     },
     title: 'Tours',
@@ -25,9 +25,9 @@ const siteMap = {
         lookup: 'product_category_id',
         label: 'Categoria',
         _props: { scope: 'col' },
-      }
+      },
     ],
   },
-}
+};
 
 export default siteMap;

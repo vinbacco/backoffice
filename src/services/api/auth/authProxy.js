@@ -8,7 +8,7 @@ function AuthProxy(refreshTokenConfig, apiMethod, successCallback, errorCallback
     const errorNoTokenForRequiredAuth = {
       ok: false,
       status: 401,
-      code: 'Unauthorized'
+      code: 'Unauthorized',
     };
     if (!!refreshTokenErrorCallback && typeof refreshTokenErrorCallback === 'function') refreshTokenErrorCallback(errorNoTokenForRequiredAuth);
     if (!!errorCallback && typeof errorCallback === 'function') errorCallback(errorNoTokenForRequiredAuth);
@@ -21,9 +21,9 @@ function AuthProxy(refreshTokenConfig, apiMethod, successCallback, errorCallback
         window.removeEventListener('token', listener);
         if (!!successCallback && typeof successCallback === 'function') successCallback(res);
       })
-      .catch((apiMethodError) => {
-        if (!!errorCallback && typeof errorCallback === 'function') errorCallback(apiMethodError);
-      });
+        .catch((apiMethodError) => {
+          if (!!errorCallback && typeof errorCallback === 'function') errorCallback(apiMethodError);
+        });
     };
 
     apiMethod().then((res) => {
@@ -31,16 +31,14 @@ function AuthProxy(refreshTokenConfig, apiMethod, successCallback, errorCallback
       if (!!successCallback && typeof successCallback === 'function') successCallback(res);
     }).catch((err) => {
       console.error(err);
-      if (err.response && err.response.status === 401){
+      if (err.response && err.response.status === 401) {
         window.addEventListener('token', listener);
         try {
-          refreshTokenHandler.sem.take(function(){ refreshTokenHandler.refreshToken(); });
+          refreshTokenHandler.sem.take(() => { refreshTokenHandler.refreshToken(); });
         } catch (e) {
           if (!!errorCallback && typeof errorCallback === 'function') errorCallback(e);
         }
-      } else {
-        if (!!errorCallback && typeof errorCallback === 'function') errorCallback(err.response);
-      }
+      } else if (!!errorCallback && typeof errorCallback === 'function') errorCallback(err.response);
     });
   };
 

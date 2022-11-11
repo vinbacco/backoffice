@@ -1,7 +1,9 @@
-import React from 'react'
-import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
+import React from 'react';
+import {
+  AppContent, AppSidebar, AppFooter, AppHeader,
+} from '../components/index';
 
-const DefaultLayout = () => {
+function DefaultLayout() {
   return (
     <div className="vinbacco">
       <AppSidebar />
@@ -13,7 +15,7 @@ const DefaultLayout = () => {
         <AppFooter />
       </div>
     </div>
-  )
+  );
 }
 
-export default DefaultLayout
+export default DefaultLayout;

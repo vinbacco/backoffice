@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CBadge,
   CCard,
@@ -9,16 +9,18 @@ import {
   CListGroup,
   CListGroupItem,
   CRow,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
-const ListGroups = () => {
+function ListGroups() {
   return (
     <CRow>
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Basic example</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Basic example</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -40,11 +42,21 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Active items</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Active items</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add <code>active</code> boolean property to a <code>&lt;CListGroupItem&gt;</code> to
+              Add
+              {' '}
+              <code>active</code>
+              {' '}
+              boolean property to a
+              {' '}
+              <code>&lt;CListGroupItem&gt;</code>
+              {' '}
+              to
               show the current active selection.
             </p>
             <DocsExample href="components/list-group/#active-items">
@@ -62,11 +74,21 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Disabled items</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Disabled items</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add <code>disabled</code> boolean property to a <code>&lt;CListGroupItem&gt;</code> to
+              Add
+              {' '}
+              <code>disabled</code>
+              {' '}
+              boolean property to a
+              {' '}
+              <code>&lt;CListGroupItem&gt;</code>
+              {' '}
+              to
               make it appear disabled.
             </p>
             <DocsExample href="components/list-group/#disabled-items">
@@ -84,14 +106,30 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Links and buttons</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Links and buttons</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Use <code>&lt;a&gt;</code>s or <code>&lt;button&gt;</code>s to create{' '}
-              <em>actionable</em> list group items with hover, disabled, and active states by adding{' '}
-              <code>component=&#34;a|button&#34;</code>. We separate these pseudo-classes to ensure
-              list groups made of non-interactive elements (like <code>&lt;li&gt;</code>s or{' '}
+              Use
+              {' '}
+              <code>&lt;a&gt;</code>
+              s or
+              {' '}
+              <code>&lt;button&gt;</code>
+              s to create
+              {' '}
+              <em>actionable</em>
+              {' '}
+              list group items with hover, disabled, and active states by adding
+              {' '}
+              <code>component=&#34;a|button&#34;</code>
+              . We separate these pseudo-classes to ensure
+              list groups made of non-interactive elements (like
+              <code>&lt;li&gt;</code>
+              s or
+              {' '}
               <code>&lt;div&gt;</code>
               s) don&#39;tprovide a click or tap affordance.
             </p>
@@ -120,11 +158,17 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Flush</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Flush</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add <code>flush</code> boolean property to remove some borders and rounded corners to
+              Add
+              {' '}
+              <code>flush</code>
+              {' '}
+              boolean property to remove some borders and rounded corners to
               render list group items edge-to-edge in a parent container (e.g., cards).
             </p>
             <DocsExample href="components/list-group/#flush">
@@ -142,15 +186,27 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Horizontal</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Horizontal</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              Add <code>layout=&#34;horizontal&#34;</code> to change the layout of list group items
+              Add
+              {' '}
+              <code>layout=&#34;horizontal&#34;</code>
+              {' '}
+              to change the layout of list group items
               from vertical to horizontal across all breakpoints. Alternatively, choose a responsive
-              variant <code>.layout=&#34;horizontal-&#123;sm | md | lg | xl | xxl&#125;&#34;</code>{' '}
-              to make a list group horizontal starting at that breakpoint&#39;s{' '}
-              <code>min-width</code>. Currently{' '}
+              variant
+              {' '}
+              <code>.layout=&#34;horizontal-&#123;sm | md | lg | xl | xxl&#125;&#34;</code>
+              {' '}
+              to make a list group horizontal starting at that breakpoint&#39;s
+              {' '}
+              <code>min-width</code>
+              . Currently
+              {' '}
               <strong>horizontal list groups cannot be combined with flush list groups.</strong>
             </p>
             <DocsExample href="components/list-group/#flush">
@@ -168,7 +224,9 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Contextual classes</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Contextual classes</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -188,15 +246,27 @@ const ListGroups = () => {
                   'dark',
                 ].map((color, index) => (
                   <CListGroupItem color={color} key={index}>
-                    A simple {color} list group item
+                    A simple
+                    {' '}
+                    {color}
+                    {' '}
+                    list group item
                   </CListGroupItem>
                 ))}
               </CListGroup>
             </DocsExample>
             <p className="text-medium-emphasis small">
-              Contextual classes also work with <code>&lt;a&gt;</code>s or{' '}
-              <code>&lt;button&gt;</code>s. Note the addition of the hover styles here not present
-              in the previous example. Also supported is the <code>active</code> state; apply it to
+              Contextual classes also work with
+              {' '}
+              <code>&lt;a&gt;</code>
+              s or
+              {' '}
+              <code>&lt;button&gt;</code>
+              s. Note the addition of the hover styles here not present
+              in the previous example. Also supported is the
+              <code>active</code>
+              {' '}
+              state; apply it to
               indicate an active selection on a contextual list group item.
             </p>
             <DocsExample href="components/list-group/#contextual-classes">
@@ -215,7 +285,11 @@ const ListGroups = () => {
                   'dark',
                 ].map((color, index) => (
                   <CListGroupItem component="a" href="#" color={color} key={index}>
-                    A simple {color} list group item
+                    A simple
+                    {' '}
+                    {color}
+                    {' '}
+                    list group item
                   </CListGroupItem>
                 ))}
               </CListGroup>
@@ -226,7 +300,9 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>With badges</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>With badges</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -260,12 +336,17 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Custom content</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Custom content</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
               Add nearly any HTML within, even for linked list groups like the one below, with the
-              help of <a href="https://coreui.io/docs/utilities/flex/">flexbox utilities</a>.
+              help of
+              {' '}
+              <a href="https://coreui.io/docs/utilities/flex/">flexbox utilities</a>
+              .
             </p>
             <DocsExample href="components/list-group/#custom-content">
               <CListGroup>
@@ -310,7 +391,9 @@ const ListGroups = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React List Group</strong> <small>Checkboxes and radios</small>
+            <strong>React List Group</strong>
+            {' '}
+            <small>Checkboxes and radios</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
@@ -340,7 +423,7 @@ const ListGroups = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
+  );
 }
 
-export default ListGroups
+export default ListGroups;

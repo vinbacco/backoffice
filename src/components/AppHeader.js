@@ -1,6 +1,6 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   CContainer,
   CHeader,
@@ -11,18 +11,19 @@ import {
   CNavLink,
   CNavItem,
   CImage,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import {
+  cilBell, cilEnvelopeOpen, cilList, cilMenu,
+} from '@coreui/icons';
 
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
-import logo from 'src/assets/images/logo/logo_lg_white.svg'
+import logo from 'src/assets/images/logo/logo_lg_white.svg';
+import { toggleSidebar } from 'src/redux/slices/appSlice';
+import { AppBreadcrumb } from './index';
+import { AppHeaderDropdown } from './header/index';
 
-import { toggleSidebar } from 'src/redux/slices/appSlice'
-
-const AppHeader = () => {
-  const dispatch = useDispatch()
+function AppHeader() {
+  const dispatch = useDispatch();
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -75,7 +76,7 @@ const AppHeader = () => {
         <AppBreadcrumb />
       </CContainer>
     </CHeader>
-  )
+  );
 }
 
-export default AppHeader
+export default AppHeader;

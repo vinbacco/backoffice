@@ -1,7 +1,9 @@
-import React from 'react'
-import { CForm, CCol, CFormInput, CFormSelect, CFormCheck, CButton } from '@coreui/react'
+import React from 'react';
+import {
+  CForm, CCol, CFormInput, CFormSelect, CFormCheck, CButton,
+} from '@coreui/react';
 
-const OrdersDetail = () => {
+function OrdersDetail() {
   return (
     <CForm className="row g-3">
       <CCol md={6}>
@@ -39,7 +41,7 @@ const OrdersDetail = () => {
         <CButton type="submit">Sign in</CButton>
       </CCol>
     </CForm>
-  )
+  );
 }
 
-export default OrdersDetail
+export default OrdersDetail;

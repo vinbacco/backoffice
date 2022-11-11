@@ -1,10 +1,14 @@
 import { cilChevronBottom, cilChevronTop } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react';
+import {
+  CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow,
+} from '@coreui/react';
 import React from 'react';
 import AppLoadingSpinner from './AppLoadingSpinner';
 
-const AppTable = ({loading = false, columns, items, rowAction = null, sortBy = '', orderBy = 'asc', onChangeOrderSort = null}) => {
+function AppTable({
+  loading = false, columns, items, rowAction = null, sortBy = '', orderBy = 'asc', onChangeOrderSort = null,
+}) {
   /**
     key: 'select',
     label: <CFormCheck checked={Array.isArray(data) && data.length  === state.selectedItems.length } onChange={(event) => toggleSelectAllRows(event)} />,
@@ -13,7 +17,7 @@ const AppTable = ({loading = false, columns, items, rowAction = null, sortBy = '
    */
 
   const evalAndChangeOrderSort = (value) => {
-    const newOrderSort = { order: orderBy, sort: sortBy};
+    const newOrderSort = { order: orderBy, sort: sortBy };
     if (value === sortBy) {
       if (orderBy.toLowerCase() === 'asc') newOrderSort.order = 'desc';
       else newOrderSort.order = 'asc';
@@ -22,15 +26,16 @@ const AppTable = ({loading = false, columns, items, rowAction = null, sortBy = '
       newOrderSort.order = 'asc';
     }
     return onChangeOrderSort(newOrderSort);
-  }
+  };
 
   return (
     <CTable striped bordered>
       <CTableHead>
         <CTableRow>
-          {columns.map(currentColumn => (
-            <CTableHeaderCell className={currentColumn.sortable ? 'cursor-pointer' :''} key={currentColumn.key} onClick={() => currentColumn.sortable ? evalAndChangeOrderSort(currentColumn.key) : null} scope="col" {...currentColumn._style} {...currentColumn._props}>
-              {currentColumn.label}{currentColumn.sortable && currentColumn.key === sortBy && <CIcon className="ms-2" icon={orderBy.toLowerCase() === 'asc' ? cilChevronTop : cilChevronBottom} />}
+          {columns.map((currentColumn) => (
+            <CTableHeaderCell className={currentColumn.sortable ? 'cursor-pointer' : ''} key={currentColumn.key} onClick={() => (currentColumn.sortable ? evalAndChangeOrderSort(currentColumn.key) : null)} scope="col" {...currentColumn._style} {...currentColumn._props}>
+              {currentColumn.label}
+              {currentColumn.sortable && currentColumn.key === sortBy && <CIcon className="ms-2" icon={orderBy.toLowerCase() === 'asc' ? cilChevronTop : cilChevronBottom} />}
             </CTableHeaderCell>
           ))}
         </CTableRow>
@@ -67,7 +72,7 @@ const AppTable = ({loading = false, columns, items, rowAction = null, sortBy = '
         </CTableRow> */}
       </CTableBody>
     </CTable>
-  )
+  );
 }
 
 export default AppTable;

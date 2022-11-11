@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CRow } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React, { useState } from 'react';
+import {
+  CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CRow,
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
-const Collapses = () => {
-  const [visible, setVisible] = useState(false)
-  const [visibleHorizontal, setVisibleHorizontal] = useState(false)
-  const [visibleA, setVisibleA] = useState(false)
-  const [visibleB, setVisibleB] = useState(false)
+function Collapses() {
+  const [visible, setVisible] = useState(false);
+  const [visibleHorizontal, setVisibleHorizontal] = useState(false);
+  const [visibleA, setVisibleA] = useState(false);
+  const [visibleB, setVisibleB] = useState(false);
 
   return (
     <CRow>
@@ -21,8 +23,8 @@ const Collapses = () => {
               <CButton
                 href="#"
                 onClick={(e) => {
-                  e.preventDefault()
-                  setVisible(!visible)
+                  e.preventDefault();
+                  setVisible(!visible);
                 }}
               >
                 Link
@@ -44,7 +46,9 @@ const Collapses = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Collapse</strong> <small> Horizontal</small>
+            <strong>React Collapse</strong>
+            {' '}
+            <small> Horizontal</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">You can use a link or a button component.</p>
@@ -74,19 +78,25 @@ const Collapses = () => {
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>React Collapse</strong> <small> multi target</small>
+            <strong>React Collapse</strong>
+            {' '}
+            <small> multi target</small>
           </CCardHeader>
           <CCardBody>
             <p className="text-medium-emphasis small">
-              A <code>&lt;CButton&gt;</code> can show and hide multiple elements.
+              A
+              {' '}
+              <code>&lt;CButton&gt;</code>
+              {' '}
+              can show and hide multiple elements.
             </p>
             <DocsExample href="components/collapse#multiple-targets">
               <CButton onClick={() => setVisibleA(!visibleA)}>Toggle first element</CButton>
               <CButton onClick={() => setVisibleB(!visibleB)}>Toggle second element</CButton>
               <CButton
                 onClick={() => {
-                  setVisibleA(!visibleA)
-                  setVisibleB(!visibleB)
+                  setVisibleA(!visibleA);
+                  setVisibleB(!visibleB);
                 }}
               >
                 Toggle both elements
@@ -120,7 +130,7 @@ const Collapses = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
+  );
 }
 
-export default Collapses
+export default Collapses;

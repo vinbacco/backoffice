@@ -1,14 +1,19 @@
-import React from 'react'
-import { CFooter } from '@coreui/react'
+import React from 'react';
+import { CFooter } from '@coreui/react';
 
-const AppFooter = () => {
+function AppFooter() {
   return (
     <CFooter>
       <div>
-        <span className="ms-1">&copy; {new Date().getFullYear()} RUSHNET.S.r.l.</span>
+        <span className="ms-1">
+          &copy;
+          {new Date().getFullYear()}
+          {' '}
+          RUSHNET.S.r.l.
+        </span>
       </div>
     </CFooter>
-  )
+  );
 }
 
-export default React.memo(AppFooter)
+export default React.memo(AppFooter);

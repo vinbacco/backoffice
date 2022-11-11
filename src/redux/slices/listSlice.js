@@ -1,44 +1,44 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   content: [],
   total: 0,
   paginate: 10,
   page: 1,
-}
+};
 
 export const listSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
     increasePage: (state) => {
-      state.page += 1
+      state.page += 1;
     },
     decreasePage: (state) => {
-      if (state.page > 0) state.page -= 1
+      if (state.page > 0) state.page -= 1;
     },
     setPage: (state, action) => {
-      state.page = action.payload
+      state.page = action.payload;
     },
     setPaginate: (state, action) => {
-      state.paginate = action.payload
+      state.paginate = action.payload;
     },
     setContent: (state, action) => {
-      state.content = action.payload
+      state.content = action.payload;
     },
     setTotal: (state, action) => {
-      state.total = action.payload
+      state.total = action.payload;
     },
     clearContent: (state, action) => {
-      state.content = []
+      state.content = [];
     },
     clearList: (state) => {
-      state = { ...initialState }
-    }
+      state = { ...initialState };
+    },
   },
-})
+});
 
-export const { 
+export const {
   increasePage,
   decreasePage,
   setPage,
@@ -47,6 +47,6 @@ export const {
   clearContent,
   clearList,
   setTotal,
-} = listSlice.actions
+} = listSlice.actions;
 
-export default listSlice.reducer
+export default listSlice.reducer;

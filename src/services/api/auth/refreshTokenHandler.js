@@ -11,8 +11,8 @@ class RefreshTokenHandler {
 
   refreshToken() {
     this.refreshTokenConfig.refreshTokenMethod().then((resp) => {
-      this.refreshTokenConfig.refreshTokenSuccessCallback(resp.data)
-      let event = new Event('token');
+      this.refreshTokenConfig.refreshTokenSuccessCallback(resp.data);
+      const event = new Event('token');
       window.dispatchEvent(event);
       RefreshTokenHandler.instance.sem = require('semaphore')(1);
     }).catch((err) => {
@@ -20,11 +20,10 @@ class RefreshTokenHandler {
         RefreshTokenHandler.instance.sem = require('semaphore')(1);
         this.refreshTokenConfig.refreshTokenErrorCallback(err.response);
       } else {
-        throw err
+        throw err;
       }
     });
   }
-};
+}
 
 export default RefreshTokenHandler;
-

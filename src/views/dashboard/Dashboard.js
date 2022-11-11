@@ -1,7 +1,9 @@
-import React from 'react'
-import { CCard, CCardBody, CCol, CRow } from '@coreui/react'
+import React from 'react';
+import {
+  CCard, CCardBody, CCol, CRow,
+} from '@coreui/react';
 
-const Dashboard = () => {
+function Dashboard() {
   return (
     <CCard className="mb-4">
       <CCardBody>
@@ -15,7 +17,7 @@ const Dashboard = () => {
         </CRow>
       </CCardBody>
     </CCard>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
