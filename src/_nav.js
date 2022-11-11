@@ -12,7 +12,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Orders',
+    name: 'Ordini',
     to: '/orders',
     icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
   },
