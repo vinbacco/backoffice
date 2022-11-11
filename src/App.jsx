@@ -1,4 +1,3 @@
-import { CSpinner } from '@coreui/react';
 import React, { Suspense, useEffect, useState } from 'react';
 import {
   BrowserRouter, Route, Routes, Navigate,

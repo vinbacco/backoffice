@@ -5,7 +5,7 @@ import {
 } from '@coreui/icons';
 import { CNavItem } from '@coreui/react';
 
-const _nav = [
+const nav = [
   {
     component: CNavItem,
     name: 'Dashboard',
@@ -32,4 +32,4 @@ const _nav = [
   },
 ];
 
-export default _nav;
+export default nav;

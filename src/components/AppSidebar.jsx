@@ -1,22 +1,21 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import {
-  CImage, CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler,
+  CImage, CSidebar, CSidebarBrand, CSidebarNav,
 } from '@coreui/react';
-
-import { AppSidebarNav } from './AppSidebarNav';
+/* eslint-disable */
+import SimpleBar from 'simplebar-react';
+/* eslint-disable */
+import 'simplebar/dist/simplebar.min.css';
 
 import logo from 'src/assets/images/logo/logo_lg_white.svg';
 import logoSmall from 'src/assets/images/logo/logo_sm_white.svg';
 
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
-
 // sidebar nav config
-
 import { setSidebar } from 'src/redux/slices/appSlice';
-import navigation from '../_nav';
+import { AppSidebarNav } from './AppSidebarNav';
+
+import navigation from '../nav';
 
 function AppSidebar() {
   const sidebarShow = useSelector((state) => state.app.sidebarShow);
@@ -26,7 +25,13 @@ function AppSidebar() {
     <CSidebar
       position="fixed"
       visible={sidebarShow}
-      onVisibleChange={(showValue) => (sidebarShow !== showValue ? dispatch(setSidebar(showValue)) : null)}
+      onVisibleChange={
+        (showValue) => (
+          sidebarShow !== showValue
+            ? dispatch(setSidebar(showValue))
+            : null
+        )
+      }
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
         <CImage className="sidebar-brand-full" src={logo} height={35} />
