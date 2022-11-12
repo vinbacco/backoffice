@@ -2,10 +2,11 @@
 /* eslint-disable no-underscore-dangle */
 /**
  * TODO:
- * Aggiornare il query params della pagina una volta avviene qualsiasi modifica (cambio filtro, sort, pagina...) (da fare DOMANI 12/11/2022)
+ * Sistemare formulario creazione con pacchetto da discutere con Marco, inclusa validazione prima di salvare
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   CCol,
   CForm,
@@ -22,6 +23,8 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
+  CAlert,
+  CAlertHeading,
 } from '@coreui/react';
 import { useNavigate } from 'react-router-dom';
 import CIcon from '@coreui/icons-react';
@@ -29,8 +32,12 @@ import {
   cilFile, cilPencil, cilPlus, cilTrash,
 } from '@coreui/icons';
 
-import TourService from 'src/services/api/tourService';
 import AppTable from 'src/components/ui/AppTable';
+import dataToQueryParams from 'src/utils/dataToQueryParams';
+import Autocomplete from 'src/components/ui/Autocomplete';
+
+import TourService from 'src/services/api/TourService';
+import ContactService from 'src/services/api/ContactService';
 
 function ToursList() {
   const [data, setData] = useState(null);
@@ -43,6 +50,48 @@ function ToursList() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
+
+  /** FIXME: Usare pacchetto formulari da discutere con Marco */
+  const [creationModel, setCreationModel] = useState({});
+  const [creationAction, setCreationAction] = useState({ error: null, executing: false });
+  /** END */
+
+  const [contactsData, setContactsData] = useState({
+    data: [],
+    fetching: true,
+    filter: '',
+    requestId: uuidv4(),
+  });
+  const contactRequestIdRef = useRef(contactsData.requestId);
+
+  const loadContacts = () => {
+    const contactService = new ContactService();
+
+    const okGetContacts = (response, requestId) => {
+      if (contactRequestIdRef.current === requestId) {
+        let responseData = [];
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          responseData = response.data.map((currentItem) => ({ value: currentItem._id, label: currentItem.business_name }));
+        }
+        setContactsData({ ...contactsData, fetching: false, data: responseData });
+      }
+    };
+
+    const koGetContacts = (error, requestId) => {
+      if (contactRequestIdRef.current === requestId) {
+        setContactsData({ ...contactsData, fetching: false, data: [] });
+        throw error;
+      }
+    };
+
+    const filters = {
+      paginate: 5,
+      page: 1,
+    };
+    if (contactsData.filter.length > 0) filters['??^business_name'] = contactsData.filter;
+
+    contactService.getList(filters, (res) => okGetContacts(res, contactsData.requestId), (err) => koGetContacts(err, contactsData.requestId));
+  };
 
   const toggleSelectAllRows = (event) => {
     const newState = { ...state };
@@ -125,6 +174,12 @@ function ToursList() {
     setTableData(newTableData);
   };
 
+  const onChangeCreationModel = (event) => {
+    const newCreationModel = { ...creationModel };
+    newCreationModel[event.target.name] = event.target.value;
+    setCreationModel(newCreationModel);
+  };
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const newTableData = { ...tableData };
@@ -132,6 +187,7 @@ function ToursList() {
     newTableData.page = queryParams.get('page') || 1;
     newTableData.order = queryParams.get('order') || 'asc';
     newTableData.sort = queryParams.get('sort') || 'name';
+    newTableData.search = queryParams.get('search') || '';
     setTableData(newTableData);
     if (!data) {
       setFetchData(true);
@@ -140,9 +196,17 @@ function ToursList() {
 
   useEffect(() => {
     if (fetchData === true) {
+      const queryParams = dataToQueryParams(tableData);
+      navigate(`/tours${queryParams}`, { replace: true });
       processData(tableData);
     }
   }, [fetchData]);
+
+  useEffect(() => {
+    if (contactsData.fetching === true) {
+      loadContacts();
+    }
+  }, [contactsData]);
 
   const columns = [
     {
@@ -203,6 +267,51 @@ function ToursList() {
     }
   };
 
+  const handleCreateNew = (event) => {
+    if (showCreateModal === true && creationAction.executing === false) {
+      event.preventDefault();
+      setCreationAction({ error: null, executing: true });
+      const tourService = new TourService();
+      const tourData = { ...creationModel };
+      tourData.contact_id = tourData.contact_id.value;
+      tourService.addItem(
+        tourData,
+        (response) => {
+          setCreationAction({ ...creationAction, executing: false });
+          console.log('tourService.addItem response');
+          console.log(response);
+        },
+        (error) => {
+          setCreationAction({ error, executing: false });
+        },
+      );
+    }
+  };
+
+  const showCreationModalAndClearModel = () => {
+    setCreationModel({});
+    setCreationAction({ error: null, executing: false });
+    setShowCreateModal(true);
+  };
+
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    loadContacts();
+  };
+
+  const handleContactFilter = (value) => {
+    const newContactsData = { ...contactsData };
+    if (newContactsData.filter !== value) {
+      newContactsData.filter = value;
+      if (value.length > 2 || value.length === 0) {
+        newContactsData.requestId = uuidv4();
+        newContactsData.fetching = true;
+        contactRequestIdRef.current = newContactsData.requestId;
+      }
+      setContactsData(newContactsData);
+    }
+  };
+
   return (
     <>
       <h1 className="list-title">Lista Tour</h1>
@@ -228,7 +337,7 @@ function ToursList() {
           </CForm>
         </CCol>
         <CCol md={12} lg={6} className="list-actions mt-2">
-          <CButton color="primary" disabled={fetchData === true} onClick={() => setShowCreateModal(true)}>
+          <CButton color="primary" disabled={fetchData === true} onClick={() => showCreationModalAndClearModel()}>
             <CIcon icon={cilPlus} className="icon-button" />
             Nuovo
           </CButton>
@@ -275,19 +384,58 @@ function ToursList() {
           </CPagination>
         </CCol>
         <CCol className="text-end">
-          {`Pagina ${tableData.page} di ${Math.ceil(tableData.total / tableData.paginate)}(${tableData.total} risultat${tableData.total === 1 ? 'o' : 'i'})`}
+          {`Pagina ${tableData.page} di ${Math.ceil(tableData.total / tableData.paginate)} (${tableData.total} risultat${tableData.total === 1 ? 'o' : 'i'})`}
         </CCol>
       </CRow>
-      <CModal backdrop="static" visible={showCreateModal}>
+      <CModal size="xl" backdrop="static" visible={showCreateModal}>
         <CModalHeader closeButton={false}>
           <CModalTitle>Creare un nuovo Tour</CModalTitle>
         </CModalHeader>
-        <CModalBody />
+        <CModalBody>
+          <CForm id="creationForm" onSubmit={(e) => handleCreateNew(e)}>
+            {creationAction?.error?.data?.message && (
+              <CRow>
+                <CCol>
+                  <CAlert color="danger" dismissible>
+                    <CAlertHeading tag="h4">Errore nella creazione tour</CAlertHeading>
+                    <p>{creationAction?.error?.data?.message}</p>
+                  </CAlert>
+                </CCol>
+              </CRow>
+            )}
+            <CRow>
+              <CCol md={6}>
+                <CFormInput
+                  disabled={creationAction.executing === true}
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="es. Tour degli ulivi"
+                  label="Nome del tour"
+                  value={creationModel?.name || ''}
+                  onChange={onChangeCreationModel}
+                />
+              </CCol>
+              <CCol md={6}>
+                <Autocomplete
+                  dynamic
+                  label="Contatto"
+                  name="contact_id"
+                  value={creationModel.contact_id}
+                  options={contactsData.data}
+                  loading={contactsData.fetching}
+                  onChange={onChangeCreationModel}
+                  onFilter={handleContactFilter}
+                />
+              </CCol>
+            </CRow>
+          </CForm>
+        </CModalBody>
         <CModalFooter>
-          <CButton color="danger" onClick={() => setShowCreateModal(false)}>
+          <CButton disabled={creationAction.executing === true} color="danger" onClick={() => closeCreateModal()}>
             Annulla
           </CButton>
-          <CButton color="primary">Crea</CButton>
+          <CButton type="submit" form="creationForm" disabled={creationAction.executing === true} color="primary">Crea</CButton>
         </CModalFooter>
       </CModal>
       <CModal backdrop="static" visible={showDeleteModal}>

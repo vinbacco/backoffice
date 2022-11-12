@@ -11,4 +11,9 @@ export default class TourService extends ApiProxyService {
     const path = '/products';
     super.getList(path, queryParams, okCallback, koCallback);
   }
+
+  addItem(body, okCallback, koCallback) {
+    const path = '/products';
+    super.addItem(path, body, okCallback, koCallback);
+  }
 }

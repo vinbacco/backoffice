@@ -83,4 +83,33 @@ h1,h2,h3,h4,h5,h6 {
     box-sizing: border-box;
     padding: 1.5em;
   }
+  .app-autocomplete {
+    position: relative;
+    & > .app-autocomplete-options {
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      display: none;
+      &.open {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-items: stretch;
+        & > .app-autocomplete-option {
+          border: none;
+          background-color: $white;
+          text-align: left;
+          box-sizing: border-box;
+          margin: 0;
+          padding: 5px 15px;
+          &:not(.null-option):not(.loading-options):hover {
+            background-color: $option-hover;
+          }
+          &.null-option {
+            color: $option-hover;
+          }
+        }
+      }
+    }
+  }
 }

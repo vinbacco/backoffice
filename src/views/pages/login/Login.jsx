@@ -24,7 +24,7 @@ import CIcon from '@coreui/icons-react';
 import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 
 import AuthService from 'src/services/api/authService';
-import UserService from 'src/services/api/userService';
+import UserService from 'src/services/api/UserService';
 import { setUser } from 'src/redux/slices/user.slice';
 import Logo from '../../../assets/images/logo/logo_lg.svg';
 
