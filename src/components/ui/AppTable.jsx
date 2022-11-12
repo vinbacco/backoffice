@@ -1,4 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/forbid-prop-types */
 import { cilChevronBottom, cilChevronTop } from '@coreui/icons';
+import PropTypes from 'prop-types';
 import CIcon from '@coreui/icons-react';
 import {
   CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow,
@@ -9,13 +14,6 @@ import AppLoadingSpinner from './AppLoadingSpinner';
 function AppTable({
   loading = false, columns, items, rowAction = null, sortBy = '', orderBy = 'asc', onChangeOrderSort = null,
 }) {
-  /**
-    key: 'select',
-    label: <CFormCheck checked={Array.isArray(data) && data.length  === state.selectedItems.length } onChange={(event) => toggleSelectAllRows(event)} />,
-    _style: { width: '1%' },
-    _props: { scope: 'col' },
-   */
-
   const evalAndChangeOrderSort = (value) => {
     const newOrderSort = { order: orderBy, sort: sortBy };
     if (value === sortBy) {
@@ -46,33 +44,36 @@ function AppTable({
             <CTableDataCell colSpan={columns.length}><AppLoadingSpinner /></CTableDataCell>
           </CTableRow>
         )}
-        {loading === false && items.map((currentItem, itemIndex) => (
+        {loading === false && items.length <= 0 && (
+          <CTableRow>
+            <CTableDataCell colSpan={columns.length}><span className="table-no-results">Non ci sono risultati.</span></CTableDataCell>
+          </CTableRow>
+        )}
+        {loading === false && items.length > 0 && items.map((currentItem, itemIndex) => (
           <CTableRow key={`row-${itemIndex}`} onDoubleClick={() => rowAction(currentItem._id)}>
             {columns.map((currentColumn, rowIndex) => (
               <CTableDataCell key={`${itemIndex}-${currentColumn.key}-${rowIndex}`}>{currentItem[currentColumn.key]}</CTableDataCell>
             ))}
           </CTableRow>
         ))}
-        {/* <CTableRow>
-          <CTableDataCell>1</CTableDataCell>
-          <CTableDataCell>Mark</CTableDataCell>
-          <CTableDataCell>Otto</CTableDataCell>
-          <CTableDataCell>@mdo</CTableDataCell>
-        </CTableRow>
-        <CTableRow>
-          <CTableDataCell>2</CTableDataCell>
-          <CTableDataCell>Jacob</CTableDataCell>
-          <CTableDataCell>Thornton</CTableDataCell>
-          <CTableDataCell>@fat</CTableDataCell>
-        </CTableRow>
-        <CTableRow>
-          <CTableDataCell>3</CTableDataCell>
-          <CTableDataCell colSpan="2">Larry the Bird</CTableDataCell>
-          <CTableDataCell>@twitter</CTableDataCell>
-        </CTableRow> */}
       </CTableBody>
     </CTable>
   );
 }
+
+AppTable.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  columns: PropTypes.any.isRequired,
+  items: PropTypes.any.isRequired,
+  rowAction: PropTypes.func,
+  sortBy: PropTypes.string.isRequired,
+  orderBy: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  onChangeOrderSort: PropTypes.func,
+};
+
+AppTable.defaultProps = {
+  rowAction: null,
+  onChangeOrderSort: null,
+};
 
 export default AppTable;

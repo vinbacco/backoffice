@@ -1,10 +1,14 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable no-shadow */
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { CBadge } from '@coreui/react';
 
-export function AppSidebarNav({ items }) {
+function AppSidebarNav({ items }) {
   const location = useLocation();
   const navLink = (name, icon, badge) => (
     <>
@@ -49,7 +53,9 @@ export function AppSidebarNav({ items }) {
         visible={location.pathname.startsWith(to)}
         {...rest}
       >
-        {item.items?.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        {item.items?.map((item, index) => (item.items
+          ? navGroup(item, index)
+          : navItem(item, index)))}
       </Component>
     );
   };
@@ -65,3 +71,5 @@ export function AppSidebarNav({ items }) {
 AppSidebarNav.propTypes = {
   items: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
+
+export default AppSidebarNav;

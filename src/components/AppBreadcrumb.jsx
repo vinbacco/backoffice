@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -7,8 +9,8 @@ import routes from '../routes';
 function AppBreadcrumb() {
   const currentLocation = useLocation().pathname;
 
-  const getRouteName = (pathname, routes) => {
-    const currentRoute = routes.find((route) => route.path === pathname);
+  const getRouteName = (pathname, appRoutes) => {
+    const currentRoute = appRoutes.find((route) => route.path === pathname);
     return currentRoute ? currentRoute.name : false;
   };
 
@@ -17,12 +19,13 @@ function AppBreadcrumb() {
     location.split('/').reduce((prev, curr, index, array) => {
       const currentPathname = `${prev}/${curr}`;
       const routeName = getRouteName(currentPathname, routes);
-      routeName
-        && breadcrumbs.push({
+      if (routeName) {
+        breadcrumbs.push({
           pathname: currentPathname,
           name: routeName,
           active: index + 1 === array.length,
         });
+      }
       return currentPathname;
     });
     return breadcrumbs;

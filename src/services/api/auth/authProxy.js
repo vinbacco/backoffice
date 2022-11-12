@@ -30,7 +30,6 @@ function AuthProxy(refreshTokenConfig, apiMethod, successCallback, errorCallback
       window.removeEventListener('token', eventCallback);
       if (!!successCallback && typeof successCallback === 'function') successCallback(res);
     }).catch((err) => {
-      console.error(err);
       if (err.response && err.response.status === 401) {
         window.addEventListener('token', listener);
         try {

@@ -1,10 +1,12 @@
+/* eslint-disable consistent-return */
+/* eslint-disable class-methods-use-this */
 // GLOBAL
 import axios from 'axios';
 
 const config = require('../../environment');
 
 export default class AuthService {
-  constructor(baseUrl) {
+  constructor() {
     this.axiosInstance = axios.create({
       baseURL: `${config.API_PATH}${config.API_VERSION}${config.API_ENDPOINT}`,
       timeout: 5000,
@@ -15,24 +17,24 @@ export default class AuthService {
     return `${window.location.origin}/login`;
   }
 
-  registerUser(user, executeRecaptcha, okCallback, koCallback, order_id) {
+  registerUser(user, executeRecaptcha, okCallback, koCallback, orderId) {
     this.deleteAuthData();
 
     const path = '/users';
     const body = user;
 
     const processRegistration = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      if (order_id) {
-        config.params = { order_id };
+      if (orderId) {
+        config.params = { order_id: orderId };
       }
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -42,7 +44,7 @@ export default class AuthService {
         .then((res) => processRegistration(res))
         .catch(koCallback.bind(this));
     } catch (error) {
-      console.error('error: ', error);
+      throw error('error: ', error);
     }
   }
 
@@ -79,13 +81,13 @@ export default class AuthService {
     };
 
     const processPassword = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -102,13 +104,13 @@ export default class AuthService {
     };
 
     const processRenewPassword = (recaptcha) => {
-      const config = {
+      const callConfig = {
         headers: {
           'X-Recaptcha-Token': recaptcha,
         },
       };
 
-      return this.axiosInstance.post(path, body, config)
+      return this.axiosInstance.post(path, body, callConfig)
         .then(okCallback.bind(this))
         .catch(koCallback.bind(this));
     };
@@ -136,10 +138,11 @@ export default class AuthService {
   }
 
   setAuthData(auth) {
-    if (auth) {
-      auth.timestamp = (new Date()).getTime();
+    const newAuth = { ...auth };
+    if (newAuth) {
+      newAuth.timestamp = (new Date()).getTime();
     }
-    window.localStorage.setItem('authFE', JSON.stringify(auth));
+    window.localStorage.setItem('authFE', JSON.stringify(newAuth));
   }
 
   deleteAuthData() {
@@ -175,9 +178,10 @@ export default class AuthService {
   }
 
   refreshTokenSuccessCallback(auth) {
-    if (auth) {
-      auth.timestamp = (new Date()).getTime();
-      window.localStorage.setItem('authFE', JSON.stringify(auth));
+    const newAuth = { ...auth };
+    if (newAuth) {
+      newAuth.timestamp = (new Date()).getTime();
+      window.localStorage.setItem('authFE', JSON.stringify(newAuth));
     }
   }
 
