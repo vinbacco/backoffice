@@ -73,4 +73,14 @@ h1,h2,h3,h4,h5,h6 {
   .pagination {
     margin: 0;
   }
+  .icon-button {
+    margin-right: 1em;
+  }
+  .table-no-results {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 1.5em;
+  }
 }
