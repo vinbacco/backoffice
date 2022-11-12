@@ -7,7 +7,10 @@ import validator from '@rjsf/validator-ajv8';
 const ProductCategoryDetail = () => {
   const data = {
     name: 'Puglia',
-    product_type: 'Tour',
+    product_type: {
+      _id: '1',
+      name: 'Tour',
+    },
   };
 
   const productTypes = [
@@ -24,16 +27,16 @@ const ProductCategoryDetail = () => {
   const schema = {
     title: `Categoria Prodotto: ${data.name}`,
     type: 'object',
-    required: ['name', 'product_type'],
+    required: ['name', 'product_type_id'],
     properties: {
-      product_type: {
+      product_type_id: {
         type: 'string',
         title: 'Tipo Prodotto',
         oneOf: productTypes.map((item) => ({
           const: item._id,
           title: item.name,
         })),
-        default: '2',
+        default: data.product_type._id,
       },
       name: { type: 'string', title: 'Nome', default: data.name },
     },
