@@ -66,14 +66,16 @@ AppTable.propTypes = {
   columns: PropTypes.any.isRequired,
   items: PropTypes.any.isRequired,
   rowAction: PropTypes.func,
-  sortBy: PropTypes.string.isRequired,
-  orderBy: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  sortBy: PropTypes.string,
+  orderBy: PropTypes.oneOf(['asc', 'desc']),
   onChangeOrderSort: PropTypes.func,
 };
 
 AppTable.defaultProps = {
   rowAction: null,
   onChangeOrderSort: null,
+  sortBy: null,
+  orderBy: null,
 };
 
 export default AppTable;
