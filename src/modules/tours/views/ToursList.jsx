@@ -1,8 +1,8 @@
-/* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /**
  * TODO:
- * Sistemare formulario creazione con pacchetto da discutere con Marco, inclusa validazione prima di salvare
+ * Sistemare formulario creazione con pacchetto da discutere con Marco,
+ * inclusa validazione prima di salvare
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
 import React, { useEffect, useState, useRef } from 'react';
@@ -24,7 +24,7 @@ import {
   CAlert,
   CAlertHeading,
 } from '@coreui/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CIcon from '@coreui/icons-react';
 import {
   cilFile, cilPencil, cilPlus, cilTrash,
@@ -39,13 +39,19 @@ import TourService from 'src/services/api/TourService';
 import ContactService from 'src/services/api/ContactService';
 
 function ToursList() {
-  const [data, setData] = useState(null);
+  const location = useLocation();
   const [state, setState] = useState({ selectedItems: [] });
-  const [tableData, setTableData] = useState({
-    paginate: 10, page: 1, total: 0, order: 'asc', sort: 'name', search: '',
-  });
+  const initialTableData = {
+    paginate: 10,
+    page: 1,
+    total: 0,
+    order: 'asc',
+    sort: 'name',
+    search: '',
+    data: null,
+  };
+  const [tableData, setTableData] = useState(initialTableData);
   const [fetchData, setFetchData] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
@@ -70,7 +76,9 @@ function ToursList() {
       if (contactRequestIdRef.current === requestId) {
         let responseData = [];
         if (Array.isArray(response.data) && response.data.length > 0) {
-          responseData = response.data.map((currentItem) => ({ value: currentItem._id, label: currentItem.business_name }));
+          responseData = response.data.map((currentItem) => (
+            { value: currentItem._id, label: currentItem.business_name }
+          ));
         }
         setContactsData({ ...contactsData, fetching: false, data: responseData });
       }
@@ -88,15 +96,18 @@ function ToursList() {
       page: 1,
     };
     if (contactsData.filter.length > 0) filters['??^business_name'] = contactsData.filter;
-
-    contactService.getList(filters, (res) => okGetContacts(res, contactsData.requestId), (err) => koGetContacts(err, contactsData.requestId));
+    contactService.getList(
+      filters,
+      (res) => okGetContacts(res, contactsData.requestId),
+      (err) => koGetContacts(err, contactsData.requestId),
+    );
   };
 
   const toggleSelectAllRows = (event) => {
     const newState = { ...state };
     const isChecked = event.target.checked;
-    if (isChecked === true && Array.isArray(data) && data.length > 0) {
-      newState.selectedItems = data.map((currentItem) => currentItem._id);
+    if (isChecked === true && Array.isArray(tableData.data) && tableData.data.length > 0) {
+      newState.selectedItems = tableData.data.map((currentItem) => currentItem._id);
     } else {
       newState.selectedItems = [];
     }
@@ -115,12 +126,13 @@ function ToursList() {
     setState(newState);
   };
 
-  const isRowSelected = (itemId) => state.selectedItems.findIndex((current) => current === itemId) > -1;
+  const isRowSelected = (itemId) => (
+    state.selectedItems.findIndex((current) => current === itemId) > -1
+  );
 
   const processData = (currentTableData) => {
     const filters = {};
     if (currentTableData.search.length > 0) filters['^name'] = currentTableData.search;
-    setIsLoadingData(true);
     const newTableData = { ...currentTableData };
     const tourService = new TourService();
     tourService.getList(
@@ -131,18 +143,15 @@ function ToursList() {
       filters,
       (response) => {
         newTableData.total = response?.headers?.total || 0;
-        setFetchData(false);
-        setTableData(newTableData);
-        setIsLoadingData(false);
-        setData(response.data.map((item) => ({
+        const mappedData = response.data.map((item) => ({
           _id: item._id,
           name: item.name,
           business_name: item.contact.business_name,
-        })));
+        }));
+        setTableData({ ...newTableData, ...{ data: mappedData } });
       },
       () => {
-        setData([]);
-        setIsLoadingData(false);
+        setTableData({ ...tableData }, { ...{ data: [] } });
       },
     );
   };
@@ -170,26 +179,27 @@ function ToursList() {
   };
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
+    const queryParams = new URLSearchParams(location.search);
     const newTableData = { ...tableData };
     newTableData.paginate = queryParams.get('paginate') || 10;
     newTableData.page = queryParams.get('page') || 1;
     newTableData.order = queryParams.get('order') || 'asc';
     newTableData.sort = queryParams.get('sort') || 'name';
     newTableData.search = queryParams.get('search') || '';
+    newTableData.data = null;
     setTableData(newTableData);
-    if (!data) {
-      setFetchData(true);
+    const mappedQueryParams = dataToQueryParams(newTableData);
+    if (tableData.page !== newTableData.page
+    || tableData.paginate !== newTableData.paginate
+    || tableData.order !== newTableData.order
+    || tableData.sort !== newTableData.sort
+    || tableData.paginate !== newTableData.paginate
+    || tableData.search !== newTableData.search
+    ) {
+      navigate(`/tours${mappedQueryParams}`, { replace: true });
     }
-  }, []);
-
-  useEffect(() => {
-    if (fetchData === true) {
-      const queryParams = dataToQueryParams(tableData);
-      navigate(`/tours${queryParams}`, { replace: true });
-      processData(tableData);
-    }
-  }, [fetchData]);
+    processData(newTableData);
+  }, [location]);
 
   useEffect(() => {
     if (contactsData.fetching === true) {
@@ -201,8 +211,13 @@ function ToursList() {
     {
       key: 'select',
       label: <CFormCheck
-        disabled={fetchData === true || (Array.isArray(data) && data.length <= 0)}
-        checked={Array.isArray(data) && data.length > 0 && data.length === state.selectedItems.length}
+        disabled={
+          tableData.data === null
+          || (Array.isArray(tableData.data) && tableData.data.length <= 0)
+        }
+        checked={(Array.isArray(tableData.data) && tableData.data.length > 0
+          && tableData.data.length === state.selectedItems.length
+        )}
         onChange={(event) => toggleSelectAllRows(event)}
       />,
       _style: { width: '1%' },
@@ -223,10 +238,15 @@ function ToursList() {
   ];
 
   const renderTableData = () => {
-    if (Array.isArray(data) && data.length > 0) {
-      return data.map((item) => ({
+    if (Array.isArray(tableData.data) && tableData.data.length > 0) {
+      return tableData.data.map((item) => ({
         _id: item._id,
-        select: <CFormCheck checked={isRowSelected(item._id)} onChange={(event) => toggleSelectRow(event, item._id)} />,
+        select: (
+          <CFormCheck
+            checked={isRowSelected(item._id)}
+            onChange={(event) => toggleSelectRow(event, item._id)}
+          />
+        ),
         name: item.name,
         'contact.business_name': item.business_name,
       }));
@@ -239,19 +259,19 @@ function ToursList() {
   };
 
   const applyFilters = (event) => {
-    if (fetchData === false) {
+    if (tableData.data !== null) {
       event.preventDefault();
       const newTableData = { ...tableData };
       switch (event.nativeEvent.submitter.name) {
         case 'reset':
           newTableData.search = '';
+          newTableData.data = null;
           break;
         default:
           break;
       }
       newTableData.page = 1;
       setState({ selectedItems: [] });
-      setFetchData(true);
       setTableData(newTableData);
     }
   };
@@ -310,7 +330,7 @@ function ToursList() {
             <CFormLabel htmlFor="list-filter">Filtro</CFormLabel>
             <CInputGroup>
               <CFormInput
-                disabled={fetchData === true}
+                disabled={tableData.data === null}
                 type="text"
                 id="list-filter"
                 name="list-filter"
@@ -320,25 +340,25 @@ function ToursList() {
                 value={tableData.search}
                 onChange={(event) => onChangeFilter(event.target.value)}
               />
-              <CButton disabled={fetchData === true} type="submit" name="filter" color="primary" id="filter-button">Filtra</CButton>
-              <CButton disabled={fetchData === true || tableData.search.length <= 0} type="submit" name="reset" color="danger" id="filter-button">Cancella</CButton>
+              <CButton disabled={tableData.data === null} type="submit" name="filter" color="primary" id="filter-button">Filtra</CButton>
+              <CButton disabled={tableData.data === null || tableData.search.length <= 0} type="submit" name="reset" color="danger" id="filter-button">Cancella</CButton>
             </CInputGroup>
           </CForm>
         </CCol>
         <CCol md={12} lg={6} className="list-actions mt-2">
-          <CButton color="primary" disabled={fetchData === true} onClick={() => showCreationModalAndClearModel()}>
+          <CButton color="primary" disabled={tableData.data === null} onClick={() => showCreationModalAndClearModel()}>
             <CIcon icon={cilPlus} className="icon-button" />
             Nuovo
           </CButton>
-          <CButton color="primary" disabled={fetchData === true || state.selectedItems.length !== 1} onClick={() => (state.selectedItems[0]) && editItem(state.selectedItems[0])}>
+          <CButton color="primary" disabled={tableData === null || state.selectedItems.length !== 1} onClick={() => (state.selectedItems[0]) && editItem(state.selectedItems[0])}>
             <CIcon icon={cilPencil} className="icon-button" />
             Modifica
           </CButton>
-          <CButton color="primary" disabled={fetchData === true || state.selectedItems.length === 0} onClick={() => setShowDeleteModal(true)}>
+          <CButton color="primary" disabled={tableData.data === null || state.selectedItems.length === 0} onClick={() => setShowDeleteModal(true)}>
             <CIcon icon={cilTrash} className="icon-button" />
             Elimina
           </CButton>
-          <CButton color="primary" disabled={fetchData === true}>
+          <CButton color="primary" disabled={tableData.data === null}>
             <CIcon icon={cilFile} className="icon-button" />
             Esporta
           </CButton>
@@ -347,7 +367,7 @@ function ToursList() {
       <AppTable
         columns={columns}
         items={renderTableData()}
-        loading={isLoadingData}
+        loading={tableData.data === null}
         orderBy={tableData.order}
         sortBy={tableData.sort}
         onChangeOrderSort={onChangeOrderSort}
@@ -355,10 +375,8 @@ function ToursList() {
       />
       <Pagination
         tableData={tableData}
-        fetchData={fetchData}
         setSelectedItems={setState}
         setTableData={setTableData}
-        setFetchData={setFetchData}
       />
       <CModal size="xl" backdrop="static" visible={showCreateModal}>
         <CModalHeader closeButton={false}>

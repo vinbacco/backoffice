@@ -9,18 +9,16 @@ import {
 
 const Pagination = ({
   tableData,
-  fetchData,
   setSelectedItems,
   setTableData,
-  setFetchData,
 }) => {
   const changePage = (value) => {
-    if (fetchData === false) {
+    if (tableData.data !== null) {
       const newTableData = { ...tableData };
       newTableData.page = value;
+      newTableData.data = null;
       setSelectedItems({ selectedItems: [] });
       setTableData(newTableData);
-      setFetchData(true);
     }
   };
   const totalsText = `Pagina ${tableData.page} 
@@ -34,7 +32,7 @@ const Pagination = ({
           <CPaginationItem
             onClick={() => changePage(tableData.page - 1)}
             className={tableData.page === 1 ? 'cursor-not-allowed' : 'cursor-pointer'}
-            disabled={fetchData === true || tableData.page === 1}
+            disabled={tableData.data === null || tableData.page === 1}
           >
             Pagina precedente
           </CPaginationItem>
@@ -46,7 +44,7 @@ const Pagination = ({
                 : 'cursor-pointer'
             }
             disabled={
-              fetchData === true
+              tableData.data === null
               || tableData.page === Math.ceil(tableData.total / tableData.paginate)
             }
           >
@@ -69,11 +67,10 @@ Pagination.propTypes = {
     order: PropTypes.oneOf(['asc', 'desc']),
     sort: PropTypes.string,
     search: PropTypes.string,
+    data: PropTypes.oneOfType([PropTypes.array, null]),
   }),
-  fetchData: PropTypes.bool,
   setSelectedItems: PropTypes.func.isRequired,
   setTableData: PropTypes.func.isRequired,
-  setFetchData: PropTypes.func.isRequired,
 };
 
 Pagination.defaultProps = {
@@ -84,8 +81,8 @@ Pagination.defaultProps = {
     order: 'asc',
     sort: 'name',
     search: '',
+    data: null,
   },
-  fetchData: false,
 };
 
 export default Pagination;
