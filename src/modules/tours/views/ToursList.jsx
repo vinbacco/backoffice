@@ -43,7 +43,7 @@ function ToursList() {
   const [state, setState] = useState({ selectedItems: [] });
   const initialTableData = {
     paginate: 10,
-    page: 1,
+    page: undefined,
     total: 0,
     order: 'asc',
     sort: 'name',
@@ -180,26 +180,26 @@ function ToursList() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const newTableData = { ...tableData };
+    const newTableData = {};
     newTableData.paginate = queryParams.get('paginate') || 10;
-    newTableData.page = queryParams.get('page') || 1;
+    newTableData.page = tableData.page || queryParams.get('page') || 1;
     newTableData.order = queryParams.get('order') || 'asc';
     newTableData.sort = queryParams.get('sort') || 'name';
     newTableData.search = queryParams.get('search') || '';
     newTableData.data = null;
     setTableData(newTableData);
     const mappedQueryParams = dataToQueryParams(newTableData);
-    if (tableData.page !== newTableData.page
+    if ((tableData.page !== newTableData.page
     || tableData.paginate !== newTableData.paginate
     || tableData.order !== newTableData.order
     || tableData.sort !== newTableData.sort
     || tableData.paginate !== newTableData.paginate
     || tableData.search !== newTableData.search
-    ) {
+    ) || tableData.page !== queryParams.get('page')) {
       navigate(`/tours${mappedQueryParams}`, { replace: true });
     }
     processData(newTableData);
-  }, [location]);
+  }, [location, tableData.page]);
 
   useEffect(() => {
     if (contactsData.fetching === true) {
