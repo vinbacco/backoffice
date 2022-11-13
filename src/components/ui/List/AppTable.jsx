@@ -9,7 +9,7 @@ import {
   CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow,
 } from '@coreui/react';
 import React from 'react';
-import AppLoadingSpinner from './AppLoadingSpinner';
+import AppLoadingSpinner from '../AppLoadingSpinner';
 
 function AppTable({
   loading = false, columns, items, rowAction = null, sortBy = '', orderBy = 'asc', onChangeOrderSort = null,
