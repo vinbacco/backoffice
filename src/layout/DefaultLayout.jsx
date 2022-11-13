@@ -5,7 +5,7 @@ import {
 
 function DefaultLayout() {
   return (
-    <div className="vinbacco">
+    <div>
       <AppSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AppHeader />
