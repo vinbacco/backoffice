@@ -11,8 +11,6 @@ import {
   CCol,
   CForm,
   CFormInput,
-  CPagination,
-  CPaginationItem,
   CRow,
   CButton,
   CInputGroup,
@@ -33,6 +31,7 @@ import {
 } from '@coreui/icons';
 
 import AppTable from 'src/components/ui/AppTable';
+import Pagination from 'src/components/ui/List/Pagination';
 import dataToQueryParams from 'src/utils/dataToQueryParams';
 import Autocomplete from 'src/components/ui/Autocomplete';
 
@@ -154,16 +153,6 @@ function ToursList() {
       newTableData.page = 1;
       setTableData(newTableData);
       setState({ selectedItems: [] });
-      setFetchData(true);
-    }
-  };
-
-  const changePage = (value) => {
-    if (fetchData === false) {
-      const newTableData = { ...tableData };
-      newTableData.page = value;
-      setState({ selectedItems: [] });
-      setTableData(newTableData);
       setFetchData(true);
     }
   };
@@ -364,29 +353,13 @@ function ToursList() {
         onChangeOrderSort={onChangeOrderSort}
         rowAction={editItem}
       />
-      <CRow className="align-items-center mb-5">
-        <CCol>
-          <CPagination>
-            <CPaginationItem
-              onClick={() => changePage(tableData.page - 1)}
-              className={tableData.page === 1 ? 'cursor-not-allowed' : 'cursor-pointer'}
-              disabled={fetchData === true || tableData.page === 1}
-            >
-              Pagina precedente
-            </CPaginationItem>
-            <CPaginationItem
-              onClick={() => changePage(tableData.page + 1)}
-              className={tableData.page === Math.ceil(tableData.total / tableData.paginate) ? 'cursor-not-allowed' : 'cursor-pointer'}
-              disabled={fetchData === true || tableData.page === Math.ceil(tableData.total / tableData.paginate)}
-            >
-              Pagina successiva
-            </CPaginationItem>
-          </CPagination>
-        </CCol>
-        <CCol className="text-end">
-          {`Pagina ${tableData.page} di ${Math.ceil(tableData.total / tableData.paginate)} (${tableData.total} risultat${tableData.total === 1 ? 'o' : 'i'})`}
-        </CCol>
-      </CRow>
+      <Pagination
+        tableData={tableData}
+        fetchData={fetchData}
+        setSelectedItems={setState}
+        setTableData={setTableData}
+        setFetchData={setFetchData}
+      />
       <CModal size="xl" backdrop="static" visible={showCreateModal}>
         <CModalHeader closeButton={false}>
           <CModalTitle>Creare un nuovo Tour</CModalTitle>
