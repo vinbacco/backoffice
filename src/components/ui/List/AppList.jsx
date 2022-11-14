@@ -402,65 +402,6 @@ function AppList({
         setSelectedItems={setState}
         setTableData={setTableData}
       />
-      <CModal size="xl" backdrop="static" visible={showCreateModal}>
-        <CModalHeader closeButton={false}>
-          <CModalTitle>Creare un nuovo Tour</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CForm id="creationForm" onSubmit={(e) => handleCreateNew(e)}>
-            {creationAction?.error?.data?.message && (
-              <CRow>
-                <CCol>
-                  <CAlert color="danger" dismissible>
-                    <CAlertHeading tag="h4">Errore nella creazione tour</CAlertHeading>
-                    <p>{creationAction?.error?.data?.message}</p>
-                  </CAlert>
-                </CCol>
-              </CRow>
-            )}
-            <CRow md={{ cols: 2, gutter: 2 }}>
-              <CCol md={6}>
-                <CFormInput
-                  disabled={creationAction.executing === true}
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="es. Tour degli ulivi"
-                  label="Nome del tour"
-                  value={creationModel?.name || ''}
-                  onChange={onChangeCreationModel}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
-                <AsyncSelect
-                  inputId="new-tour-contact"
-                  isClearable
-                  defaultOptions
-                  loadOptions={loadContacts}
-                  onChange={(choice) => onChangeCreationModel({ target: { name: 'contact_id', value: choice } })}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="new-tour-category">Regione</CFormLabel>
-                <AsyncSelect
-                  inputId="new-tour-category"
-                  isClearable
-                  defaultOptions
-                  loadOptions={loadProductCategories}
-                  onChange={(choice) => onChangeCreationModel({ target: { name: 'product_category_id', value: choice } })}
-                />
-              </CCol>
-            </CRow>
-          </CForm>
-        </CModalBody>
-        <CModalFooter>
-          <CButton disabled={creationAction.executing === true} color="danger" onClick={() => closeCreateModal()}>
-            Annulla
-          </CButton>
-          <CButton type="submit" form="creationForm" disabled={creationAction.executing === true} color="primary">Crea</CButton>
-        </CModalFooter>
-      </CModal>
       <CModal backdrop="static" visible={showDeleteModal}>
         <CModalHeader closeButton={false}>
           <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare il tour' : 'Eliminare i tours'}</CModalTitle>
