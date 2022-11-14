@@ -1,5 +1,7 @@
 import ApiProxyService from './apiProxyService';
 
+import utils from './utils/utils';
+
 export default class TourService extends ApiProxyService {
   TOUR_PRODUCT_TYPE_ID = '633dbfe8c843f55df6fa2a0e';
 
@@ -27,5 +29,11 @@ export default class TourService extends ApiProxyService {
       },
     };
     super.addItem(path, creationData, okCallback, koCallback);
+  }
+
+  getItem(itemId, okCallback, koCallback) {
+    const path = `/products/${itemId}`;
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_id,product_category_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 }

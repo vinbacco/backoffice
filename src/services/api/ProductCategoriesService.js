@@ -6,4 +6,9 @@ export default class ProductCategoriesService extends ApiProxyService {
     const path = '/product_categories';
     super.getList(path, callParams, okCallback, koCallback);
   }
+
+  getItem(itemId, okCallback, koCallback) {
+    const path = `/product_categories/${itemId}`;
+    super.getItem(path, okCallback, koCallback);
+  }
 }
