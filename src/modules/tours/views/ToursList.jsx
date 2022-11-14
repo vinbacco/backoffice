@@ -13,7 +13,7 @@ import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
 import AppList from 'src/components/ui/List/AppList';
 
 function ToursList() {
-  const loadContacts = (filter) => new Promise((resolve) => {
+    const loadContacts = (filter) => new Promise((resolve) => {
     const contactService = new ContactService();
     const okGetContacts = (response) => {
       let responseData = [];
