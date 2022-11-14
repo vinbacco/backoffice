@@ -8,7 +8,7 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/tours', name: 'Tours', element: ToursList },
-  { path: '/tour/:id', name: 'Tour', element: ToursDetail },
+  { path: '/tours/:id', name: 'Tour', element: ToursDetail },
   { path: '*', name: 'NotFound', element: NotFound },
 ];
 
