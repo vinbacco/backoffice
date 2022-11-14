@@ -1,8 +1,10 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-underscore-dangle */
 /** eslint-disable react/prop-types  */
 import React, { useEffect, useState } from 'react';
-import AsyncSelect from 'react-select/async';
-import { useForm, Controller } from "react-hook-form";
+import PropTypes from 'prop-types';
+import { useForm, Controller } from 'react-hook-form';
 import {
   CCol,
   CForm,
@@ -30,23 +32,26 @@ import AppTable from 'src/components/ui/List/AppTable';
 import Pagination from 'src/components/ui/List/Pagination';
 import dataToQueryParams from 'src/utils/dataToQueryParams';
 
-import ContactService from 'src/services/api/ContactService';
-import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
-
 function AppList({
   SectionServiceClass,
   sectionPath,
+  creationTitle,
   mapListFn,
   buildColumnsFn,
-  buildRowsFn
+  buildRowsFn,
+  creationModel,
+  creationBodyFn,
+  clearCreationModel,
+  evalCreation,
 }) {
   const sectionService = new SectionServiceClass();
   const location = useLocation();
   const [state, setState] = useState({ selectedItems: [] });
+  const [creationAction, setCreationAction] = useState({ error: null, executing: false });
   const { control, handleSubmit } = useForm({
     defaultValues: {
       listFilter: '',
-    }
+    },
   });
   const initialTableData = {
     paginate: null,
@@ -61,59 +66,6 @@ function AppList({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-
-  /** FIXME: Usare pacchetto formulari da discutere con Marco */
-  const [creationModel, setCreationModel] = useState({});
-  const [creationAction, setCreationAction] = useState({ error: null, executing: false });
-  /** END */
-
-  const loadContacts = (filter) => new Promise((resolve) => {
-    const contactService = new ContactService();
-    const okGetContacts = (response) => {
-      let responseData = [];
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        responseData = response.data.map((currentItem) => (
-          { value: currentItem._id, label: currentItem.business_name }
-        ));
-      }
-      resolve(responseData);
-    };
-    const koGetContacts = () => resolve([]);
-    const filters = {
-      paginate: 5,
-      page: 1,
-    };
-    if (filter.length > 0) filters['??^business_name'] = filter;
-    contactService.getList(
-      filters,
-      (res) => okGetContacts(res),
-      (err) => koGetContacts(err),
-    );
-  });
-
-  const loadProductCategories = (filter) => new Promise((resolve) => {
-    const productCategoriesService = new ProductCategoriesService();
-    const okGetProductCategories = (response) => {
-      let responseData = [];
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        responseData = response.data.map((currentItem) => (
-          { value: currentItem._id, label: currentItem.name }
-        ));
-      }
-      resolve(responseData);
-    };
-    const koGetProductCategories = () => resolve([]);
-    const filters = {
-      paginate: 5,
-      page: 1,
-    };
-    if (filter.length > 0) filters['??^name'] = filter;
-    productCategoriesService.getList(
-      filters,
-      (res) => okGetProductCategories(res),
-      (err) => koGetProductCategories(err),
-    );
-  });
 
   const toggleSelectAllRows = (event) => {
     const newState = { ...state };
@@ -171,18 +123,12 @@ function AppList({
     setState({ selectedItems: [] });
   };
 
-  const onChangeFilter = (value) => {
-    const newTableData = { ...tableData };
-    newTableData.search = value;
-    newTableData.data = null;
-    setTableData(newTableData);
-  };
-
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    setCreationModel(newCreationModel);
-  };
+  // const onChangeFilter = (value) => {
+  //   const newTableData = { ...tableData };
+  //   newTableData.search = value;
+  //   newTableData.data = null;
+  //   setTableData(newTableData);
+  // };
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -275,22 +221,22 @@ function AppList({
       _style: { width: '1%' },
       _props: { scope: 'col' },
     };
-    return [selectColumn].concat(buildColumnsFn(tableData, state));
-  }
+    return [selectColumn].concat(buildColumnsFn());
+  };
 
   const renderTableData = () => {
     if (Array.isArray(tableData.data) && tableData.data.length > 0) {
       return tableData.data.map((item) => {
-      const selectColumn = {
-        select: (
-          <CFormCheck
-            checked={isRowSelected(item._id)}
-            onChange={(event) => toggleSelectRow(event, item._id)}
-          />
-        ),
-      };
-      const rowsData = buildRowsFn(item);
-      return { ...selectColumn, ...rowsData }
+        const selectColumn = {
+          select: (
+            <CFormCheck
+              checked={isRowSelected(item._id)}
+              onChange={(event) => toggleSelectRow(event, item._id)}
+            />
+          ),
+        };
+        const rowsData = buildRowsFn(item);
+        return { ...selectColumn, ...rowsData };
       });
     }
     return [];
@@ -312,28 +258,26 @@ function AppList({
   };
 
   const handleCreateNew = (event) => {
-    if (showCreateModal === true && creationAction.executing === false) {
-      event.preventDefault();
-      setCreationAction({ error: null, executing: true });
-      const listData = { ...creationModel };
-      listData.contact_id = listData?.contact_id?.value || null;
-      listData.product_category_id = listData?.product_category_id?.value || null;
-      listData.attributes = {};
-      sectionService.addItem(
-        listData,
-        (response) => {
-          setCreationAction({ ...creationAction, executing: false });
-          navigate(`${sectionPath}/${response?.data?.itemId}`);
-        },
-        (error) => {
-          setCreationAction({ error, executing: false });
-        },
-      );
+    if (evalCreation() === true) {
+      if (showCreateModal === true && creationAction.executing === false) {
+        event.preventDefault();
+        setCreationAction({ error: null, executing: true });
+        sectionService.addItem(
+          creationModel,
+          (response) => {
+            setCreationAction({ ...creationAction, executing: false });
+            navigate(`${sectionPath}/${response?.data?._id}`);
+          },
+          (error) => {
+            setCreationAction({ error, executing: false });
+          },
+        );
+      }
     }
   };
 
   const showCreationModalAndClearModel = () => {
-    setCreationModel({});
+    clearCreationModel();
     setCreationAction({ error: null, executing: false });
     setShowCreateModal(true);
   };
@@ -402,6 +346,32 @@ function AppList({
         setSelectedItems={setState}
         setTableData={setTableData}
       />
+      <CModal size="xl" backdrop="static" visible={showCreateModal}>
+        <CModalHeader closeButton={false}>
+          <CModalTitle>{creationTitle}</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {creationAction?.error?.data?.message && (
+            <CRow>
+              <CCol>
+                <CAlert color="danger" dismissible>
+                  <CAlertHeading tag="h4">Errore nella creazione tour</CAlertHeading>
+                  <p>{creationAction?.error?.data?.message}</p>
+                </CAlert>
+              </CCol>
+            </CRow>
+          )}
+          <CForm id="creationForm" onSubmit={(e) => handleCreateNew(e)}>
+            {creationBodyFn()}
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="danger" disabled={creationAction.executing === true} onClick={() => closeCreateModal()}>
+            Annulla
+          </CButton>
+          <CButton type="submit" disabled={creationAction.executing === true} form="creationForm" color="primary">Crea</CButton>
+        </CModalFooter>
+      </CModal>
       <CModal backdrop="static" visible={showDeleteModal}>
         <CModalHeader closeButton={false}>
           <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare il tour' : 'Eliminare i tours'}</CModalTitle>
@@ -419,4 +389,25 @@ function AppList({
     </>
   );
 }
+
+AppList.propTypes = {
+  SectionServiceClass: PropTypes.func.isRequired,
+  sectionPath: PropTypes.string.isRequired,
+  mapListFn: PropTypes.func.isRequired,
+  buildColumnsFn: PropTypes.func.isRequired,
+  buildRowsFn: PropTypes.func.isRequired,
+  creationTitle: PropTypes.string.isRequired,
+  creationBodyFn: PropTypes.func,
+  creationModel: PropTypes.any,
+  evalCreation: PropTypes.func,
+  clearCreationModel: PropTypes.func,
+};
+
+AppList.defaultProps = {
+  creationBodyFn: null,
+  creationModel: {},
+  evalCreation: null,
+  clearCreationModel: null,
+};
+
 export default AppList;

@@ -8,7 +8,7 @@ export default class TourService extends ApiProxyService {
       paginate, page, order_by: order, sort_by: sort, lookup: '[contact_id,product_category_id]',
     };
     if (filters) {
-      queryParams = { ...queryParams, ...filters };
+      queryParams = { ...queryParams, ...filters, product_type_id: this.TOUR_PRODUCT_TYPE_ID };
     }
     const path = '/products';
     super.getList(path, queryParams, okCallback, koCallback);
@@ -16,6 +16,16 @@ export default class TourService extends ApiProxyService {
 
   addItem(body, okCallback, koCallback) {
     const path = '/products';
-    super.addItem(path, body, okCallback, koCallback);
+    const creationData = { ...body };
+    creationData.contact_id = creationData?.contact_id?.value || null;
+    creationData.product_category_id = creationData?.product_category_id?.value || null;
+    creationData.product_type_id = this.TOUR_PRODUCT_TYPE_ID;
+    creationData.attributes = {};
+    creationData.translations = {
+      it: {
+        name: creationData.name,
+      },
+    };
+    super.addItem(path, creationData, okCallback, koCallback);
   }
 }

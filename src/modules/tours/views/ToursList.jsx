@@ -6,13 +6,25 @@
  * inclusa validazione prima di salvare
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
-import React from 'react';
+import React, { useState } from 'react';
+import AsyncSelect from 'react-select/async';
+
+import {
+  CCol,
+  CFormInput,
+  CRow,
+  CFormLabel,
+} from '@coreui/react';
+
 import TourService from 'src/services/api/TourService';
 import ContactService from 'src/services/api/ContactService';
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 import AppList from 'src/components/ui/List/AppList';
 
 function ToursList() {
+  /** FIXME: Usare pacchetto formulari da discutere con Marco */
+  const [creationModel, setCreationModel] = useState({});
+  /** END */
   const loadContacts = (filter) => new Promise((resolve) => {
     const contactService = new ContactService();
     const okGetContacts = (response) => {
@@ -61,7 +73,7 @@ function ToursList() {
     );
   });
 
-  const buildColumnsFn = (tableDataParam, stateParam) => [(
+  const buildColumnsFn = () => ([
     {
       key: 'name',
       label: 'Nome',
@@ -73,10 +85,11 @@ function ToursList() {
       label: 'Cantina',
       sortable: true,
       _props: { scope: 'col' },
-    }
-  )];
+    },
+  ]);
 
   const buildRowsFn = (item) => ({
+    _id: item._id,
     name: item.name,
     'contact.business_name': item.business_name,
   });
@@ -87,6 +100,50 @@ function ToursList() {
     business_name: item.contact.business_name,
   });
 
+  const onChangeCreationModel = (event) => {
+    const newCreationModel = { ...creationModel };
+    newCreationModel[event.target.name] = event.target.value;
+    setCreationModel(newCreationModel);
+  };
+
+  const evalCreation = () => true;
+
+  const creationBodyFn = () => (
+    <CRow md={{ cols: 2, gutter: 2 }}>
+      <CCol md={6}>
+        <CFormInput
+          type="text"
+          id="name"
+          name="name"
+          placeholder="es. Tour degli ulivi"
+          label="Nome del tour"
+          value={creationModel?.name || ''}
+          onChange={onChangeCreationModel}
+        />
+      </CCol>
+      <CCol md={6}>
+        <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
+        <AsyncSelect
+          inputId="new-tour-contact"
+          isClearable
+          defaultOptions
+          loadOptions={loadContacts}
+          onChange={(choice) => onChangeCreationModel({ target: { name: 'contact_id', value: choice } })}
+        />
+      </CCol>
+      <CCol md={6}>
+        <CFormLabel htmlFor="new-tour-category">Regione</CFormLabel>
+        <AsyncSelect
+          inputId="new-tour-category"
+          isClearable
+          defaultOptions
+          loadOptions={loadProductCategories}
+          onChange={(choice) => onChangeCreationModel({ target: { name: 'product_category_id', value: choice } })}
+        />
+      </CCol>
+    </CRow>
+  );
+
   return (
     <section id="tour">
       <AppList
@@ -96,66 +153,12 @@ function ToursList() {
         mapListFn={mapListFn}
         buildColumnsFn={buildColumnsFn}
         buildRowsFn={buildRowsFn}
+        creationTitle="Creare un nuovo Tour"
+        creationBodyFn={() => creationBodyFn()}
+        creationModel={creationModel}
+        evalCreation={() => evalCreation()}
+        clearCreationModel={() => setCreationModel({})}
       />
-      <CModal size="xl" backdrop="static" visible={showCreateModal}>
-        <CModalHeader closeButton={false}>
-          <CModalTitle>Creare un nuovo Tour</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CForm id="creationForm" onSubmit={(e) => handleCreateNew(e)}>
-            {creationAction?.error?.data?.message && (
-              <CRow>
-                <CCol>
-                  <CAlert color="danger" dismissible>
-                    <CAlertHeading tag="h4">Errore nella creazione tour</CAlertHeading>
-                    <p>{creationAction?.error?.data?.message}</p>
-                  </CAlert>
-                </CCol>
-              </CRow>
-            )}
-            <CRow md={{ cols: 2, gutter: 2 }}>
-              <CCol md={6}>
-                <CFormInput
-                  disabled={creationAction.executing === true}
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="es. Tour degli ulivi"
-                  label="Nome del tour"
-                  value={creationModel?.name || ''}
-                  onChange={onChangeCreationModel}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
-                <AsyncSelect
-                  inputId="new-tour-contact"
-                  isClearable
-                  defaultOptions
-                  loadOptions={loadContacts}
-                  onChange={(choice) => onChangeCreationModel({ target: { name: 'contact_id', value: choice } })}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormLabel htmlFor="new-tour-category">Regione</CFormLabel>
-                <AsyncSelect
-                  inputId="new-tour-category"
-                  isClearable
-                  defaultOptions
-                  loadOptions={loadProductCategories}
-                  onChange={(choice) => onChangeCreationModel({ target: { name: 'product_category_id', value: choice } })}
-                />
-              </CCol>
-            </CRow>
-          </CForm>
-        </CModalBody>
-        <CModalFooter>
-          <CButton disabled={creationAction.executing === true} color="danger" onClick={() => closeCreateModal()}>
-            Annulla
-          </CButton>
-          <CButton type="submit" form="creationForm" disabled={creationAction.executing === true} color="primary">Crea</CButton>
-        </CModalFooter>
-      </CModal>
     </section>
   );
 }
