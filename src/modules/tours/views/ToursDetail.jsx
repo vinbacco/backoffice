@@ -12,6 +12,7 @@ import ContactService from 'src/services/api/ContactService';
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
+import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 
 function ToursDetail() {
   const { id } = useParams();
@@ -98,6 +99,9 @@ function ToursDetail() {
             control={control}
             render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
           />
+        </CCol>
+        <CCol>
+          <AppMultiData title="Pacchetti"/>
         </CCol>
       </CForm>
     </>
