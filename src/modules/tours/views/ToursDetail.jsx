@@ -4,13 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput, CFormSelect, CFormCheck, CButton, CRow,
+  CForm, CCol, CFormInput,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
 import ContactService from 'src/services/api/ContactService';
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 
+import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import PackageForm from './Packages/PackageForm';
@@ -73,41 +74,60 @@ function ToursDetail() {
       tourService.getItem(id, okGetDetails, koGetDetails);
     }
   }, []);
+
+  const saveAction = (type) => {
+    switch (type) {
+      case 'publish':
+        // Azione pubblica
+        break;
+      case 'publishNow':
+        // Azione pubblica ora
+        break;
+      case 'save':
+      default:
+        // Azione salva
+    }
+  };
+
   if (state.loading === true) return <AppLoadingSpinner />;
 
   if (state.error) return <p>NO DATA</p>;
 
   return (
-    <>
-      <CRow className="mb-4">
+    <AppDetail
+      saveAction={saveAction}
+      name={getValues('name')}
+      urlFriendlyName={getValues('url_friendly_name')}
+      tabContentMain={(
+        <CForm className="row g-3">
+          <CCol md={6}>
+            <Controller
+              name="category_name"
+              control={control}
+              render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
+            />
+          </CCol>
+          <CCol md={6}>
+            <Controller
+              name="contact_name"
+              control={control}
+              render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
+            />
+          </CCol>
+          <CCol>
+            <AppMultiData
+              title="Pacchetti"
+              createFormComponent={() => PackageForm({})}
+            />
+          </CCol>
+        </CForm>
+      )}
+      tabContentWeb={(
         <CCol>
-          <h2>{getValues('name')}</h2>
-          <small>{`Pagina sito: /${getValues('url_friendly_name')}`}</small>
+          In lavorazione!!!
         </CCol>
-      </CRow>
-      <CForm className="row g-3">
-        <CCol md={6}>
-          <Controller
-            name="category_name"
-            control={control}
-            render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
-          />
-        </CCol>
-        <CCol md={6}>
-          <Controller
-            name="contact_name"
-            control={control}
-            render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
-          />
-        </CCol>
-        <CCol>
-          <AppMultiData
-            title="Pacchetti"
-            createFormComponent={() => PackageForm({})}
-          />
-        </CCol>
-      </CForm>
-    </>
+      )}
+    />
   );
 }
 
