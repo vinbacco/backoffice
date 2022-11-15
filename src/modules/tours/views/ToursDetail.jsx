@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput,
+  CForm, CCol, CFormInput, CRow, CFormTextarea,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -14,6 +14,7 @@ import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
+import Gallery from 'src/components/ui/Gallery/Gallery';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -24,11 +25,15 @@ function ToursDetail() {
   } = useForm({
     defaultValues: {
       name: '',
+      abstract: '',
+      description: '',
       contact_name: '',
       category_name: '',
       url_friendly_name: '',
     },
   });
+  const [tourMediaContents, setTourMediaContents] = useState([]);
+  const [tourWineMediaContents, setTourWineMediaContents] = useState([]);
 
   useEffect(() => {
     if (id !== null && typeof id !== 'undefined') {
@@ -54,14 +59,25 @@ function ToursDetail() {
             .getItem(tourResponseData.product_category_id, okGetCategoryData, koGetCategoryData);
         });
 
-        Promise.all([contactPromise, categoryPromise]).then((promisesValues) => {
+        Promise.all([
+          contactPromise, categoryPromise,
+        ]).then((promisesValues) => {
           const tourModelData = {};
           tourModelData.name = tourResponseData.name;
+          tourModelData.abstract = tourResponseData?.translations?.it?.abstract || '';
+          tourModelData.description = tourResponseData?.translations?.it?.description || '';
           tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
           tourModelData.contact_name = promisesValues[0].business_name;
           tourModelData.category_name = promisesValues[1].translations.it.name;
           reset(tourModelData || {});
           setState({ ...state, loading: false });
+          if (
+            Array.isArray(tourResponseData.media_contents)
+            && tourResponseData.media_contents.length > 0
+          ) {
+            setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
+            setTourWineMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_wine_image')]);
+          }
         });
       };
 
@@ -94,40 +110,61 @@ function ToursDetail() {
   if (state.error) return <p>NO DATA</p>;
 
   return (
-    <AppDetail
-      saveAction={saveAction}
-      name={getValues('name')}
-      urlFriendlyName={getValues('url_friendly_name')}
-      tabContentMain={(
-        <CForm className="row g-3">
-          <CCol md={6}>
-            <Controller
-              name="category_name"
-              control={control}
-              render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
-            />
-          </CCol>
-          <CCol md={6}>
-            <Controller
-              name="contact_name"
-              control={control}
-              render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
-            />
-          </CCol>
-          <CCol>
-            <AppMultiData
-              title="Pacchetti"
-              createFormComponent={() => PackageForm({})}
-            />
-          </CCol>
-        </CForm>
-      )}
-      tabContentWeb={(
-        <CCol>
-          In lavorazione!!!
-        </CCol>
-      )}
-    />
+    <CForm>
+      <AppDetail
+        saveAction={saveAction}
+        name={getValues('name')}
+        urlFriendlyName={getValues('url_friendly_name')}
+        tabContentMain={(
+          <CRow className="g-3">
+            <CCol md={6} sm={12}>
+              <Controller
+                name="category_name"
+                control={control}
+                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
+              />
+            </CCol>
+            <CCol md={6} sm={12}>
+              <Controller
+                name="contact_name"
+                control={control}
+                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
+              />
+            </CCol>
+            <CCol>
+              <AppMultiData
+                title="Pacchetti"
+                createFormComponent={() => PackageForm({})}
+              />
+            </CCol>
+          </CRow>
+        )}
+        tabContentWeb={(
+          <CRow className="g-3">
+            <CCol>
+              <CRow className="g-3">
+                <CCol md={12}>
+                  <Controller
+                    name="abstract"
+                    control={control}
+                    render={({ field }) => <CFormTextarea label="Descrizione breve del tour" id="tour-abstract" rows="3" {...field} />}
+                  />
+                </CCol>
+                <CCol md={12}>
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => <CFormTextarea label="Descrizione completa del tour" id="tour-description" rows="5" {...field} />}
+                  />
+                </CCol>
+              </CRow>
+              <Gallery title="Galleria del tour" data={tourMediaContents} />
+              <Gallery title="Galleria dei vini del tour" data={tourWineMediaContents} />
+            </CCol>
+          </CRow>
+        )}
+      />
+    </CForm>
   );
 }
 
