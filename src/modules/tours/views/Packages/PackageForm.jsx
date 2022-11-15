@@ -13,14 +13,14 @@ const PackageForm = ({ defaultValues = null, submit = () => {} }) => {
   const { control, handleSubmit } = useForm({
     defaultValues: defaultValues || {
       name: '',
-      price: 0,
-      price_type: 'a persona',
+      price: '',
+      price_type: '',
       services: [],
     },
   });
 
   return (
-    <CForm style={{ padding: '80px 60px' }} onSubmit={handleSubmit(submit || ((data) => console.log(data)))}>
+    <CForm style={{ padding: '60px 40px' }} onSubmit={handleSubmit(submit || ((data) => console.log(data)))}>
       <CRow>
         <CCol>
           <CInputGroup>
@@ -97,8 +97,8 @@ PackageForm.propTypes = {
 PackageForm.defaultProps = {
   defaultValues: {
     name: '',
-    price: 0,
-    price_type: 'a persona',
+    price: '',
+    price_type: '',
     services: [],
   },
 };

@@ -5,7 +5,15 @@ import utils from './utils/utils';
 export default class TourService extends ApiProxyService {
   TOUR_PRODUCT_TYPE_ID = '633dbfe8c843f55df6fa2a0e';
 
-  getList(paginate, page, order, sort, filters, okCallback, koCallback) {
+  getList({
+    paginate,
+    page,
+    order,
+    sort,
+    filters,
+    okCallback,
+    koCallback,
+  }) {
     let queryParams = {
       paginate, page, order_by: order, sort_by: sort, lookup: '[contact_id,product_category_id]',
     };

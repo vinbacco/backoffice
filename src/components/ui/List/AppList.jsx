@@ -35,6 +35,7 @@ import dataToQueryParams from 'src/utils/dataToQueryParams';
 function AppList({
   SectionServiceClass,
   sectionPath,
+  sectionTitle,
   creationTitle,
   mapListFn,
   buildColumnsFn,
@@ -98,21 +99,31 @@ function AppList({
     const filters = {};
     if (typeof currentTableData.search === 'string' && currentTableData.search.length > 0) filters['^name'] = currentTableData.search;
     const newTableData = { ...currentTableData };
-    sectionService.getList(
-      currentTableData.paginate,
-      currentTableData.page,
-      currentTableData.order,
-      currentTableData.sort,
-      filters,
-      (response) => {
-        newTableData.total = parseInt(response?.headers?.total || 0, 10);
-        const mappedData = response.data.map(mapListFn);
-        setTableData({ ...newTableData, ...{ data: mappedData } });
-      },
-      () => {
-        setTableData({ ...tableData }, { ...{ data: [] } });
-      },
-    );
+    try {
+      sectionService.getList(
+        {
+          paginate: currentTableData.paginate,
+          page: currentTableData.page,
+          order: currentTableData.order,
+          sort: currentTableData.sort,
+          filters,
+          okCallback: (response) => {
+            try {
+              newTableData.total = parseInt(response?.headers?.total || 0, 10);
+              const mappedData = response.data.map(mapListFn) || [];
+              setTableData({ ...newTableData, ...{ data: mappedData } });
+            } catch (e) {
+              throw new Error(e);
+            }
+          },
+          koCallback: () => {
+            setTableData({ ...tableData }, { ...{ data: [] } });
+          },
+        },
+      );
+    } catch (e) {
+      throw new Error(e);
+    }
   };
 
   const onChangeOrderSort = (value) => {
@@ -288,7 +299,7 @@ function AppList({
 
   return (
     <>
-      <h1 className="list-title">Lista Tour</h1>
+      <h1 className="list-title">{sectionTitle}</h1>
       <CRow className="align-items-end mb-4">
         <CCol md={12} lg={6}>
           <CForm onSubmit={handleSubmit(applyFilters)}>
@@ -393,6 +404,7 @@ function AppList({
 AppList.propTypes = {
   SectionServiceClass: PropTypes.func.isRequired,
   sectionPath: PropTypes.string.isRequired,
+  sectionTitle: PropTypes.string,
   mapListFn: PropTypes.func.isRequired,
   buildColumnsFn: PropTypes.func.isRequired,
   buildRowsFn: PropTypes.func.isRequired,
@@ -404,6 +416,7 @@ AppList.propTypes = {
 };
 
 AppList.defaultProps = {
+  sectionTitle: 'Lista',
   creationBodyFn: null,
   creationModel: {},
   evalCreation: null,
