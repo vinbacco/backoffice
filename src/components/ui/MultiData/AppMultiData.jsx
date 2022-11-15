@@ -90,7 +90,7 @@ const AppMultiData = ({
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {createFormComponent}
+          {createFormComponent()}
         </CModalBody>
         <CModalFooter>
           <CButton color="danger" onClick={() => setShowCreateModal(false)}>

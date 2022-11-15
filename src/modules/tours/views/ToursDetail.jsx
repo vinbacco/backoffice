@@ -13,6 +13,7 @@ import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
 
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
+import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
   const { id } = useParams();
@@ -72,7 +73,6 @@ function ToursDetail() {
       tourService.getItem(id, okGetDetails, koGetDetails);
     }
   }, []);
-
   if (state.loading === true) return <AppLoadingSpinner />;
 
   if (state.error) return <p>NO DATA</p>;
@@ -101,7 +101,10 @@ function ToursDetail() {
           />
         </CCol>
         <CCol>
-          <AppMultiData title="Pacchetti"/>
+          <AppMultiData
+            title="Pacchetti"
+            createFormComponent={() => PackageForm({})}
+          />
         </CCol>
       </CForm>
     </>
