@@ -33,6 +33,18 @@ const nav = [
         to: '/tags',
         icon: <CIcon icon={cilList} customClassName="nav-icon" />,
       },
+      {
+        component: CNavItem,
+        name: 'Regioni',
+        to: '/regions',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: 'Zone',
+        to: '/zones',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      },
     ],
   },
 ];
