@@ -14,7 +14,7 @@ export default class FeedsService extends ApiProxyService {
       paginate, page, order_by: order, sort_by: sort,
     };
     if (filters) {
-      queryParams = { ...queryParams, ...filters, product_type_id: this.TOUR_PRODUCT_TYPE_ID };
+      queryParams = { ...queryParams, ...filters };
     }
     const path = '/feeds';
     super.getList(path, queryParams, okCallback, koCallback);
