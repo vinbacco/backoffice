@@ -17,7 +17,6 @@ import FeedsService from 'src/services/api/FeedsService';
 import AppList from 'src/components/ui/List/AppList';
 
 function FeedsList() {
-  /** FIXME: Usare pacchetto formulari da discutere con Marco */
   const [creationModel, setCreationModel] = useState({});
   /** END */
   const buildColumnsFn = () => ([
@@ -50,6 +49,7 @@ function FeedsList() {
   const onChangeCreationModel = (event) => {
     const newCreationModel = { ...creationModel };
     newCreationModel[event.target.name] = event.target.value;
+    console.log(`newCreationModel = ${JSON.stringify(newCreationModel)}`);
     setCreationModel(newCreationModel);
   };
 

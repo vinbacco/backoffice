@@ -12,7 +12,7 @@ export default class AbstractService {
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Accept-Language': lang,
+      'Accept-Language': lang || 'it',
       'Cache-Control': 'no-cache',
       'x-no-recaptcha': 'vinbacco',
     };
