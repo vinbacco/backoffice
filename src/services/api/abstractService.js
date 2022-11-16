@@ -45,4 +45,17 @@ export default class AbstractService {
     this.axiosInstance.defaults.headers = this.getHeaders();
     return this.axiosInstance.delete(path);
   }
+
+  upload(path, fileData) {
+    this.axiosInstance.defaults.headers = this.getHeaders();
+    this.axiosInstance.defaults.headers['Content-Type'] = 'multipart/form-data';
+
+    const formData = new FormData();
+    formData.append('file', fileData.file);
+    formData.append('filename', fileData.filename);
+    formData.append('type', fileData.mimetype);
+    formData.append('order', 0);
+
+    return this.axiosInstance.post(path, formData);
+  }
 }

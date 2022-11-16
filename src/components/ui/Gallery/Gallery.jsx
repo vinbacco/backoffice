@@ -1,17 +1,21 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { Component, useState } from 'react';
+import React, { Component, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  CButton, CCol, CFormInput, CImage, CRow,
+  CButton, CCol, CFormInput, CFormLabel, CImage, CInputGroup, CRow,
 } from '@coreui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 
-const Gallery = ({ title, label, data }) => {
+const Gallery = ({
+  title, label, data, onUpload,
+}) => {
   const [currentPreview, setCurrentPreview] = useState(null);
+  const [newImageFile, setNewImageFile] = useState(undefined);
+  const inputRef = useRef(null);
 
   const deleteImage = (imageChildId) => {
     alert(`You want to delete image ${imageChildId}`);
@@ -67,14 +71,20 @@ const Gallery = ({ title, label, data }) => {
     if (!result.destination) {
       return;
     }
-
     const items = reorder(
       galleryState.items,
       result.source.index,
       result.destination.index,
     );
-
     setGalleryState({ items });
+  };
+
+  const handleOnChange = () => {
+    setNewImageFile(inputRef.current.files[0]);
+  };
+
+  const handleOnUpload = () => {
+    onUpload(newImageFile);
   };
 
   return (
@@ -82,7 +92,11 @@ const Gallery = ({ title, label, data }) => {
       <h4>{title}</h4>
       <CRow className="mt-4">
         <CCol lg={4} md={6} sm={12}>
-          <CFormInput type="file" id="formFileMultiple" label={label} multiple />
+          <CFormLabel htmlFor="formFileImageGallery">{label}</CFormLabel>
+          <CInputGroup>
+            <CFormInput aria-describedby="uploadNewImage" ref={inputRef} type="file" id="formFileImageGallery" onChange={handleOnChange} accept="image/*" />
+            <CButton disabled={typeof newImageFile === 'undefined'} type="button" color="primary" id="uploadNewImage" onClick={handleOnUpload}>Carica</CButton>
+          </CInputGroup>
         </CCol>
       </CRow>
       <CRow className="mt-4">
@@ -133,6 +147,7 @@ Gallery.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
   title: PropTypes.string,
   label: PropTypes.string,
+  onUpload: PropTypes.func.isRequired,
 };
 
 Gallery.defaultProps = {

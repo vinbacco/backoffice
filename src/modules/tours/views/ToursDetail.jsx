@@ -40,45 +40,24 @@ function ToursDetail() {
       const tourService = new TourService();
       const okGetDetails = (response) => {
         const tourResponseData = { ...response?.data || {} };
-        /**
-         * FIXME: Non funziona la chiamata con lookup.
-         * attendere verifica dal BE per rimuovere le chiamate aggiuntive.
-         */
-        const contactPromise = new Promise((resolve) => {
-          const contactService = new ContactService();
-          const okGetContactData = (contactResponse) => resolve(contactResponse?.data);
-          const koGetContactData = () => resolve(null);
-          contactService.getItem(tourResponseData.contact_id, okGetContactData, koGetContactData);
-        });
+        const tourModelData = {};
 
-        const categoryPromise = new Promise((resolve) => {
-          const productCategoriesService = new ProductCategoriesService();
-          const okGetCategoryData = (categoryResponse) => resolve(categoryResponse?.data);
-          const koGetCategoryData = () => resolve(null);
-          productCategoriesService
-            .getItem(tourResponseData.product_category_id, okGetCategoryData, koGetCategoryData);
-        });
+        tourModelData.name = tourResponseData.name;
+        tourModelData.abstract = tourResponseData?.abstract || '';
+        tourModelData.description = tourResponseData?.description || '';
+        tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
+        tourModelData.contact_name = tourResponseData?.contact?.business_name;
+        tourModelData.category_name = tourResponseData?.product_category?.name;
 
-        Promise.all([
-          contactPromise, categoryPromise,
-        ]).then((promisesValues) => {
-          const tourModelData = {};
-          tourModelData.name = tourResponseData.name;
-          tourModelData.abstract = tourResponseData?.translations?.it?.abstract || '';
-          tourModelData.description = tourResponseData?.translations?.it?.description || '';
-          tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
-          tourModelData.contact_name = promisesValues[0].business_name;
-          tourModelData.category_name = promisesValues[1].translations.it.name;
-          reset(tourModelData || {});
-          setState({ ...state, loading: false });
-          if (
-            Array.isArray(tourResponseData.media_contents)
-            && tourResponseData.media_contents.length > 0
-          ) {
-            setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
-            setTourWineMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_wine_image')]);
-          }
-        });
+        reset(tourModelData || {});
+        setState({ ...state, loading: false });
+        if (
+          Array.isArray(tourResponseData.media_contents)
+          && tourResponseData.media_contents.length > 0
+        ) {
+          setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourWineMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_wine_image')]);
+        }
       };
 
       const koGetDetails = (error) => {
@@ -103,6 +82,29 @@ function ToursDetail() {
       default:
         // Azione salva
     }
+  };
+
+  const uploadMediaContent = (fileData, type) => {
+    const tourService = new TourService();
+    const mediaContentData = {};
+
+    const okUploadMediaContent = (categoryResponse) => {
+      console.log(categoryResponse?.data);
+    };
+
+    const koUploadMediaContent = (error) => {
+      console.log(error);
+    };
+
+    mediaContentData.file = fileData;
+    mediaContentData.filename = fileData.name;
+    mediaContentData.published = true;
+    mediaContentData.is_video = false;
+    mediaContentData.type = type;
+    mediaContentData.mimetype = fileData.type;
+    console.log(mediaContentData);
+    tourService
+      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -158,8 +160,8 @@ function ToursDetail() {
                   />
                 </CCol>
               </CRow>
-              <Gallery title="Galleria del tour" data={tourMediaContents} />
-              <Gallery title="Galleria dei vini del tour" data={tourWineMediaContents} />
+              <Gallery title="Galleria del tour" data={tourMediaContents} onUpload={(file) => uploadMediaContent(file, 'tour_image')} />
+              <Gallery title="Galleria dei vini del tour" data={tourWineMediaContents} onUpload={(file) => uploadMediaContent(file, 'tour_wine_image')} />
             </CCol>
           </CRow>
         )}

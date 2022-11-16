@@ -44,4 +44,9 @@ export default class TourService extends ApiProxyService {
     const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_id,product_category_id]' });
     super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
+
+  addMediaContent(itemId, fileData, okCallback, koCallback) {
+    const path = `/products/${itemId}/media_contents`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
 }
