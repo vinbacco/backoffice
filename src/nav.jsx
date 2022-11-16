@@ -45,6 +45,12 @@ const nav = [
         to: '/zones',
         icon: <CIcon icon={cilList} customClassName="nav-icon" />,
       },
+      {
+        component: CNavItem,
+        name: 'Tipologie Prodotti',
+        to: '/product-types',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      },
     ],
   },
 ];

@@ -1,11 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
-/**
- * TODO:
- * Sistemare formulario creazione con pacchetto da discutere con Marco,
- * inclusa validazione prima di salvare
- * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
- */
 import React, { useState } from 'react';
 import {
   CCol,
@@ -13,10 +7,11 @@ import {
   CRow,
 } from '@coreui/react';
 
-import FeedsService from 'src/services/api/FeedsService';
+import ProductTypesService from 'src/services/api/ProductTypesService';
 import AppList from 'src/components/ui/List/AppList';
 
-function FeedsList() {
+function ProductTypesList() {
+  /** FIXME: Usare pacchetto formulari da discutere con Marco */
   const [creationModel, setCreationModel] = useState({});
   /** END */
   const buildColumnsFn = () => ([
@@ -26,30 +21,21 @@ function FeedsList() {
       sortable: true,
       _props: { scope: 'col' },
     },
-    {
-      key: 'code',
-      label: 'Codice',
-      sortable: true,
-      _props: { scope: 'col' },
-    },
   ]);
 
   const buildRowsFn = (item) => ({
     _id: item._id,
     name: item.name,
-    code: item.code,
   });
 
   const mapListFn = (item) => ({
     _id: item._id,
     name: item.name,
-    code: item.code,
   });
 
   const onChangeCreationModel = (event) => {
     const newCreationModel = { ...creationModel };
     newCreationModel[event.target.name] = event.target.value;
-    console.log(`newCreationModel = ${JSON.stringify(newCreationModel)}`);
     setCreationModel(newCreationModel);
   };
 
@@ -62,19 +48,8 @@ function FeedsList() {
           type="text"
           id="name"
           name="name"
-          placeholder="Inserisci feed"
-          label="Nome del feed"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
-        />
-      </CCol>
-      <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="code"
-          name="code"
-          placeholder="Inserisci codice feed"
-          label="Codice feed"
+          placeholder="Inserisci tipo prodotto"
+          label="Tipo prodotto"
           value={creationModel?.name || ''}
           onChange={onChangeCreationModel}
         />
@@ -83,15 +58,15 @@ function FeedsList() {
   );
 
   return (
-    <section id="feeds">
+    <section id="product-types">
       <AppList
-        sectionTitle="Lista Feeds"
-        SectionServiceClass={FeedsService}
-        sectionPath="/feeds"
+        sectionTitle="Lista Tipi Prodotti"
+        SectionServiceClass={ProductTypesService}
+        sectionPath="/product-types"
         mapListFn={mapListFn}
         buildColumnsFn={buildColumnsFn}
         buildRowsFn={buildRowsFn}
-        creationTitle="Nuovo Feed"
+        creationTitle="Nuovo Tipo Prodotto"
         creationBodyFn={() => creationBodyFn()}
         creationModel={creationModel}
         evalCreation={() => evalCreation()}
@@ -100,4 +75,4 @@ function FeedsList() {
     </section>
   );
 }
-export default FeedsList;
+export default ProductTypesList;
