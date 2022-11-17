@@ -10,8 +10,15 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 
+/**
+ * TODO:
+ * - Verificare il cambio di contenuto quando una nuova immagine viene inserita
+ * - Verificare il cambio di contenuto quando un'immagine esistente viene cancellata
+ * - Assicurarsi che il cambio ordine delle immagine sorge effetto nel salvataggio del contenuto
+ */
+
 const Gallery = ({
-  title, label, data, onUpload,
+  title, label, data, instructions, onUpload, onChangeOrder,
 }) => {
   const [currentPreview, setCurrentPreview] = useState(null);
   const [newImageFile, setNewImageFile] = useState(undefined);
@@ -31,6 +38,7 @@ const Gallery = ({
         </CButton>
       </span>
     ),
+    data: currentData,
   }));
 
   const [galleryState, setGalleryState] = useState({
@@ -66,6 +74,12 @@ const Gallery = ({
     margin: 'auto',
   });
 
+  const processChangeOrder = (newOrder) => {
+    const newArray = [];
+    newOrder.forEach((current) => newArray.push(current.data));
+    onChangeOrder(newArray);
+  };
+
   const onDragEnd = (result) => {
     // dropped outside the list
     if (!result.destination) {
@@ -77,6 +91,7 @@ const Gallery = ({
       result.destination.index,
     );
     setGalleryState({ items });
+    processChangeOrder(items);
   };
 
   const handleOnChange = () => {
@@ -101,37 +116,40 @@ const Gallery = ({
       </CRow>
       <CRow className="mt-4">
         <CCol lg={4} md={6} sm={12}>
-          <div className="mt-2 div-gallery-drag-drop">
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(droppableProvided, droppableSnapshot) => (
-                  <div
-                    {...droppableProvided.droppableProps}
-                    ref={droppableProvided.innerRef}
-                    style={getListStyle(droppableSnapshot.isDraggingOver)}
-                  >
-                    {galleryState.items.map((item, index) => (
-                      <Draggable key={item.id} draggableId={item.id} index={index}>
-                        {(draggableProvided, draggableSnapshot) => (
-                          <div
-                            ref={draggableProvided.innerRef}
-                            {...draggableProvided.draggableProps}
-                            {...draggableProvided.dragHandleProps}
-                            style={getItemStyle(
-                              draggableSnapshot.isDragging,
-                              draggableProvided.draggableProps.style,
-                            )}
-                          >
-                            {item.content}
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {droppableProvided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+          <div className="mt-4">
+            <small>{instructions}</small>
+            <div className="mt-2 div-gallery-drag-drop">
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable">
+                  {(droppableProvided, droppableSnapshot) => (
+                    <div
+                      {...droppableProvided.droppableProps}
+                      ref={droppableProvided.innerRef}
+                      style={getListStyle(droppableSnapshot.isDraggingOver)}
+                    >
+                      {galleryState.items.map((item, index) => (
+                        <Draggable key={item.id} draggableId={item.id} index={index}>
+                          {(draggableProvided, draggableSnapshot) => (
+                            <div
+                              ref={draggableProvided.innerRef}
+                              {...draggableProvided.draggableProps}
+                              {...draggableProvided.dragHandleProps}
+                              style={getItemStyle(
+                                draggableSnapshot.isDragging,
+                                draggableProvided.draggableProps.style,
+                              )}
+                            >
+                              {item.content}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {droppableProvided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
           </div>
         </CCol>
         <CCol lg={8} md={6} sm={12}>
@@ -147,6 +165,8 @@ Gallery.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
   title: PropTypes.string,
   label: PropTypes.string,
+  instructions: PropTypes.string,
+  onChangeOrder: PropTypes.func.isRequired,
   onUpload: PropTypes.func.isRequired,
 };
 
@@ -154,6 +174,7 @@ Gallery.defaultProps = {
   data: [],
   title: 'Galleria',
   label: 'Inserisci qui la tua immagine',
+  instructions: "Trascina e rilascia le immagini per cambiare l'ordine",
 };
 
 export default Gallery;

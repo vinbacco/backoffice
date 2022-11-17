@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput, CRow, CFormTextarea,
+  CForm, CCol, CFormInput, CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -25,6 +25,7 @@ function ToursDetail() {
   } = useForm({
     defaultValues: {
       name: '',
+      base_price: 0,
       abstract: '',
       description: '',
       contact_name: '',
@@ -43,6 +44,7 @@ function ToursDetail() {
         const tourModelData = {};
 
         tourModelData.name = tourResponseData.name;
+        tourModelData.base_price = tourResponseData.base_price;
         tourModelData.abstract = tourResponseData?.abstract || '';
         tourModelData.description = tourResponseData?.description || '';
         tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
@@ -84,6 +86,10 @@ function ToursDetail() {
     }
   };
 
+  const updateMediaContent = (newImagesArray) => {
+    setTourMediaContents(newImagesArray);
+  };
+
   const uploadMediaContent = (fileData, type) => {
     const tourService = new TourService();
     const mediaContentData = {};
@@ -96,13 +102,6 @@ function ToursDetail() {
       console.log(error);
     };
 
-    mediaContentData.file = fileData;
-    mediaContentData.filename = fileData.name;
-    mediaContentData.published = true;
-    mediaContentData.is_video = false;
-    mediaContentData.type = type;
-    mediaContentData.mimetype = fileData.type;
-    console.log(mediaContentData);
     tourService
       .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
@@ -133,7 +132,22 @@ function ToursDetail() {
                 render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
               />
             </CCol>
-            <CCol>
+            <CCol md={6} sm={12}>
+              <Controller
+                name="base_price"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
+                    <CInputGroup>
+                      <CFormInput type="currency" id="tour-base_price" {... field} />
+                      <CInputGroupText>€</CInputGroupText>
+                    </CInputGroup>
+                  </>
+                )}
+              />
+            </CCol>
+            <CCol md={12}>
               <AppMultiData
                 title="Pacchetti"
                 createFormComponent={() => PackageForm({})}
@@ -160,8 +174,18 @@ function ToursDetail() {
                   />
                 </CCol>
               </CRow>
-              <Gallery title="Galleria del tour" data={tourMediaContents} onUpload={(file) => uploadMediaContent(file, 'tour_image')} />
-              <Gallery title="Galleria dei vini del tour" data={tourWineMediaContents} onUpload={(file) => uploadMediaContent(file, 'tour_wine_image')} />
+              <Gallery
+                title="Galleria del tour"
+                data={tourMediaContents}
+                onUpload={(file) => uploadMediaContent(file, 'tour_image')}
+                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_image')}
+              />
+              <Gallery
+                title="Galleria dei vini del tour"
+                data={tourWineMediaContents}
+                onUpload={(file) => uploadMediaContent(file, 'tour_wine_image')}
+                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_wine_image')}
+              />
             </CCol>
           </CRow>
         )}
