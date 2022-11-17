@@ -1,13 +1,13 @@
+/* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /**
  * TODO:
- * Sistemare formulario creazione con pacchetto da discutere con Marco,
- * inclusa validazione prima di salvare
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
 import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
+import { useForm, Controller } from 'react-hook-form';
 
 import {
   CCol,
@@ -20,11 +20,19 @@ import TourService from 'src/services/api/TourService';
 import ContactService from 'src/services/api/ContactService';
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 import AppList from 'src/components/ui/List/AppList';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function ToursList() {
-  /** FIXME: Usare pacchetto formulari da discutere con Marco */
-  const [creationModel, setCreationModel] = useState({});
-  /** END */
+  const {
+    control, handleSubmit, reset, getValues, formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      contact_id: null,
+      product_category_id: null,
+    },
+  });
+
   const loadContacts = (filter) => new Promise((resolve) => {
     const contactService = new ContactService();
     const okGetContacts = (response) => {
@@ -42,11 +50,11 @@ function ToursList() {
       page: 1,
     };
     if (filter.length > 0) filters['??^business_name'] = filter;
-    contactService.getList(
+    contactService.getList({
       filters,
-      (res) => okGetContacts(res),
-      (err) => koGetContacts(err),
-    );
+      okCallback: (res) => okGetContacts(res),
+      koCallback: (err) => koGetContacts(err),
+    });
   });
 
   const loadProductCategories = (filter) => new Promise((resolve) => {
@@ -66,11 +74,11 @@ function ToursList() {
       page: 1,
     };
     if (filter.length > 0) filters['??^name'] = filter;
-    productCategoriesService.getList(
+    productCategoriesService.getList({
       filters,
-      (res) => okGetProductCategories(res),
-      (err) => koGetProductCategories(err),
-    );
+      okCallback: (res) => okGetProductCategories(res),
+      koCallback: (err) => koGetProductCategories(err),
+    });
   });
 
   const buildColumnsFn = () => ([
@@ -100,45 +108,64 @@ function ToursList() {
     business_name: item.contact.business_name,
   });
 
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    setCreationModel(newCreationModel);
-  };
-
-  const evalCreation = () => true;
-
   const creationBodyFn = () => (
     <CRow md={{ cols: 2, gutter: 2 }}>
       <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="name"
+        <Controller
           name="name"
-          placeholder="es. Tour degli ulivi"
-          label="Nome del tour"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CFormInput
+              invalid={errors.name}
+              feedback={errors?.name ? composeErrorFormType(errors.name) : null}
+              type="text"
+              id="tour-name"
+              label="Nome del tour"
+              placeholder="es. Tour degli ulivi"
+              {... field}
+            />
+          )}
         />
       </CCol>
       <CCol md={6}>
-        <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
-        <AsyncSelect
-          inputId="new-tour-contact"
-          isClearable
-          defaultOptions
-          loadOptions={loadContacts}
-          onChange={(choice) => onChangeCreationModel({ target: { name: 'contact_id', value: choice } })}
+        <Controller
+          name="contact_id"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <>
+              <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
+              <AsyncSelect
+                inputId="new-tour-contact"
+                isClearable
+                defaultOptions
+                loadOptions={loadContacts}
+                {...field}
+              />
+              {errors.contact_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_id)}</div> : null}
+            </>
+          )}
         />
       </CCol>
       <CCol md={6}>
-        <CFormLabel htmlFor="new-tour-category">Regione</CFormLabel>
-        <AsyncSelect
-          inputId="new-tour-category"
-          isClearable
-          defaultOptions
-          loadOptions={loadProductCategories}
-          onChange={(choice) => onChangeCreationModel({ target: { name: 'product_category_id', value: choice } })}
+        <Controller
+          name="product_category_id"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <>
+              <CFormLabel htmlFor="new-tour-category">Regione</CFormLabel>
+              <AsyncSelect
+                inputId="new-tour-category"
+                isClearable
+                defaultOptions
+                loadOptions={loadProductCategories}
+                {...field}
+              />
+              {errors.product_category_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.product_category_id)}</div> : null}
+            </>
+          )}
         />
       </CCol>
     </CRow>
@@ -155,9 +182,8 @@ function ToursList() {
         buildRowsFn={buildRowsFn}
         creationTitle="Creare un nuovo Tour"
         creationBodyFn={() => creationBodyFn()}
-        creationModel={creationModel}
-        evalCreation={() => evalCreation()}
-        clearCreationModel={() => setCreationModel({})}
+        evalCreation={handleSubmit}
+        clearCreationModel={() => reset({})}
       />
     </section>
   );

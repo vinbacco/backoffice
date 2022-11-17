@@ -2,8 +2,6 @@
 /* eslint-disable no-unused-vars */
 /**
  * TODO:
- * Sistemare formulario creazione con pacchetto da discutere con Marco,
- * inclusa validazione prima di salvare
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
 import React, { useState } from 'react';
@@ -12,13 +10,22 @@ import {
   CFormInput,
   CRow,
 } from '@coreui/react';
+import { useForm, Controller } from 'react-hook-form';
 
 import FeedsService from 'src/services/api/FeedsService';
 import AppList from 'src/components/ui/List/AppList';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function FeedsList() {
-  const [creationModel, setCreationModel] = useState({});
-  /** END */
+  const {
+    control, handleSubmit, reset, getValues, formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      code: '',
+    },
+  });
+
   const buildColumnsFn = () => ([
     {
       key: 'name',
@@ -46,37 +53,42 @@ function FeedsList() {
     code: item.code,
   });
 
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    console.log(`newCreationModel = ${JSON.stringify(newCreationModel)}`);
-    setCreationModel(newCreationModel);
-  };
-
-  const evalCreation = () => true;
-
   const creationBodyFn = () => (
     <CRow md={{ cols: 2, gutter: 2 }}>
       <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="name"
+        <Controller
           name="name"
-          placeholder="Inserisci feed"
-          label="Nome del feed"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CFormInput
+              invalid={errors.name}
+              feedback={errors?.name ? composeErrorFormType(errors.name) : null}
+              type="text"
+              id="feed-name"
+              label="Nome del feed"
+              placeholder="Inserisci feed"
+              {... field}
+            />
+          )}
         />
       </CCol>
       <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="code"
+        <Controller
           name="code"
-          placeholder="Inserisci codice feed"
-          label="Codice feed"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CFormInput
+              invalid={errors.code}
+              feedback={errors?.code ? composeErrorFormType(errors.code) : null}
+              type="text"
+              id="feed-code"
+              label="Codice feed"
+              placeholder="Inserisci codice feed"
+              {... field}
+            />
+          )}
         />
       </CCol>
     </CRow>
@@ -93,9 +105,8 @@ function FeedsList() {
         buildRowsFn={buildRowsFn}
         creationTitle="Nuovo Feed"
         creationBodyFn={() => creationBodyFn()}
-        creationModel={creationModel}
-        evalCreation={() => evalCreation()}
-        clearCreationModel={() => setCreationModel({})}
+        evalCreation={handleSubmit}
+        clearCreationModel={() => reset({})}
       />
     </section>
   );

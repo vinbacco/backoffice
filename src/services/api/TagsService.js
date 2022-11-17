@@ -16,17 +16,17 @@ export default class TagsService extends ApiProxyService {
     if (filters) {
       queryParams = { ...queryParams, ...filters };
     }
-    const path = '/feeds';
+    const path = '/tags';
     super.getList(path, queryParams, okCallback, koCallback);
   }
 
   getItem(itemId, okCallback, koCallback) {
-    const path = `/feeds/${itemId}`;
+    const path = `/tags/${itemId}`;
     super.getItem(path, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
-    const path = '/feeds';
+    const path = '/tags';
     super.addItem(path, body, okCallback, koCallback);
   }
 }

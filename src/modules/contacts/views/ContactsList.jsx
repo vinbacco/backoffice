@@ -13,8 +13,6 @@ import AppList from 'src/components/ui/List/AppList';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function ContactsList() {
-  const [creationModel, setCreationModel] = useState({});
-
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
   } = useForm({
@@ -58,12 +56,6 @@ function ContactsList() {
     holder: item.holder,
     registered_address: item.registered_address,
   });
-
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    setCreationModel(newCreationModel);
-  };
 
   const creationBodyFn = () => (
     <CRow md={{ cols: 2, gutter: 2 }}>

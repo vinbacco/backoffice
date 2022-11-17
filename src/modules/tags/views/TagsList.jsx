@@ -6,24 +6,25 @@ import {
   CFormInput,
   CRow,
 } from '@coreui/react';
+import { useForm, Controller } from 'react-hook-form';
 
 import TagsService from 'src/services/api/TagsService';
 import AppList from 'src/components/ui/List/AppList';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function TagsList() {
-  /** FIXME: Usare pacchetto formulari da discutere con Marco */
-  const [creationModel, setCreationModel] = useState({});
-  /** END */
+  const {
+    control, handleSubmit, reset, getValues, formState: { errors },
+  } = useForm({
+    defaultValues: {
+      tag: '',
+    },
+  });
+
   const buildColumnsFn = () => ([
     {
-      key: 'name',
-      label: 'Nome',
-      sortable: true,
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'code',
-      label: 'Codice',
+      key: 'tag',
+      label: 'Tag',
       sortable: true,
       _props: { scope: 'col' },
     },
@@ -31,46 +32,32 @@ function TagsList() {
 
   const buildRowsFn = (item) => ({
     _id: item._id,
-    name: item.name,
-    code: item.code,
+    tag: item.tag,
   });
 
   const mapListFn = (item) => ({
     _id: item._id,
-    name: item.name,
-    code: item.code,
+    tag: item.tag,
   });
-
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    setCreationModel(newCreationModel);
-  };
-
-  const evalCreation = () => true;
 
   const creationBodyFn = () => (
     <CRow md={{ cols: 2, gutter: 2 }}>
       <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="name"
-          name="name"
-          placeholder="Inserisci Tag"
-          label="Nome del tag"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
-        />
-      </CCol>
-      <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="code"
-          name="code"
-          placeholder="Inserisci codice tag"
-          label="Codice tag"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
+        <Controller
+          name="tag"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CFormInput
+              invalid={errors.tag}
+              feedback={errors?.tag ? composeErrorFormType(errors.tag) : null}
+              type="text"
+              id="tag-tag"
+              label="Nome del tag"
+              placeholder="Inserisci tag"
+              {... field}
+            />
+          )}
         />
       </CCol>
     </CRow>
@@ -87,9 +74,8 @@ function TagsList() {
         buildRowsFn={buildRowsFn}
         creationTitle="Nuovo Tag"
         creationBodyFn={() => creationBodyFn()}
-        creationModel={creationModel}
-        evalCreation={() => evalCreation()}
-        clearCreationModel={() => setCreationModel({})}
+        evalCreation={handleSubmit}
+        clearCreationModel={() => reset({})}
       />
     </section>
   );

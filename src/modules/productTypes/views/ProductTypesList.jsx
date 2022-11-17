@@ -6,14 +6,21 @@ import {
   CFormInput,
   CRow,
 } from '@coreui/react';
+import { useForm, Controller } from 'react-hook-form';
 
 import ProductTypesService from 'src/services/api/ProductTypesService';
 import AppList from 'src/components/ui/List/AppList';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function ProductTypesList() {
-  /** FIXME: Usare pacchetto formulari da discutere con Marco */
-  const [creationModel, setCreationModel] = useState({});
-  /** END */
+  const {
+    control, handleSubmit, reset, getValues, formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+    },
+  });
+
   const buildColumnsFn = () => ([
     {
       key: 'name',
@@ -33,25 +40,24 @@ function ProductTypesList() {
     name: item.name,
   });
 
-  const onChangeCreationModel = (event) => {
-    const newCreationModel = { ...creationModel };
-    newCreationModel[event.target.name] = event.target.value;
-    setCreationModel(newCreationModel);
-  };
-
-  const evalCreation = () => true;
-
   const creationBodyFn = () => (
     <CRow md={{ cols: 2, gutter: 2 }}>
       <CCol md={6}>
-        <CFormInput
-          type="text"
-          id="name"
+        <Controller
           name="name"
-          placeholder="Inserisci tipo prodotto"
-          label="Tipo prodotto"
-          value={creationModel?.name || ''}
-          onChange={onChangeCreationModel}
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CFormInput
+              invalid={errors.name}
+              feedback={errors?.name ? composeErrorFormType(errors.name) : null}
+              type="text"
+              id="product-type-name"
+              label="Tipo prodotto"
+              placeholder="Inserisci tipo prodotto"
+              {... field}
+            />
+          )}
         />
       </CCol>
     </CRow>
@@ -68,9 +74,8 @@ function ProductTypesList() {
         buildRowsFn={buildRowsFn}
         creationTitle="Nuovo Tipo Prodotto"
         creationBodyFn={() => creationBodyFn()}
-        creationModel={creationModel}
-        evalCreation={() => evalCreation()}
-        clearCreationModel={() => setCreationModel({})}
+        evalCreation={handleSubmit}
+        clearCreationModel={() => reset({})}
       />
     </section>
   );

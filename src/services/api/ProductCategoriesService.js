@@ -1,10 +1,23 @@
 import ApiProxyService from './apiProxyService';
 
 export default class ProductCategoriesService extends ApiProxyService {
-  getList(params, okCallback, koCallback) {
-    const callParams = { ...params };
+  getList({
+    paginate,
+    page,
+    order = 'business_name',
+    sort = 'ASC',
+    filters,
+    okCallback,
+    koCallback,
+  }) {
+    let queryParams = {
+      paginate, page, order_by: order, sort_by: sort,
+    };
+    if (filters) {
+      queryParams = { ...queryParams, ...filters };
+    }
     const path = '/product_categories';
-    super.getList(path, callParams, okCallback, koCallback);
+    super.getList(path, queryParams, okCallback, koCallback);
   }
 
   getItem(itemId, okCallback, koCallback) {
