@@ -29,4 +29,9 @@ export default class FeedsService extends ApiProxyService {
     const path = '/feeds';
     super.addItem(path, body, okCallback, koCallback);
   }
+
+  updateItem(id, body, okCallback, koCallback) {
+    const path = `/feeds/${id}`;
+    super.updateItem(path, body, okCallback, koCallback);
+  }
 }

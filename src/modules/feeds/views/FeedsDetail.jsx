@@ -1,7 +1,8 @@
+/* eslint-disable dot-notation */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useToasts } from 'react-toast-notifications';
 import { useParams } from 'react-router-dom';
 import {
   CForm,
@@ -11,15 +12,16 @@ import {
 } from '@coreui/react';
 // SERVICES
 import FeedsService from 'src/services/api/FeedsService';
-import { showSuccessToast, showErrorToast } from 'src/redux/slices/app.slice';
+import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
 const FeedsDetail = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const { addToast } = useToasts();
   const {
     control,
     handleSubmit,
     setValue,
+    reset,
   } = useForm({
     defaultValues: {
       name: '',
@@ -35,16 +37,26 @@ const FeedsDetail = () => {
 
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
-      useState({ loading: false, model: { ...response.data } });
-      dispatch(showSuccessToast({ msg: 'Dato modificato con successo!' }));
+      setState({ loading: false, model: { ...response.data } });
+      addToast('Dato modificato con successo!', {
+        appearance: 'success',
+        autoDismiss: true,
+      });
     };
 
     const koEditCallback = (response) => {
-      useState({ loading: false, error: response.error });
-      dispatch(showErrorToast({ msg: 'Ops, si è verificato un errore nella maodifica!' }));
+      setState({ loading: false, error: response?.error });
+      addToast('Ops, si è verificato un errore!', {
+        appearance: 'error',
+        autoDismiss: true,
+      });
     };
 
-    feedsService.addItem(data, okEditCallback, koEditCallback);
+    feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+  };
+
+  const handleReset = () => {
+    reset({ name: state.model?.name, code: state.model?.code });
   };
 
   useEffect(() => {
@@ -52,6 +64,7 @@ const FeedsDetail = () => {
       const okGetCallback = (response) => {
         setValue('name', response.data.name);
         setValue('code', response.data.code);
+        setState({ ...state, loading: false, model: { ...response.data } });
       };
 
       const koGetCallback = (error) => {
@@ -65,46 +78,47 @@ const FeedsDetail = () => {
   }, [id]);
 
   return (
-    <section id="feeds-detail">
-      <CRow className="mb-4">
-        <CCol>
-          <h2>Modifica feed</h2>
-        </CCol>
-      </CRow>
-      <CForm
-        className="row g-3"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <CRow>
-          <CCol md={6}>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <CFormInput
-                  {...field}
-                />
-              )}
-            />
-          </CCol>
-          <div className="mb-3" />
-        </CRow>
-        <CRow>
-          <CCol md={6}>
-            <Controller
-              name="code"
-              control={control}
-              defaultValue={state?.model?.code}
-              render={({ field }) => (
-                <CFormInput
-                  {...field}
-                />
-              )}
-            />
-          </CCol>
-        </CRow>
-      </CForm>
-    </section>
+    <AppBaseDetail
+      name="feed"
+      saveAction={handleSubmit(onSubmit)}
+      resetAction={handleReset}
+    >
+      <section id="feeds-detail">
+        <CForm
+          className="row g-3"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <CRow>
+            <CCol md={6}>
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <CFormInput
+                    {...field}
+                  />
+                )}
+              />
+            </CCol>
+            <div className="mb-3" />
+          </CRow>
+          <CRow>
+            <CCol md={6}>
+              <Controller
+                name="code"
+                control={control}
+                defaultValue={state?.model?.code}
+                render={({ field }) => (
+                  <CFormInput
+                    {...field}
+                  />
+                )}
+              />
+            </CCol>
+          </CRow>
+        </CForm>
+      </section>
+    </AppBaseDetail>
   );
 };
 
