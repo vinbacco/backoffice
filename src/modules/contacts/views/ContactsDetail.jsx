@@ -11,7 +11,7 @@ import {
   CFormInput,
 } from '@coreui/react';
 // SERVICES
-import FeedsService from 'src/services/api/FeedsService';
+import ContactsService from 'src/services/api/ContactsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
 const ContactsDetails = () => {
@@ -24,8 +24,7 @@ const ContactsDetails = () => {
     reset,
   } = useForm({
     defaultValues: {
-      name: '',
-      code: '',
+      business_name: '',
     },
   });
   const [state, setState] = useState({
@@ -33,7 +32,7 @@ const ContactsDetails = () => {
     model: null,
   });
 
-  const feedsService = new FeedsService();
+  const contactsService = new ContactsService();
 
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
@@ -52,18 +51,17 @@ const ContactsDetails = () => {
       });
     };
 
-    feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+    contactsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
   };
 
   const handleReset = () => {
-    reset({ name: state.model?.name, code: state.model?.code });
+    reset({ business_name: state.model?.business_name });
   };
 
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
-        setValue('name', response.data.name);
-        setValue('code', response.data.code);
+        setValue('business_name', response.data.business_name);
         setState({ ...state, loading: false, model: { ...response.data } });
       };
 
@@ -73,17 +71,17 @@ const ContactsDetails = () => {
         throw new Error(errorMessage);
       };
 
-      feedsService.getItem(id, okGetCallback, koGetCallback);
+      contactsService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
 
   return (
     <AppBaseDetail
-      name="feed"
+      name="contatto"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >
-      <section id="feeds-detail">
+      <section id="contacts-detail">
         <CForm
           className="row g-3"
           onSubmit={handleSubmit(onSubmit)}
@@ -91,7 +89,7 @@ const ContactsDetails = () => {
           <CRow>
             <CCol md={6}>
               <Controller
-                name="name"
+                name="business_name"
                 control={control}
                 render={({ field }) => (
                   <CFormInput
@@ -101,20 +99,6 @@ const ContactsDetails = () => {
               />
             </CCol>
             <div className="mb-3" />
-          </CRow>
-          <CRow>
-            <CCol md={6}>
-              <Controller
-                name="code"
-                control={control}
-                defaultValue={state?.model?.code}
-                render={({ field }) => (
-                  <CFormInput
-                    {...field}
-                  />
-                )}
-              />
-            </CCol>
           </CRow>
         </CForm>
       </section>

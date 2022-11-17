@@ -17,7 +17,7 @@ import {
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
-import ContactService from 'src/services/api/ContactService';
+import ContactsService from 'src/services/api/ContactsService';
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 import AppList from 'src/components/ui/List/AppList';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
@@ -34,7 +34,7 @@ function ToursList() {
   });
 
   const loadContacts = (filter) => new Promise((resolve) => {
-    const contactService = new ContactService();
+    const contactsService = new ContactsService();
     const okGetContacts = (response) => {
       let responseData = [];
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -50,7 +50,7 @@ function ToursList() {
       page: 1,
     };
     if (filter.length > 0) filters['??^business_name'] = filter;
-    contactService.getList({
+    contactsService.getList({
       filters,
       okCallback: (res) => okGetContacts(res),
       koCallback: (err) => koGetContacts(err),

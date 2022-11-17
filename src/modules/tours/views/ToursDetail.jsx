@@ -8,8 +8,6 @@ import {
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
-import ContactService from 'src/services/api/ContactService';
-import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';

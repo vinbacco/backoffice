@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import { CCol, CFormInput, CRow } from '@coreui/react';
 import { useForm, Controller } from 'react-hook-form';
 
-import ContactsService from 'src/services/api/ContactService';
+import ContactsService from 'src/services/api/ContactsService';
 import AppList from 'src/components/ui/List/AppList';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 

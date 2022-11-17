@@ -1,6 +1,6 @@
 import ApiProxyService from './apiProxyService';
 
-export default class TourService extends ApiProxyService {
+export default class ContactsService extends ApiProxyService {
   getList({
     paginate,
     page,
