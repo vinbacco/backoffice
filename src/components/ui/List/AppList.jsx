@@ -40,7 +40,6 @@ function AppList({
   mapListFn,
   buildColumnsFn,
   buildRowsFn,
-  creationModel,
   creationBodyFn,
   clearCreationModel,
   evalCreation,
@@ -268,22 +267,19 @@ function AppList({
     }
   };
 
-  const handleCreateNew = (event) => {
-    if (evalCreation() === true) {
-      if (showCreateModal === true && creationAction.executing === false) {
-        event.preventDefault();
-        setCreationAction({ error: null, executing: true });
-        sectionService.addItem(
-          creationModel,
-          (response) => {
-            setCreationAction({ ...creationAction, executing: false });
-            navigate(`${sectionPath}/${response?.data?._id}`);
-          },
-          (error) => {
-            setCreationAction({ error, executing: false });
-          },
-        );
-      }
+  const handleCreateNew = (data) => {
+    if (showCreateModal === true && creationAction.executing === false) {
+      setCreationAction({ error: null, executing: true });
+      sectionService.addItem(
+        data,
+        (response) => {
+          setCreationAction({ ...creationAction, executing: false });
+          navigate(`${sectionPath}/${response?.data?._id}`);
+        },
+        (error) => {
+          setCreationAction({ error, executing: false });
+        },
+      );
     }
   };
 
@@ -366,13 +362,13 @@ function AppList({
             <CRow>
               <CCol>
                 <CAlert color="danger" dismissible>
-                  <CAlertHeading tag="h4">Errore nella creazione tour</CAlertHeading>
+                  <CAlertHeading tag="h4">Errore nella creazione</CAlertHeading>
                   <p>{creationAction?.error?.data?.message}</p>
                 </CAlert>
               </CCol>
             </CRow>
           )}
-          <CForm id="creationForm" onSubmit={(e) => handleCreateNew(e)}>
+          <CForm id="creationForm" onSubmit={evalCreation(handleCreateNew)}>
             {creationBodyFn()}
           </CForm>
         </CModalBody>
@@ -385,10 +381,10 @@ function AppList({
       </CModal>
       <CModal backdrop="static" visible={showDeleteModal}>
         <CModalHeader closeButton={false}>
-          <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare il tour' : 'Eliminare i tours'}</CModalTitle>
+          <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare l\'elemento' : 'Eliminare gli elementi'}</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {`Sei sicuro di voler eliminare ${state.selectedItems.length === 1 ? 'il tour selezionato' : 'i tours selezionati'}? Questa azione non può essere annullata.`}
+          {`Sei sicuro di voler eliminare ${state.selectedItems.length === 1 ? 'l\'elemento selezionato' : 'gli elementi selezionati'}? Questa azione non può essere annullata.`}
         </CModalBody>
         <CModalFooter>
           <CButton color="danger" onClick={() => setShowDeleteModal(false)}>
@@ -410,7 +406,6 @@ AppList.propTypes = {
   buildRowsFn: PropTypes.func.isRequired,
   creationTitle: PropTypes.string.isRequired,
   creationBodyFn: PropTypes.func,
-  creationModel: PropTypes.any,
   evalCreation: PropTypes.func,
   clearCreationModel: PropTypes.func,
 };
@@ -418,7 +413,6 @@ AppList.propTypes = {
 AppList.defaultProps = {
   sectionTitle: 'Lista',
   creationBodyFn: null,
-  creationModel: {},
   evalCreation: null,
   clearCreationModel: null,
 };
