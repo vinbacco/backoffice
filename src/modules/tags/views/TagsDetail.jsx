@@ -14,8 +14,8 @@ import {
 import TagsService from 'src/services/api/TagsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
-const { id } = useParams();
 const TagsDetail = () => {
+  const { id } = useParams();
   const { addToast } = useToasts();
   const {
     control,
@@ -24,7 +24,8 @@ const TagsDetail = () => {
     reset,
   } = useForm({
     defaultValues: {
-      tag: '',
+      name: '',
+      code: '',
     },
   });
   const [state, setState] = useState({
@@ -55,7 +56,7 @@ const TagsDetail = () => {
   };
 
   const handleReset = () => {
-    reset({ name: state.model?.tag });
+    reset({ name: state.model?.tag, code: state.model?.code });
   };
 
   useEffect(() => {
@@ -70,7 +71,6 @@ const TagsDetail = () => {
         setState({ ...state, loading: false, error: errorMessage });
         throw new Error(errorMessage);
       };
-
       tagsService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
@@ -89,11 +89,11 @@ const TagsDetail = () => {
           <CRow>
             <CCol md={6}>
               <Controller
-                name="tag"
+                name="name"
                 control={control}
                 render={({ field }) => (
                   <CFormInput
-                    label="Tag"
+                    label="Nome"
                     {...field}
                   />
                 )}
