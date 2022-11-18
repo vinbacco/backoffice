@@ -178,12 +178,6 @@ function ToursDetail() {
                 onUpload={(file) => uploadMediaContent(file, 'tour_image')}
                 onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_image')}
               />
-              <Gallery
-                title="Galleria dei vini del tour"
-                data={tourWineMediaContents}
-                onUpload={(file) => uploadMediaContent(file, 'tour_wine_image')}
-                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_wine_image')}
-              />
             </CCol>
           </CRow>
         )}
