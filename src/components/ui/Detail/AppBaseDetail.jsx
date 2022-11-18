@@ -6,7 +6,27 @@ import {
   CButton,
   CCol,
   CRow,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
 } from '@coreui/react';
+
+const Buttons = ({ saveAction, resetAction }) => (
+  <CRow className="mb-4 justify-content-end">
+    <CCol xs="auto">
+      <CButton color="primary" onClick={() => saveAction()}>Salva</CButton>
+    </CCol>
+    <CCol xs="auto">
+      <CButton color="secondary" onClick={() => resetAction()}>Annulla</CButton>
+    </CCol>
+  </CRow>
+);
+
+Buttons.propTypes = {
+  saveAction: PropTypes.func.isRequired,
+  resetAction: PropTypes.func.isRequired,
+};
 
 const AppBaseDetail = ({
   name,
@@ -14,26 +34,32 @@ const AppBaseDetail = ({
   resetAction,
   children,
 }) => (
-  <>
-    <CRow className="mb-4">
-      <CCol>
-        <h2>
-          Modifica {name}
-        </h2>
-      </CCol>
-    </CRow>
-    <CRow className="mb-4 justify-content-end">
-      <CCol xs="auto">
-        <CButton color="primary" onClick={() => saveAction()}>Salva</CButton>
-      </CCol>
-      <CCol xs="auto">
-        <CButton color="secondary" onClick={() => resetAction()}>Annulla</CButton>
-      </CCol>
-    </CRow>
-    <CRow>
-      {children}
-    </CRow>
-  </>
+  <CCard>
+    <CCardHeader>
+      <CRow className="mb-4">
+        <CCol>
+          <h2>
+            Modifica {name}
+          </h2>
+        </CCol>
+      </CRow>
+      <Buttons
+        saveAction={saveAction}
+        resetAction={resetAction}
+      />
+    </CCardHeader>
+    <CCardBody>
+      <CRow>
+        {children}
+      </CRow>
+    </CCardBody>
+    <CCardFooter>
+      <Buttons
+        saveAction={saveAction}
+        resetAction={resetAction}
+      />
+    </CCardFooter>
+  </CCard>
 );
 
 AppBaseDetail.propTypes = {

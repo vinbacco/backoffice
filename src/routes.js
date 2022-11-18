@@ -10,6 +10,7 @@ const FeedsDetail = React.lazy(() => import('./modules/feeds/views/FeedsDetail')
 const ProductTypesList = React.lazy(() => import('./modules/productTypes/views/ProductTypesList'));
 const RegionsList = React.lazy(() => import('./modules/regions/views/RegionsList'));
 const TagsList = React.lazy(() => import('./modules/tags/views/TagsList'));
+const TagsDetail = React.lazy(() => import('./modules/tags/views/TagsDetail'));
 const ZonesList = React.lazy(() => import('./modules/zones/views/ZonesList'));
 const NotFound = React.lazy(() => import('./views/pages/page404/Page404'));
 const routes = [
@@ -22,6 +23,7 @@ const routes = [
   { path: '/product-types', name: 'ProductTypes', element: ProductTypesList },
   { path: '/regions', name: 'Tags', element: RegionsList },
   { path: '/tags', name: 'Tags', element: TagsList },
+  { path: '/tags/:id', name: 'Tags Details', element: TagsDetail },
   { path: '/tours', name: 'Tours', element: ToursList },
   { path: '/tours/:id', name: 'Tour', element: ToursDetail },
   { path: '/zones', name: 'Tags', element: ZonesList },
