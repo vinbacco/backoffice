@@ -24,7 +24,7 @@ const TagsDetail = () => {
     reset,
   } = useForm({
     defaultValues: {
-      name: '',
+      tag: '',
       code: '',
     },
   });
@@ -56,7 +56,7 @@ const TagsDetail = () => {
   };
 
   const handleReset = () => {
-    reset({ name: state.model?.tag, code: state.model?.code });
+    reset({ tag: state.model?.tag, code: state.model?.code });
   };
 
   useEffect(() => {
@@ -89,11 +89,11 @@ const TagsDetail = () => {
           <CRow>
             <CCol md={6}>
               <Controller
-                name="name"
+                name="tag"
                 control={control}
                 render={({ field }) => (
                   <CFormInput
-                    label="Nome"
+                    label="Nome tag"
                     {...field}
                   />
                 )}

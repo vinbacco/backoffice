@@ -84,10 +84,6 @@ function ToursDetail() {
     }
   };
 
-  const updateMediaContent = (newImagesArray) => {
-    setTourMediaContents(newImagesArray);
-  };
-
   const uploadMediaContent = (fileData, type) => {
     const tourService = new TourService();
     const mediaContentData = {};
@@ -176,7 +172,7 @@ function ToursDetail() {
                 title="Galleria del tour"
                 data={tourMediaContents}
                 onUpload={(file) => uploadMediaContent(file, 'tour_image')}
-                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_image')}
+                onChangeOrder={(imagesArray) => setTourMediaContents(imagesArray)}
               />
             </CCol>
           </CRow>
