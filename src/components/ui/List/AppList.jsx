@@ -43,6 +43,7 @@ function AppList({
   creationBodyFn,
   clearCreationModel,
   evalCreation,
+  formatCreationData,
 }) {
   const sectionService = new SectionServiceClass();
   const location = useLocation();
@@ -270,8 +271,9 @@ function AppList({
   const handleCreateNew = (data) => {
     if (showCreateModal === true && creationAction.executing === false) {
       setCreationAction({ error: null, executing: true });
+      const creationData = (typeof formatCreationData === 'function') ? formatCreationData(data) : { ...data };
       sectionService.addItem(
-        data,
+        creationData,
         (response) => {
           setCreationAction({ ...creationAction, executing: false });
           navigate(`${sectionPath}/${response?.data?._id}`);
@@ -408,6 +410,7 @@ AppList.propTypes = {
   creationBodyFn: PropTypes.func,
   evalCreation: PropTypes.func,
   clearCreationModel: PropTypes.func,
+  formatCreationData: PropTypes.func,
 };
 
 AppList.defaultProps = {
@@ -415,6 +418,7 @@ AppList.defaultProps = {
   creationBodyFn: null,
   evalCreation: null,
   clearCreationModel: null,
+  formatCreationData: undefined,
 };
 
 export default AppList;

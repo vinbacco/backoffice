@@ -4,7 +4,7 @@
  * TODO:
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CCol,
   CFormInput,
@@ -19,11 +19,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 function RegionsList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: '',
-    },
-  });
+  } = useForm();
 
   const buildColumnsFn = () => ([
     {
@@ -51,9 +47,10 @@ function RegionsList() {
           name="name"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.name}
+              invalid={!!errors.name}
               feedback={errors?.name ? composeErrorFormType(errors.name) : null}
               type="text"
               id="region-name"

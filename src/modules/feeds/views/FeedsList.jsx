@@ -4,7 +4,7 @@
  * TODO:
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CCol,
   CFormInput,
@@ -19,12 +19,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 function FeedsList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: '',
-      code: '',
-    },
-  });
+  } = useForm();
 
   const buildColumnsFn = () => ([
     {
@@ -60,9 +55,10 @@ function FeedsList() {
           name="name"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.name}
+              invalid={!!errors.name}
               feedback={errors?.name ? composeErrorFormType(errors.name) : null}
               type="text"
               id="feed-name"
@@ -78,9 +74,10 @@ function FeedsList() {
           name="code"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.code}
+              invalid={!!errors.code}
               feedback={errors?.code ? composeErrorFormType(errors.code) : null}
               type="text"
               id="feed-code"

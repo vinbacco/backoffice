@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CCol,
   CFormInput,
@@ -15,11 +15,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 function ProductTypesList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: '',
-    },
-  });
+  } = useForm();
 
   const buildColumnsFn = () => ([
     {
@@ -47,9 +43,10 @@ function ProductTypesList() {
           name="name"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.name}
+              invalid={!!errors.name}
               feedback={errors?.name ? composeErrorFormType(errors.name) : null}
               type="text"
               id="product-type-name"
