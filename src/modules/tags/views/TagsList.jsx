@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   CCol,
   CFormInput,
@@ -15,11 +15,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 function TagsList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
-  } = useForm({
-    defaultValues: {
-      tag: '',
-    },
-  });
+  } = useForm();
 
   const buildColumnsFn = () => ([
     {
@@ -47,9 +43,10 @@ function TagsList() {
           name="tag"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.tag}
+              invalid={!!errors.tag}
               feedback={errors?.tag ? composeErrorFormType(errors.tag) : null}
               type="text"
               id="tag-tag"

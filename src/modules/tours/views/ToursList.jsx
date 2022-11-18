@@ -5,7 +5,7 @@
  * TODO:
  * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import AsyncSelect from 'react-select/async';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -25,13 +25,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 function ToursList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: '',
-      contact_id: null,
-      product_category_id: null,
-    },
-  });
+  } = useForm();
 
   const loadContacts = (filter) => new Promise((resolve) => {
     const contactsService = new ContactsService();
@@ -115,9 +109,10 @@ function ToursList() {
           name="name"
           control={control}
           rules={{ required: true }}
+          defaultValue=""
           render={({ field }) => (
             <CFormInput
-              invalid={errors.name}
+              invalid={!!errors.name}
               feedback={errors?.name ? composeErrorFormType(errors.name) : null}
               type="text"
               id="tour-name"
