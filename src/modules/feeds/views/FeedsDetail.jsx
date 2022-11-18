@@ -95,6 +95,7 @@ const FeedsDetail = () => {
                 control={control}
                 render={({ field }) => (
                   <CFormInput
+                    label="Nome"
                     {...field}
                   />
                 )}
@@ -110,6 +111,7 @@ const FeedsDetail = () => {
                 defaultValue={state?.model?.code}
                 render={({ field }) => (
                   <CFormInput
+                    label="Codice"
                     {...field}
                   />
                 )}
