@@ -1,4 +1,5 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
 export default class ContactsService extends ApiProxyService {
   getList({
@@ -22,7 +23,9 @@ export default class ContactsService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `/contacts/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_category_id,registered_city_id]' });
+
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {

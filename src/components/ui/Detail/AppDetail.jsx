@@ -55,7 +55,9 @@ const AppDetail = (props) => {
           <CRow className="mb-4">
             <CCol>
               <h2>{name}</h2>
-              <small>{`Pagina sito: /${urlFriendlyName}`}</small>
+              {!!urlFriendlyName && (
+                <small>{`Pagina sito: /${urlFriendlyName}`}</small>
+              )}
             </CCol>
           </CRow>
           <Buttons saveAction={saveAction} />

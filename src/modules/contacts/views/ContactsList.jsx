@@ -373,6 +373,7 @@ function ContactsList() {
         evalCreation={handleSubmit}
         clearCreationModel={() => reset({})}
         formatCreationData={formatCreationData}
+        initialSortField="business_name"
       />
     </section>
   );

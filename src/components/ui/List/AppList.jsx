@@ -44,6 +44,7 @@ function AppList({
   clearCreationModel,
   evalCreation,
   formatCreationData,
+  initialSortField,
 }) {
   const sectionService = new SectionServiceClass();
   const location = useLocation();
@@ -134,13 +135,6 @@ function AppList({
     setState({ selectedItems: [] });
   };
 
-  // const onChangeFilter = (value) => {
-  //   const newTableData = { ...tableData };
-  //   newTableData.search = value;
-  //   newTableData.data = null;
-  //   setTableData(newTableData);
-  // };
-
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const newTableData = { ...tableData };
@@ -193,7 +187,7 @@ function AppList({
 
     if (tableData.sort === null) {
       if (currentParams.sort !== null) newTableData.sort = currentParams.sort;
-      else newTableData.sort = 'name';
+      else newTableData.sort = initialSortField;
     }
     if (currentParams.sort !== newTableData.sort) {
       currentParams.sort = newTableData.sort;
@@ -411,6 +405,7 @@ AppList.propTypes = {
   evalCreation: PropTypes.func,
   clearCreationModel: PropTypes.func,
   formatCreationData: PropTypes.func,
+  initialSortField: PropTypes.string,
 };
 
 AppList.defaultProps = {
@@ -419,6 +414,7 @@ AppList.defaultProps = {
   evalCreation: null,
   clearCreationModel: null,
   formatCreationData: undefined,
+  initialSortField: 'name',
 };
 
 export default AppList;
