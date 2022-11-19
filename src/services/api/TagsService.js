@@ -1,6 +1,8 @@
 import ApiProxyService from './apiProxyService';
 
 export default class TagsService extends ApiProxyService {
+  BASE_PATH = '/tags';
+
   getList({
     paginate,
     page,
@@ -16,22 +18,20 @@ export default class TagsService extends ApiProxyService {
     if (filters) {
       queryParams = { ...queryParams, ...filters };
     }
-    const path = '/tags';
-    super.getList(path, queryParams, okCallback, koCallback);
+    super.getList(this.BASE_PATH, queryParams, okCallback, koCallback);
   }
 
   getItem(itemId, okCallback, koCallback) {
-    const path = `/tags/${itemId}`;
+    const path = `${this.BASE_PATH}/${itemId}`;
     super.getItem(path, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
-    const path = '/tags';
-    super.addItem(path, body, okCallback, koCallback);
+    super.addItem(this.BASE_PATH, body, okCallback, koCallback);
   }
 
   updateItem(id, body, okCallback, koCallback) {
-    const path = `/tags/${id}`;
+    const path = `${this.BASE_PATH}/${id}`;
     super.updateItem(path, body, okCallback, koCallback);
   }
 }
