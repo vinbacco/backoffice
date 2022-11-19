@@ -22,7 +22,7 @@ export default class ZonesService extends ApiProxyService {
       {
         ...queryParams,
         ...filters,
-        ...{ product_type_id: this.TOUR_PRODUCT_TYPE_ID, '!!parent_id': null },
+        ...{ product_type_id: this.TOUR_PRODUCT_TYPE_ID, '!!^parent_id': null },
       };
     }
     super.getList(this.BASE_PATH, queryParams, okCallback, koCallback);
