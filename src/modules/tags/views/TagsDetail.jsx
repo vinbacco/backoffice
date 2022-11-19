@@ -127,7 +127,7 @@ const TagsDetail = () => {
           <CRow className="mb-3">
             <CCol>
               <Controller
-                name="product_type_id"
+                name="feed_id"
                 control={control}
                 rules={{ required: true }}
                 defaultValue={state?.model?.feed_id || null}
