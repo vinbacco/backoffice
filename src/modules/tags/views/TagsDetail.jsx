@@ -14,7 +14,7 @@ import {
 } from '@coreui/react';
 // SERVICES
 import TagsService from 'src/services/api/TagsService';
-import ProductTypesService from 'src/services/api/ProductTypesService';
+import FeedsService from 'src/services/api/FeedsService';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 // COMPONENTS
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
@@ -35,8 +35,8 @@ const TagsDetail = () => {
 
   const tagsService = new TagsService();
 
-  const loadProductTypes = () => new Promise((resolve) => {
-    const productTypesService = new ProductTypesService();
+  const loadFeeds = () => new Promise((resolve) => {
+    const feedsService = new FeedsService();
     const okCallback = (response) => {
       let responseData = [];
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -51,7 +51,7 @@ const TagsDetail = () => {
       paginate: 5,
       page: 1,
     };
-    productTypesService.getList({
+    feedsService.getList({
       filters,
       okCallback: (res) => okCallback(res),
       koCallback: (err) => koCallback(err),
@@ -88,7 +88,7 @@ const TagsDetail = () => {
   };
 
   const handleReset = () => {
-    reset({ tag: state.model?.tag, code: state.model?.code });
+    reset({ tag: state.model?.tag });
   };
 
   useEffect(() => {
@@ -126,15 +126,15 @@ const TagsDetail = () => {
                 rules={{ required: true }}
                 render={({ field }) => (
                   <>
-                    <CFormLabel htmlFor="product_type_id">Tipo prodotto</CFormLabel>
+                    <CFormLabel htmlFor="feed_id">Feed</CFormLabel>
                     <AsyncSelect
-                      inputId="product_type_id"
+                      inputId="feed_id"
                       isClearable
                       defaultOptions
-                      loadOptions={loadProductTypes}
+                      loadOptions={loadFeeds}
                       {...field}
                     />
-                    {errors.product_type_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.product_type_id)}</div> : null}
+                    {errors.feed_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.feed_id)}</div> : null}
                   </>
                 )}
               />
