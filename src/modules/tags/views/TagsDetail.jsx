@@ -60,10 +60,31 @@ const TagsDetail = () => {
     });
   });
 
+  const handleReset = () => {
+    reset({ ...state.model });
+  };
+
+  const formatModel = (response) => {
+    const responseData = { ...response.data };
+    let feedCurrent = null;
+    if (response.data?.feed?._id && response.data?.feed?.name) {
+      feedCurrent = { value: response.data.feed._id, label: response.data.feed.name };
+    }
+
+    if (feedCurrent !== null) responseData.feed_id = feedCurrent;
+
+    setValue('tag', responseData.tag);
+    setValue('color', responseData.color);
+    setValue('feed_id', responseData.feed_id);
+    setState({ ...state, loading: false, model: { ...responseData } });
+
+    return responseData;
+  };
+
   const onSubmit = (data) => {
     const savePromise = new Promise((resolve, reject) => {
       const okEditCallback = (response) => {
-        setState({ loading: false, model: { ...response.data } });
+        setState({ ...state, loading: false, model: formatModel(response) });
         resolve();
       };
 
@@ -89,21 +110,10 @@ const TagsDetail = () => {
     });
   };
 
-  const handleReset = () => {
-    reset({ tag: state.model?.tag });
-  };
-
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
-        let feedCurrent = null;
-        if (response.data.feed._id && response.data.feed.name) {
-          feedCurrent = { value: response.data.feed._id, label: response.data.feed.name };
-        }
-        setValue('tag', response.data.tag);
-        setValue('color', response.data.color);
-        setValue('feed_id', feedCurrent);
-        setState({ ...state, loading: false, model: { ...response.data, feed_id: feedCurrent } });
+        setState({ ...state, loading: false, model: formatModel(response) });
       };
 
       const koGetCallback = (error) => {
