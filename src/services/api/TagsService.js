@@ -29,4 +29,9 @@ export default class TagsService extends ApiProxyService {
     const path = '/tags';
     super.addItem(path, body, okCallback, koCallback);
   }
+
+  updateItem(id, body, okCallback, koCallback) {
+    const path = `/tags/${id}`;
+    super.updateItem(path, body, okCallback, koCallback);
+  }
 }

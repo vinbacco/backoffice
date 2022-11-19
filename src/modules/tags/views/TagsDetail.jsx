@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import AsyncSelect from 'react-select/async';
 import { useToasts } from 'react-toast-notifications';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,9 +10,13 @@ import {
   CRow,
   CCol,
   CFormInput,
+  CFormLabel,
 } from '@coreui/react';
 // SERVICES
 import TagsService from 'src/services/api/TagsService';
+import ProductTypesService from 'src/services/api/ProductTypesService';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
+// COMPONENTS
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
 const TagsDetail = () => {
@@ -22,10 +27,12 @@ const TagsDetail = () => {
     handleSubmit,
     setValue,
     reset,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       tag: '',
-      code: '',
+      product_type_id: '',
+      color: '',
     },
   });
   const [state, setState] = useState({
@@ -34,6 +41,29 @@ const TagsDetail = () => {
   });
 
   const tagsService = new TagsService();
+
+  const loadProductTypes = () => new Promise((resolve) => {
+    const productTypesService = new ProductTypesService();
+    const okCallback = (response) => {
+      let responseData = [];
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        responseData = response.data.map((currentItem) => (
+          { value: currentItem['_id'], label: currentItem.name }
+        ));
+      }
+      resolve(responseData);
+    };
+    const koCallback = () => resolve([]);
+    const filters = {
+      paginate: 5,
+      page: 1,
+    };
+    productTypesService.getList({
+      filters,
+      okCallback: (res) => okCallback(res),
+      koCallback: (err) => koCallback(err),
+    });
+  });
 
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
@@ -89,6 +119,28 @@ const TagsDetail = () => {
           <CRow>
             <CCol md={6}>
               <Controller
+                name="product_type_id"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <>
+                    <CFormLabel htmlFor="product_type_id">Tipo prodotto</CFormLabel>
+                    <AsyncSelect
+                      inputId="product_type_id"
+                      isClearable
+                      defaultOptions
+                      loadOptions={loadProductTypes}
+                      {...field}
+                    />
+                    {errors.product_type_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.product_type_id)}</div> : null}
+                  </>
+                )}
+              />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol md={6}>
+              <Controller
                 name="tag"
                 control={control}
                 render={({ field }) => (
@@ -100,6 +152,20 @@ const TagsDetail = () => {
               />
             </CCol>
             <div className="mb-3" />
+          </CRow>
+          <CRow>
+            <CCol md={6}>
+              <Controller
+                name="colore"
+                control={control}
+                render={({ field }) => (
+                  <CFormInput
+                    {...field}
+                  />
+                )}
+              />
+              <small id="emailHelp" className="form-text text-muted">Valore in formato esadecimale (Es: #ff0000)</small>
+            </CCol>
           </CRow>
         </CForm>
       </section>
