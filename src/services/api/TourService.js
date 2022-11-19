@@ -5,6 +5,8 @@ import utils from './utils/utils';
 export default class TourService extends ApiProxyService {
   TOUR_PRODUCT_TYPE_ID = '633dbfe8c843f55df6fa2a0e';
 
+  BASE_PATH = '/products';
+
   getList({
     paginate,
     page,
@@ -20,12 +22,12 @@ export default class TourService extends ApiProxyService {
     if (filters) {
       queryParams = { ...queryParams, ...filters, product_type_id: this.TOUR_PRODUCT_TYPE_ID };
     }
-    const path = '/products';
+    const path = this.BASE_PATH;
     super.getList(path, queryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
-    const path = '/products';
+    const path = this.BASE_PATH;
     const creationData = { ...body };
     creationData.contact_id = creationData?.contact_id?.value || null;
     creationData.product_category_id = creationData?.product_category_id?.value || null;
@@ -40,13 +42,38 @@ export default class TourService extends ApiProxyService {
   }
 
   getItem(itemId, okCallback, koCallback) {
-    const path = `/products/${itemId}`;
+    const path = `${this.BASE_PATH}/${itemId}`;
     const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_id,product_category_id]' });
     super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addMediaContent(itemId, fileData, okCallback, koCallback) {
-    const path = `/products/${itemId}/media_contents`;
+    const path = `${this.BASE_PATH}/${itemId}/media_contents`;
     super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  deleteItem(deleteInfo, okCallback, koCallback) {
+    const deletePromisesArray = [];
+    if (typeof deleteInfo === 'string' || typeof deleteInfo === 'number') {
+      deletePromisesArray.push(
+        new Promise((resolve, reject) => {
+          super.deleteItem(`${this.BASE_PATH}/${deleteInfo}`, (res) => resolve(res), (err) => reject(err));
+        }),
+      );
+    } else if (Array.isArray(deleteInfo)) {
+      deleteInfo.forEach((currentItem) => {
+        deletePromisesArray.push(
+          new Promise((resolve, reject) => {
+            super.deleteItem(`${this.BASE_PATH}/${currentItem}`, (res) => resolve(res), (err) => reject(err));
+          }),
+        );
+      });
+    }
+    Promise.allSettled(deletePromisesArray)
+      .then((results) => {
+        const rejectedPromises = results.filter((currentResult) => currentResult.status === 'rejected');
+        if (rejectedPromises.length <= 0) okCallback();
+        else koCallback([...rejectedPromises]);
+      });
   }
 }
