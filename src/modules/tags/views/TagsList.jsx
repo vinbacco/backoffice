@@ -73,6 +73,7 @@ function TagsList() {
         creationBodyFn={() => creationBodyFn()}
         evalCreation={handleSubmit}
         clearCreationModel={() => reset({})}
+        initialSortField="tag"
       />
     </section>
   );
