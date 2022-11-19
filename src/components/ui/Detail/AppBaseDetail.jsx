@@ -29,6 +29,7 @@ Buttons.propTypes = {
 };
 
 const AppBaseDetail = ({
+  type,
   name,
   saveAction,
   resetAction,
@@ -39,8 +40,11 @@ const AppBaseDetail = ({
       <CRow className="mb-4">
         <CCol>
           <h2>
-            Modifica {name}
+            Modifica {type}
           </h2>
+          {typeof name === 'string' && name.length > 0 && (
+            <h4>{name}</h4>
+          )}
         </CCol>
       </CRow>
       <Buttons
@@ -63,10 +67,15 @@ const AppBaseDetail = ({
 );
 
 AppBaseDetail.propTypes = {
-  name: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  name: PropTypes.string,
   saveAction: PropTypes.func.isRequired,
   resetAction: PropTypes.func.isRequired,
   children: PropTypes.element.isRequired,
+};
+
+AppBaseDetail.defaultProps = {
+  name: null,
 };
 
 export default AppBaseDetail;

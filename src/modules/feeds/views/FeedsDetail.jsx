@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useToasts } from 'react-toast-notifications';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import {
   CForm,
@@ -16,7 +16,6 @@ import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
 const FeedsDetail = () => {
   const { id } = useParams();
-  const { addToast } = useToasts();
   const {
     control,
     handleSubmit,
@@ -38,18 +37,12 @@ const FeedsDetail = () => {
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
       setState({ loading: false, model: { ...response.data } });
-      addToast('Dato modificato con successo!', {
-        appearance: 'success',
-        autoDismiss: true,
-      });
+      toast.success('Dato modificato con successo!');
     };
 
     const koEditCallback = (response) => {
       setState({ loading: false, error: response?.error });
-      addToast('Ops, si è verificato un errore!', {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+      toast.error('Ops, si è verificato un errore!');
     };
 
     feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
@@ -79,7 +72,7 @@ const FeedsDetail = () => {
 
   return (
     <AppBaseDetail
-      name="feed"
+      type="feed"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >

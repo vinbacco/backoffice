@@ -1,23 +1,23 @@
 import React from 'react';
-import { ToastProvider } from 'react-toast-notifications';
+import { Toaster } from 'react-hot-toast';
+
 import {
   AppContent, AppSidebar, AppFooter, AppHeader,
 } from '../components/index';
 
 function DefaultLayout() {
   return (
-    <ToastProvider>
-      <div>
-        <AppSidebar />
-        <div className="wrapper d-flex flex-column min-vh-100 bg-light">
-          <AppHeader />
-          <div className="body flex-grow-1 px-3">
-            <AppContent />
-          </div>
-          <AppFooter />
+    <>
+      <AppSidebar />
+      <div className="wrapper d-flex flex-column min-vh-100 bg-light">
+        <AppHeader />
+        <div className="body flex-grow-1 px-3">
+          <Toaster position="top-right" reverseOrder={false} />
+          <AppContent />
         </div>
+        <AppFooter />
       </div>
-    </ToastProvider>
+    </>
   );
 }
 

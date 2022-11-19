@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useToasts } from 'react-toast-notifications';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import {
   CForm,
@@ -19,7 +19,6 @@ import Gallery from 'src/components/ui/Gallery/Gallery';
 
 const RegionsDetail = () => {
   const { id } = useParams();
-  const { addToast } = useToasts();
   const {
     control,
     handleSubmit,
@@ -36,18 +35,12 @@ const RegionsDetail = () => {
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
       setState({ loading: false, model: { ...response.data } });
-      addToast('Dato modificato con successo!', {
-        appearance: 'success',
-        autoDismiss: true,
-      });
+      toast.success('Dato modificato con successo!');
     };
 
     const koEditCallback = (response) => {
       setState({ loading: false, error: response?.error });
-      addToast('Ops, si è verificato un errore!', {
-        appearance: 'error',
-        autoDismiss: true,
-      });
+      toast.error('Ops, si è verificato un errore!');
     };
 
     regionsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
@@ -97,7 +90,7 @@ const RegionsDetail = () => {
 
   return (
     <AppBaseDetail
-      name="regione"
+      type="regione"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >

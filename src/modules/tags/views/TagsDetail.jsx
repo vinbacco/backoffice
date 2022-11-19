@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import AsyncSelect from 'react-select/async';
-import { useToasts } from 'react-toast-notifications';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import {
   CForm,
@@ -21,20 +21,13 @@ import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 
 const TagsDetail = () => {
   const { id } = useParams();
-  const { addToast } = useToasts();
   const {
     control,
     handleSubmit,
     setValue,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      tag: '',
-      product_type_id: '',
-      color: '',
-    },
-  });
+  } = useForm();
   const [state, setState] = useState({
     loading: true,
     model: null,
@@ -66,23 +59,32 @@ const TagsDetail = () => {
   });
 
   const onSubmit = (data) => {
-    const okEditCallback = (response) => {
-      setState({ loading: false, model: { ...response.data } });
-      addToast('Dato modificato con successo!', {
-        appearance: 'success',
-        autoDismiss: true,
-      });
-    };
+    const savePromise = new Promise((resolve, reject) => {
+      const okEditCallback = (response) => {
+        setState({ loading: false, model: { ...response.data } });
+        resolve();
+      };
 
-    const koEditCallback = (response) => {
-      setState({ loading: false, error: response?.error });
-      addToast('Ops, si è verificato un errore!', {
-        appearance: 'error',
-        autoDismiss: true,
-      });
-    };
+      const koEditCallback = (response) => {
+        setState({ loading: false, error: response?.error });
+        reject();
+      };
 
-    tagsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      tagsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando le modifiche...',
+      success: 'Dato modificato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
   };
 
   const handleReset = () => {
@@ -107,7 +109,7 @@ const TagsDetail = () => {
 
   return (
     <AppBaseDetail
-      name="tags"
+      type="tags"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >
@@ -117,7 +119,7 @@ const TagsDetail = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <CRow>
-            <CCol md={6}>
+            <CCol md={6} sm={12}>
               <Controller
                 name="product_type_id"
                 control={control}
@@ -137,11 +139,10 @@ const TagsDetail = () => {
                 )}
               />
             </CCol>
-          </CRow>
-          <CRow>
-            <CCol md={6}>
+            <CCol md={4} sm={10}>
               <Controller
                 name="tag"
+                defaultValue=""
                 control={control}
                 render={({ field }) => (
                   <CFormInput
@@ -151,20 +152,21 @@ const TagsDetail = () => {
                 )}
               />
             </CCol>
-            <div className="mb-3" />
-          </CRow>
-          <CRow>
-            <CCol md={6}>
+            <CCol md={2} sm={2}>
               <Controller
-                name="colore"
+                name="color"
                 control={control}
+                defaultValue="#ffffff"
                 render={({ field }) => (
                   <CFormInput
+                    type="color"
+                    id="tagColorInput"
+                    label="Colore"
+                    title="Scegli il colore del tag"
                     {...field}
                   />
                 )}
               />
-              <small id="emailHelp" className="form-text text-muted">Valore in formato esadecimale (Es: #ff0000)</small>
             </CCol>
           </CRow>
         </CForm>
