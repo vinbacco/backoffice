@@ -16,7 +16,12 @@ export default class RegionsService extends ApiProxyService {
       paginate, page, order_by: order, sort_by: sort,
     };
     if (filters) {
-      queryParams = { ...queryParams, ...filters, product_type_id: this.TOUR_PRODUCT_TYPE_ID };
+      queryParams =
+      {
+        ...queryParams,
+        ...filters,
+        ...{ product_type_id: this.TOUR_PRODUCT_TYPE_ID, parent_id: null },
+      };
     }
     const path = '/product_categories';
     super.getList(path, queryParams, okCallback, koCallback);
