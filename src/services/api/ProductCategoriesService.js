@@ -4,7 +4,7 @@ export default class ProductCategoriesService extends ApiProxyService {
   getList({
     paginate,
     page,
-    order = 'business_name',
+    order = 'name',
     sort = 'ASC',
     filters,
     okCallback,
