@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable dot-notation */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
@@ -95,11 +96,14 @@ const TagsDetail = () => {
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
+        let feedCurrent = null;
+        if (response.data.feed._id && response.data.feed.name) {
+          feedCurrent = { value: response.data.feed._id, label: response.data.feed.name };
+        }
         setValue('tag', response.data.tag);
         setValue('color', response.data.color);
-        // FIXME: Attendere lookup feed_id per inserire valore giusto
-        setValue('feed_id', { value: '63754228829d1800165c35d4', label: 'Formato Vino' });
-        setState({ ...state, loading: false, model: { ...response.data, feed_id: { value: '63754228829d1800165c35d4', label: 'Formato Vino' } } });
+        setValue('feed_id', feedCurrent);
+        setState({ ...state, loading: false, model: { ...response.data, feed_id: feedCurrent } });
       };
 
       const koGetCallback = (error) => {

@@ -31,6 +31,7 @@ import {
 import AppTable from 'src/components/ui/List/AppTable';
 import Pagination from 'src/components/ui/List/Pagination';
 import dataToQueryParams from 'src/utils/dataToQueryParams';
+import AppLoadingSpinner from '../AppLoadingSpinner';
 
 function AppList({
   SectionServiceClass,
@@ -50,6 +51,9 @@ function AppList({
   const location = useLocation();
   const [state, setState] = useState({ selectedItems: [] });
   const [creationAction, setCreationAction] = useState({ error: null, executing: false });
+  const [deleteAction, setDeleteAction] = useState({
+    error: null, executing: false, success: null,
+  });
   const { control, handleSubmit } = useForm({
     defaultValues: {
       listFilter: '',
@@ -289,6 +293,53 @@ function AppList({
     setShowCreateModal(false);
   };
 
+  const handleDeleteItems = () => {
+    setDeleteAction({ error: null, executing: true, success: null });
+    sectionService.deleteItem([...state.selectedItems], () => {
+      const newTableData = { ...tableData };
+      newTableData.data = null;
+      setState({ selectedItems: [] });
+      setDeleteAction({ error: null, executing: false, success: true });
+      setTableData(newTableData);
+      processData(newTableData);
+    }, (error) => {
+      setDeleteAction({ error, executing: false, success: false });
+    });
+  };
+
+  const showDeleteModalAndClearModel = () => {
+    setDeleteAction({ error: null, executing: false, success: null });
+    setShowDeleteModal(true);
+  };
+
+  const renderDeleteModal = () => {
+    let renderLabel = `Sei sicuro di voler eliminare ${state.selectedItems.length === 1 ? 'l\'elemento selezionato' : 'gli elementi selezionati'}? Questa azione non può essere annullata.`;
+    if (deleteAction.success === true) {
+      renderLabel = 'Operazione completata con successo.';
+    } else if (deleteAction.success === false) {
+      // TODO: verificare possibili errori, nessuno trovato al momento.
+      renderLabel = "Si è verificato un errore nell'esecuzione dell'operazione.";
+    }
+    return (
+      <CModal backdrop="static" visible={showDeleteModal}>
+        <CModalHeader closeButton={false}>
+          <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare l\'elemento' : 'Eliminare gli elementi'}</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {deleteAction.executing === true ? <AppLoadingSpinner /> : renderLabel}
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="danger" disabled={deleteAction.executing === true} onClick={() => setShowDeleteModal(false)}>
+            {deleteAction.success === null ? 'Annulla' : 'Chiudi'}
+          </CButton>
+          {deleteAction.success === null && (
+            <CButton color="primary" disabled={deleteAction.executing === true} onClick={() => handleDeleteItems()}>Si</CButton>
+          )}
+        </CModalFooter>
+      </CModal>
+    );
+  };
+
   return (
     <>
       <h1 className="list-title">{sectionTitle}</h1>
@@ -325,7 +376,7 @@ function AppList({
             <CIcon icon={cilPencil} className="icon-button" />
             Modifica
           </CButton>
-          <CButton color="primary" disabled={tableData.data === null || state.selectedItems.length === 0} onClick={() => setShowDeleteModal(true)}>
+          <CButton color="primary" disabled={tableData.data === null || state.selectedItems.length === 0} onClick={() => showDeleteModalAndClearModel()}>
             <CIcon icon={cilTrash} className="icon-button" />
             Elimina
           </CButton>
@@ -375,20 +426,7 @@ function AppList({
           <CButton type="submit" disabled={creationAction.executing === true} form="creationForm" color="primary">Crea</CButton>
         </CModalFooter>
       </CModal>
-      <CModal backdrop="static" visible={showDeleteModal}>
-        <CModalHeader closeButton={false}>
-          <CModalTitle>{state.selectedItems.length === 1 ? 'Eliminare l\'elemento' : 'Eliminare gli elementi'}</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {`Sei sicuro di voler eliminare ${state.selectedItems.length === 1 ? 'l\'elemento selezionato' : 'gli elementi selezionati'}? Questa azione non può essere annullata.`}
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="danger" onClick={() => setShowDeleteModal(false)}>
-            Annulla
-          </CButton>
-          <CButton color="primary">Si</CButton>
-        </CModalFooter>
-      </CModal>
+      {renderDeleteModal()}
     </>
   );
 }
