@@ -34,7 +34,6 @@ export default class TagsService extends ApiProxyService {
 
   updateItem(id, body, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${id}`;
-    super.updateItem(path, body, okCallback, koCallback);
     const updateItemBody = { ...body };
     updateItemBody.feed_id = updateItemBody.feed_id.value;
     super.updateItem(path, updateItemBody, okCallback, koCallback);
