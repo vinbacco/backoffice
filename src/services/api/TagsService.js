@@ -1,4 +1,5 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
 export default class TagsService extends ApiProxyService {
   BASE_PATH = '/tags';
@@ -23,7 +24,8 @@ export default class TagsService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[feed_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
@@ -34,7 +36,7 @@ export default class TagsService extends ApiProxyService {
     const path = `${this.BASE_PATH}/${id}`;
     super.updateItem(path, body, okCallback, koCallback);
     const updateItemBody = { ...body };
-    updateItemBody.product_type_id = updateItemBody.product_type_id.value;
+    updateItemBody.feed_id = updateItemBody.feed_id.value;
     super.updateItem(path, updateItemBody, okCallback, koCallback);
   }
 }

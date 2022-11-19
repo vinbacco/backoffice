@@ -35,7 +35,7 @@ const AppBaseDetail = ({
   resetAction,
   children,
 }) => (
-  <CCard>
+  <CCard className="mb-4">
     <CCardHeader>
       <CRow className="mb-4">
         <CCol>

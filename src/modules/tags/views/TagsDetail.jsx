@@ -18,6 +18,7 @@ import FeedsService from 'src/services/api/FeedsService';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 // COMPONENTS
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const TagsDetail = () => {
   const { id } = useParams();
@@ -95,7 +96,10 @@ const TagsDetail = () => {
     if (id) {
       const okGetCallback = (response) => {
         setValue('tag', response.data.tag);
-        setState({ ...state, loading: false, model: { ...response.data } });
+        setValue('color', response.data.color);
+        // FIXME: Attendere lookup feed_id per inserire valore giusto
+        setValue('feed_id', { value: '63754228829d1800165c35d4', label: 'Formato Vino' });
+        setState({ ...state, loading: false, model: { ...response.data, feed_id: { value: '63754228829d1800165c35d4', label: 'Formato Vino' } } });
       };
 
       const koGetCallback = (error) => {
@@ -107,6 +111,8 @@ const TagsDetail = () => {
     }
   }, [id]);
 
+  if (state?.loading === true) return <AppLoadingSpinner />;
+
   return (
     <AppBaseDetail
       type="tags"
@@ -115,15 +121,16 @@ const TagsDetail = () => {
     >
       <section id="tags-detail">
         <CForm
-          className="row g-3"
+          className="row g-3 mt-3"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <CRow>
-            <CCol md={6} sm={12}>
+          <CRow className="mb-3">
+            <CCol>
               <Controller
                 name="product_type_id"
                 control={control}
                 rules={{ required: true }}
+                defaultValue={state?.model?.feed_id || null}
                 render={({ field }) => (
                   <>
                     <CFormLabel htmlFor="feed_id">Feed</CFormLabel>
@@ -139,7 +146,9 @@ const TagsDetail = () => {
                 )}
               />
             </CCol>
-            <CCol md={4} sm={10}>
+          </CRow>
+          <CRow className="mb-3">
+            <CCol>
               <Controller
                 name="tag"
                 defaultValue=""
@@ -152,17 +161,16 @@ const TagsDetail = () => {
                 )}
               />
             </CCol>
-            <CCol md={2} sm={2}>
+          </CRow>
+          <CRow className="mb-3">
+            <CCol>
               <Controller
                 name="color"
-                control={control}
                 defaultValue="#ffffff"
+                control={control}
                 render={({ field }) => (
                   <CFormInput
-                    type="color"
-                    id="tagColorInput"
-                    label="Colore"
-                    title="Scegli il colore del tag"
+                    label="Colore tag"
                     {...field}
                   />
                 )}
