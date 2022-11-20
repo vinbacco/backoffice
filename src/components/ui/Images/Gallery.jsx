@@ -61,6 +61,7 @@ const Gallery = ({
     userSelect: 'none',
     padding: grid * 2,
     margin: `0 0 ${grid}px 0`,
+    borderRadius: 15,
     // change background colour if dragging
     background: isDragging ? 'lightgreen' : 'grey',
     // styles we need to apply on draggables
@@ -71,7 +72,9 @@ const Gallery = ({
     background: 'lightgrey',
     padding: grid,
     width: 200,
+    minHeight: '100%',
     margin: 'auto',
+    borderRadius: 15,
   });
 
   const processChangeOrder = (newOrder) => {

@@ -25,6 +25,9 @@ function ToursDetail() {
   } = useForm({
     defaultValues: {
       name: '',
+      meta_title: '',
+      meta_keywords: '',
+      meta_description: '',
       base_price: 0,
       abstract: '',
       description: '',
@@ -49,6 +52,9 @@ function ToursDetail() {
 
         tourModelData.name = tourResponseData.name;
         tourModelData.base_price = tourResponseData.base_price;
+        tourModelData.meta_title = tourResponseData.meta_title || '';
+        tourModelData.meta_keywords = tourResponseData.meta_keywords || '';
+        tourModelData.meta_description = tourResponseData.meta_description || '';
         tourModelData.abstract = tourResponseData?.abstract || '';
         tourModelData.description = tourResponseData?.description || '';
         tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
@@ -81,6 +87,7 @@ function ToursDetail() {
   }, []);
 
   const saveAction = (type) => {
+    console.log(getValues());
     switch (type) {
       case 'publish':
         // Azione pubblica
@@ -244,23 +251,23 @@ function ToursDetail() {
               <CRow className="g-3 mb-4">
                 <CCol md={6} sm={12}>
                   <Controller
-                    name="title"
+                    name="meta_title"
                     control={control}
-                    render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-title" {...field} />}
+                    render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-meta_title" {...field} />}
                   />
                 </CCol>
                 <CCol md={6} sm={12}>
                   <Controller
-                    name="keywords"
+                    name="meta_keywords"
                     control={control}
-                    render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-keywords" {...field} />}
+                    render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-meta_keywords" {...field} />}
                   />
                 </CCol>
                 <CCol md={12}>
                   <Controller
-                    name="meta-description"
+                    name="meta_description"
                     control={control}
-                    render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta-description" rows="3" {...field} />}
+                    render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta_description" rows="3" {...field} />}
                   />
                   <small>Non superare i 160 caratteri</small>
                 </CCol>
