@@ -8,6 +8,24 @@ const utils = {
     });
     return newPath;
   },
+  /**
+   * Esempio:
+   * Utils.formatCurrency({
+        number: parseFloat(NUMBER_TO_FORMAT)
+     })
+   */
+  formatCurrency: ({ locale, currency, number }) => {
+    const formatter = new Intl.NumberFormat(
+        locale || 'it-IT',
+        {
+            style: 'currency',
+            currency: currency || 'EUR',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }
+    );
+    return formatter.format(number);
+  },
 };
 
 export default utils;
