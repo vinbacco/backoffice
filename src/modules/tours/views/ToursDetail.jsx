@@ -30,6 +30,9 @@ function ToursDetail() {
       contact_name: '',
       category_name: '',
       url_friendly_name: '',
+      attributes: {
+        purchase_options: [],
+      },
       tags: [],
     },
   });
@@ -49,6 +52,9 @@ function ToursDetail() {
         tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
         tourModelData.contact_name = tourResponseData?.contact?.business_name;
         tourModelData.category_name = tourResponseData?.product_category?.name;
+        tourModelData.attributes = tourResponseData?.attributes || {
+          purchase_options: [],
+        };
         tourModelData.tags = tourResponseData?.tags || [];
 
         reset(tourModelData || {});
@@ -106,8 +112,8 @@ function ToursDetail() {
     const formatData = { ...data };
     formatData.name = formatData.name_option.label;
     formatData.price_type = formatData.price_type_option.label;
-    newModel.tags.push(formatData);
-    setValue('tags', [...newModel.tags]);
+    newModel.attributes.purchase_options.push(formatData);
+    setValue('attributes', newModel.attributes);
     setState({ ...state, model: newModel });
     formProps.closeModal();
   };
@@ -119,8 +125,8 @@ function ToursDetail() {
       delete formatData.id;
       formatData.name = formatData.name_option.label;
       formatData.price_type = formatData.price_type_option.label;
-      newModel.tags[data.id] = (formatData);
-      setValue('tags', [...newModel.tags]);
+      newModel.attributes.purchase_options[data.id] = (formatData);
+      setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
     }
     formProps.closeModal();
@@ -129,8 +135,8 @@ function ToursDetail() {
   const deletePackage = (data) => {
     const newModel = { ...getValues() };
     if (typeof data.id === 'number' && data.id >= 0) {
-      newModel.tags.splice(data.id, 1);
-      setValue('tags', [...newModel.tags]);
+      newModel.attributes.purchase_options.splice(data.id, 1);
+      setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
     }
   };
@@ -164,14 +170,18 @@ function ToursDetail() {
               />
             </CCol>
             <CCol md={6} sm={12}>
-              <Controller
-                name="base_price"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <CFormInput type="number" label="Prezzo base (€)" {... field} />
-                )}
-              />
+              <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
+              <CInputGroup>
+                <Controller
+                  name="base_price"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <CFormInput id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
+                  )}
+                />
+                <CInputGroupText id="tour-base_price_append">€</CInputGroupText>
+              </CInputGroup>
             </CCol>
             <CCol md={12}>
               <AppMultiData
@@ -195,8 +205,12 @@ function ToursDetail() {
                   },
                 })}
                 deleteFunction={(deleteData) => deletePackage(deleteData)}
-                columns={['name', 'price', 'price_type']}
-                data={state?.model?.tags || null}
+                columns={[
+                  { index: 'name', type: 'text' },
+                  { index: 'price', type: 'currency' },
+                  { index: 'price_type', type: 'text' },
+                ]}
+                data={state?.model?.attributes?.purchase_options || null}
               />
             </CCol>
           </CRow>

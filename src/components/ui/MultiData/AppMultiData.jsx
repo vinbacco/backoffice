@@ -24,6 +24,8 @@ import {
   cilTrash,
 } from '@coreui/icons';
 
+import utils from 'src/services/api/utils/utils';
+
 const AppMultiData = ({
   title,
   item,
@@ -43,6 +45,18 @@ const AppMultiData = ({
   const handleDeleteFunction = () => {
     deleteFunction({ target: deleteModalState.target });
     setDeleteModalState({ show: false, target: null });
+  };
+
+  const renderColumnValue = (columnData, columnProps) => {
+    const displayData = columnData[columnProps.index];
+    if (!displayData) return '-';
+    switch (columnProps.type) {
+      case 'currency':
+        return utils.formatCurrency({ number: parseFloat(displayData) });
+      case 'text':
+      default:
+        return displayData;
+    }
   };
 
   return (
@@ -74,7 +88,7 @@ const AppMultiData = ({
                   <CTableRow key={`multidata_${item}_data_${indexData}`}>
                     {columns.map((currentColumn, indexColumn) => (
                       <CTableDataCell key={`multidata_${item}_data_column_${indexColumn}_${currentColumn}`}>
-                        {currentData[currentColumn] || '-'}
+                        {renderColumnValue(currentData, currentColumn)}
                       </CTableDataCell>
                     ))}
                     <CTableDataCell className="col-1">
@@ -213,7 +227,10 @@ AppMultiData.propTypes = {
   deleteFunction: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.any) || null,
-  columns: PropTypes.arrayOf(PropTypes.string),
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string,
+    index: PropTypes.string,
+  })),
 };
 
 AppMultiData.defaultProps = {

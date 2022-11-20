@@ -170,23 +170,27 @@ const PackageForm = ({
         </CRow>
         <CRow>
           <CCol md={6} sm={12}>
+            <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
             <Controller
               name="price"
               control={control}
               rules={{ required: true }}
               defaultValue=""
               render={({ field }) => (
-                <CFormInput
-                  invalid={!!errors.price}
-                  feedback={errors?.price ? composeErrorFormType(errors.price) : null}
-                  type="text"
-                  id="price"
-                  label="Prezzo (€)"
-                  placeholder="Inserisci prezzo"
-                  {... field}
-                />
+                <CInputGroup>
+                  <CFormInput
+                    invalid={!!errors.price}
+                    type="number"
+                    id="price"
+                    aria-describedby="package-price_append"
+                    placeholder="Inserisci prezzo"
+                    {... field}
+                  />
+                  <CInputGroupText id="tour-price_append">€</CInputGroupText>
+                </CInputGroup>
               )}
             />
+            {errors.price ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.price)}</div> : null}
             <div className="mb-3" />
           </CCol>
           <CCol md={6} sm={12}>
@@ -235,7 +239,7 @@ const PackageForm = ({
           id: deleteProps.target,
         })}
         data={state.services || null}
-        columns={['service_name']}
+        columns={[{ index: 'service_name', type: 'text' }]}
         modalAlign="center"
       />
     </>
