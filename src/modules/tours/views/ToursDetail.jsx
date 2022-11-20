@@ -110,8 +110,8 @@ function ToursDetail() {
   const insertPackage = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
-    formatData.name = formatData.name_option.label;
-    formatData.price_type = formatData.price_type_option.label;
+    formatData.name = formatData.name_tag.label;
+    formatData.price_type = formatData.price_type_tag.label;
     newModel.attributes.purchase_options.push(formatData);
     setValue('attributes', newModel.attributes);
     setState({ ...state, model: newModel });
@@ -123,8 +123,8 @@ function ToursDetail() {
     if (typeof data.id === 'number' && data.id >= 0) {
       const formatData = { ...data };
       delete formatData.id;
-      formatData.name = formatData.name_option.label;
-      formatData.price_type = formatData.price_type_option.label;
+      formatData.name = formatData.name_tag.label;
+      formatData.price_type = formatData.price_type_tag.label;
       newModel.attributes.purchase_options[data.id] = (formatData);
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
@@ -177,7 +177,7 @@ function ToursDetail() {
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <CFormInput id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
+                    <CFormInput className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
                   )}
                 />
                 <CInputGroupText id="tour-base_price_append">€</CInputGroupText>

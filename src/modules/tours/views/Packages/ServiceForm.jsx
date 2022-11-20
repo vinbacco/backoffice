@@ -18,7 +18,7 @@ const ServiceForm = ({
     control, handleSubmit, reset, formState: { errors },
   } = useForm({
     defaultValues: defaultValues || {
-      service_name: '',
+      name: '',
     },
   });
 
@@ -37,16 +37,16 @@ const ServiceForm = ({
       <CRow>
         <CCol>
           <Controller
-            name="service_name"
+            name="name"
             control={control}
             rules={{ required: true }}
             defaultValue=""
             render={({ field }) => (
               <CFormInput
-                invalid={!!errors.service_name}
-                feedback={errors?.service_name ? composeErrorFormType(errors.service_name) : null}
+                invalid={!!errors.name}
+                feedback={errors?.name ? composeErrorFormType(errors.name) : null}
                 type="text"
-                id="service_name"
+                id="name"
                 label="Servizio"
                 placeholder="Inserisci servizio"
                 {... field}
@@ -62,7 +62,7 @@ const ServiceForm = ({
 
 ServiceForm.propTypes = {
   defaultValues: PropTypes.shape({
-    service_name: PropTypes.string,
+    name: PropTypes.string,
   }),
   submit: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
@@ -70,7 +70,7 @@ ServiceForm.propTypes = {
     show: PropTypes.bool,
     target: PropTypes.shape({
       data: PropTypes.shape({
-        service_name: PropTypes.string,
+        name: PropTypes.string,
         id: PropTypes.number,
       }),
     }) || null,
@@ -79,7 +79,7 @@ ServiceForm.propTypes = {
 
 ServiceForm.defaultProps = {
   defaultValues: {
-    service_name: '',
+    name: '',
   },
   parentProps: {},
 };

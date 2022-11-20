@@ -28,17 +28,17 @@ const PackageForm = ({
   } = useForm({
     defaultValues: defaultValues || {
       id: null,
-      name_option: null,
+      name_tag: null,
       price: '',
-      price_type_option: null,
+      price_type_tag: null,
       services: [],
     },
   });
   const [state, setState] = useState(defaultValues || {
     id: null,
-    name_option: '',
+    name_tag: '',
     price: '',
-    price_type_option: '',
+    price_type_tag: '',
     services: [],
   });
 
@@ -131,9 +131,9 @@ const PackageForm = ({
         if (typeof resolveId !== 'number') resolveId = null;
         const newData = {
           id: resolveId,
-          name_option: parentProps?.target?.data?.name_option || null,
+          name_tag: parentProps?.target?.data?.name_tag || null,
           price: parentProps?.target?.data?.price || '',
-          price_type_option: parentProps?.target?.data?.price_type_option || null,
+          price_type_tag: parentProps?.target?.data?.price_type_tag || null,
           services: [...(parentProps?.target?.data?.services || [])],
         };
         reset(newData);
@@ -148,20 +148,20 @@ const PackageForm = ({
         <CRow>
           <CCol md={6} sm={12}>
             <Controller
-              name="name_option"
+              name="name_tag"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <>
-                  <CFormLabel htmlFor="package-name_option">Nome</CFormLabel>
+                  <CFormLabel htmlFor="package-name_tag">Nome</CFormLabel>
                   <AsyncSelect
-                    inputId="package-name_option"
+                    inputId="package-name_tag"
                     isClearable
                     defaultOptions
                     loadOptions={loadTags}
                     {...field}
                   />
-                  {errors.name_option ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.name_option)}</div> : null}
+                  {errors.name_tag ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.name_tag)}</div> : null}
                 </>
               )}
             />
@@ -182,6 +182,7 @@ const PackageForm = ({
                     invalid={!!errors.price}
                     type="number"
                     id="price"
+                    className="text-align-end"
                     aria-describedby="package-price_append"
                     placeholder="Inserisci prezzo"
                     {... field}
@@ -195,20 +196,20 @@ const PackageForm = ({
           </CCol>
           <CCol md={6} sm={12}>
             <Controller
-              name="price_type_option"
+              name="price_type_tag"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <>
-                  <CFormLabel htmlFor="package-price_type_option">Tipologia prezzo</CFormLabel>
+                  <CFormLabel htmlFor="package-price_type_tag">Tipologia prezzo</CFormLabel>
                   <AsyncSelect
-                    inputId="package-price_type_option"
+                    inputId="package-price_type_tag"
                     isClearable
                     defaultOptions
                     loadOptions={loadPriceTypes}
                     {...field}
                   />
-                  {errors.price_type_option ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.price_type_option)}</div> : null}
+                  {errors.price_type_tag ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.price_type_tag)}</div> : null}
                 </>
               )}
             />
@@ -239,7 +240,7 @@ const PackageForm = ({
           id: deleteProps.target,
         })}
         data={state.services || null}
-        columns={[{ index: 'service_name', type: 'text' }]}
+        columns={[{ index: 'name', type: 'text' }]}
         modalAlign="center"
       />
     </>
@@ -248,12 +249,12 @@ const PackageForm = ({
 
 PackageForm.propTypes = {
   defaultValues: PropTypes.shape({
-    name_option: PropTypes.shape({
+    name_tag: PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
     }),
     price: PropTypes.number,
-    price_type_option: PropTypes.shape({
+    price_type_tag: PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
     }),
@@ -269,9 +270,9 @@ PackageForm.propTypes = {
     target: PropTypes.shape({
       data: PropTypes.shape({
         id: PropTypes.number,
-        name_option: PropTypes.string,
+        name_tag: PropTypes.string,
         price: PropTypes.string,
-        price_type_option: PropTypes.string,
+        price_type_tag: PropTypes.string,
         services: PropTypes.arrayOf(PropTypes.string),
       }),
     }) || null,
@@ -281,9 +282,9 @@ PackageForm.propTypes = {
 PackageForm.defaultProps = {
   defaultValues: {
     id: null,
-    name_option: null,
+    name_tag: null,
     price: '',
-    price_type_option: null,
+    price_type_tag: null,
     services: [],
   },
   parentProps: {},
