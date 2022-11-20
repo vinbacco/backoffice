@@ -15,7 +15,7 @@ import {
 // SERVICES
 import RegionsService from 'src/services/api/RegionsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
 
 const RegionsDetail = () => {
   const { id } = useParams();

@@ -52,9 +52,9 @@ export default class AbstractService {
 
     const formData = new FormData();
     formData.append('file', fileData.file);
-    formData.append('filename', fileData.filename);
-    formData.append('type', fileData.mimetype);
-    formData.append('order', 0);
+    formData.append('filename', fileData.file.name);
+    formData.append('minetype', fileData.file.type);
+    formData.append('type', fileData.type);
 
     return this.axiosInstance.post(path, formData);
   }

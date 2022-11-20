@@ -15,7 +15,7 @@ import {
 // SERVICES
 import ZonesService from 'src/services/api/ZonesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
 
 const ZonesDetail = () => {
   const { id } = useParams();

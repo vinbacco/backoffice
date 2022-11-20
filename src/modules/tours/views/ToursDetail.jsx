@@ -13,7 +13,8 @@ import TourService from 'src/services/api/TourService';
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
+import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -36,6 +37,7 @@ function ToursDetail() {
       tags: [],
     },
   });
+  const [tourPreviewImage, setTourPreviewImage] = useState(null);
   const [tourMediaContents, setTourMediaContents] = useState([]);
 
   useEffect(() => {
@@ -64,6 +66,7 @@ function ToursDetail() {
           && tourResponseData.media_contents.length > 0
         ) {
           setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourPreviewImage(tourResponseData.media_contents.find((current) => current.type === 'tour_preview_image'));
         }
       };
 
@@ -94,6 +97,25 @@ function ToursDetail() {
   const uploadMediaContent = (fileData, type) => {
     const tourService = new TourService();
     const mediaContentData = {};
+
+    const okUploadMediaContent = (categoryResponse) => {
+      console.log(categoryResponse?.data);
+    };
+
+    const koUploadMediaContent = (error) => {
+      console.log(error);
+    };
+
+    tourService
+      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
+  };
+
+  const handleChangePreviewImage = (fileData) => {
+    const tourService = new TourService();
+    const mediaContentData = {
+      file: fileData,
+      type: 'tour_preview_image',
+    };
 
     const okUploadMediaContent = (categoryResponse) => {
       console.log(categoryResponse?.data);
@@ -218,7 +240,38 @@ function ToursDetail() {
         tabContentWeb={(
           <CRow className="g-3">
             <CCol>
-              <CRow className="g-3">
+              <h4>Intestazione</h4>
+              <CRow className="g-3 mb-4">
+                <CCol md={6} sm={12}>
+                  <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-title" {...field} />}
+                  />
+                </CCol>
+                <CCol md={6} sm={12}>
+                  <Controller
+                    name="keywords"
+                    control={control}
+                    render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-keywords" {...field} />}
+                  />
+                </CCol>
+                <CCol md={12}>
+                  <Controller
+                    name="meta-description"
+                    control={control}
+                    render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta-description" rows="3" {...field} />}
+                  />
+                  <small>Non superare i 160 caratteri</small>
+                </CCol>
+              </CRow>
+              <ImageWithPreview
+                title="Immagine di anteprima"
+                data={tourPreviewImage}
+                onUpload={(file) => handleChangePreviewImage(file)}
+              />
+              <h4>Contenuto</h4>
+              <CRow className="g-3 mb-4">
                 <CCol md={12}>
                   <Controller
                     name="abstract"

@@ -15,7 +15,7 @@ import ContactsService from 'src/services/api/ContactsService';
 
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function ToursDetail() {
