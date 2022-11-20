@@ -36,6 +36,34 @@ export default class TagsService extends ApiProxyService {
     const path = `${this.BASE_PATH}/${id}`;
     const updateItemBody = { ...body };
     updateItemBody.feed_id = updateItemBody.feed_id.value;
-    super.updateItem(path, updateItemBody, okCallback, koCallback);
+    const handleOkCallback = (response) => {
+      this.getItem(id, okCallback, okCallback(response));
+    };
+    super.updateItem(path, updateItemBody, handleOkCallback, koCallback);
+  }
+
+  deleteItem(deleteInfo, okCallback, koCallback) {
+    const deletePromisesArray = [];
+    if (typeof deleteInfo === 'string' || typeof deleteInfo === 'number') {
+      deletePromisesArray.push(
+        new Promise((resolve, reject) => {
+          super.deleteItem(`${this.BASE_PATH}/${deleteInfo}`, (res) => resolve(res), (err) => reject(err));
+        }),
+      );
+    } else if (Array.isArray(deleteInfo)) {
+      deleteInfo.forEach((currentItem) => {
+        deletePromisesArray.push(
+          new Promise((resolve, reject) => {
+            super.deleteItem(`${this.BASE_PATH}/${currentItem}`, (res) => resolve(res), (err) => reject(err));
+          }),
+        );
+      });
+    }
+    Promise.allSettled(deletePromisesArray)
+      .then((results) => {
+        const rejectedPromises = results.filter((currentResult) => currentResult.status === 'rejected');
+        if (rejectedPromises.length <= 0) okCallback();
+        else koCallback([...rejectedPromises]);
+      });
   }
 }

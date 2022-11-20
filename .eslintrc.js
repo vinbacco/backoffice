@@ -25,5 +25,6 @@ module.exports = {
     'react/function-component-definition': 'off',
     'react/jsx-props-no-spreading': 'off',
     'operator-linebreak': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

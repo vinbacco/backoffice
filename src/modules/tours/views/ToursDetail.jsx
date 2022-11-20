@@ -19,7 +19,7 @@ function ToursDetail() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true, error: null });
   const {
-    control, handleSubmit, reset, getValues,
+    control, handleSubmit, reset, getValues, setValue,
   } = useForm({
     defaultValues: {
       name: '',
@@ -29,10 +29,10 @@ function ToursDetail() {
       contact_name: '',
       category_name: '',
       url_friendly_name: '',
+      tags: [],
     },
   });
   const [tourMediaContents, setTourMediaContents] = useState([]);
-  const [tourWineMediaContents, setTourWineMediaContents] = useState([]);
 
   useEffect(() => {
     if (id !== null && typeof id !== 'undefined') {
@@ -48,15 +48,15 @@ function ToursDetail() {
         tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
         tourModelData.contact_name = tourResponseData?.contact?.business_name;
         tourModelData.category_name = tourResponseData?.product_category?.name;
+        tourModelData.tags = tourResponseData?.tags || [];
 
         reset(tourModelData || {});
-        setState({ ...state, loading: false });
+        setState({ ...state, loading: false, model: tourModelData });
         if (
           Array.isArray(tourResponseData.media_contents)
           && tourResponseData.media_contents.length > 0
         ) {
           setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
-          setTourWineMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_wine_image')]);
         }
       };
 
@@ -100,6 +100,17 @@ function ToursDetail() {
       .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
 
+  const insertPackage = (data, formProps) => {
+    const newModel = { ...getValues() };
+    const formatData = { ...data };
+    formatData.name = formatData.name.label;
+    formatData.price_type = formatData.price_type.label;
+    newModel.tags.push(formatData);
+    setValue('tags', [...newModel.tags]);
+    setState({ ...state, model: newModel });
+    formProps.closeModal();
+  };
+
   if (state.loading === true) return <AppLoadingSpinner />;
 
   if (state.error) return <p>NO DATA</p>;
@@ -116,6 +127,7 @@ function ToursDetail() {
               <Controller
                 name="category_name"
                 control={control}
+                defaultValue=""
                 render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
               />
             </CCol>
@@ -123,6 +135,7 @@ function ToursDetail() {
               <Controller
                 name="contact_name"
                 control={control}
+                defaultValue=""
                 render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
               />
             </CCol>
@@ -130,21 +143,27 @@ function ToursDetail() {
               <Controller
                 name="base_price"
                 control={control}
+                defaultValue=""
                 render={({ field }) => (
-                  <>
-                    <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
-                    <CInputGroup>
-                      <CFormInput type="currency" id="tour-base_price" {... field} />
-                      <CInputGroupText>€</CInputGroupText>
-                    </CInputGroup>
-                  </>
+                  <CFormInput type="number" label="Prezzo base (€)" {... field} />
                 )}
               />
             </CCol>
             <CCol md={12}>
               <AppMultiData
                 title="Pacchetti"
-                createFormComponent={() => PackageForm({})}
+                item="Pacchetto"
+                modalSize="xl"
+                formId="pacchetto"
+                createFormComponent={(formProps) => PackageForm({
+                  formId: 'pacchetto',
+                  submit: (data) => insertPackage(data, formProps),
+                  parentProps: {
+                    show: formProps.show,
+                  },
+                })}
+                columns={['name', 'price', 'price_type']}
+                data={state?.model?.tags || null}
               />
             </CCol>
           </CRow>

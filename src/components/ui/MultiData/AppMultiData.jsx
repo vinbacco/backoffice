@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -24,10 +26,13 @@ import {
 
 const AppMultiData = ({
   title,
-  buildRowsFn = () => null,
+  item,
+  data,
+  modalSize,
+  modalAlign,
   createFormComponent = null,
-  editFormComponent = null,
-  deleteFn = null,
+  formId,
+  columns,
 }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -37,7 +42,7 @@ const AppMultiData = ({
     <>
       <CCard>
         <CCardHeader className="d-flex justify-content-start align-items-center">
-          <div>
+          <div className="me-4">
             {title}
           </div>
           <div className="d-inline-block ms-2">
@@ -51,55 +56,69 @@ const AppMultiData = ({
         </CCardHeader>
         <CCardBody>
           {tableData}
-          {buildRowsFn()}
-          <CTable bordered hover>
+          <CTable bordered>
             <CTableBody>
-              <CTableRow>
-                <CTableDataCell>Mark</CTableDataCell>
-                <CTableDataCell>Otto</CTableDataCell>
-                <CTableDataCell>@mdo</CTableDataCell>
-                <CTableDataCell className="col-1">
-                  <CButton
-                    color="secondary"
-                    onClick={() => setShowEditModal(!showEditModal)}
-                  >
-                    <CIcon icon={cilPencil} />
-                  </CButton>
-                </CTableDataCell>
-                <CTableDataCell className="col-1">
-                  <CButton
-                    color="secondary"
-                    onClick={() => setShowDeleteModal(!showDeleteModal)}
-                  >
-                    <CIcon icon={cilTrash} />
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
+              { !data || data.length <= 0
+                ? (
+                  <CTableRow>
+                    <CTableDataCell>Nessuno</CTableDataCell>
+                  </CTableRow>
+                )
+                : data.map((currentData, indexData) => (
+                  <CTableRow key={`multidata_${item}_data_${indexData}`}>
+                    {columns.map((currentColumn, indexColumn) => (
+                      <CTableDataCell key={`multidata_${item}_data_column_${indexColumn}_${currentColumn}`}>
+                        {currentData[currentColumn] || '-'}
+                      </CTableDataCell>
+                    ))}
+                    <CTableDataCell className="col-1">
+                      <CButton
+                        color="dark"
+                        variant="ghost"
+                        onClick={() => setShowEditModal(!showEditModal)}
+                      >
+                        <CIcon icon={cilPencil} />
+                      </CButton>
+                    </CTableDataCell>
+                    <CTableDataCell className="col-1">
+                      <CButton
+                        color="danger"
+                        variant="ghost"
+                        onClick={() => setShowDeleteModal(!showDeleteModal)}
+                      >
+                        <CIcon icon={cilTrash} />
+                      </CButton>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))}
             </CTableBody>
           </CTable>
         </CCardBody>
       </CCard>
       <CModal
+        alignment={modalAlign}
+        size={modalSize}
         id="createModal"
         backdrop="static"
         visible={showCreateModal}
       >
         <CModalHeader closeButton={false}>
-          <CModalTitle>
-            Aggiungi
-          </CModalTitle>
+          <CModalTitle>{`Aggiungi ${item}`}</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {createFormComponent()}
+          {createFormComponent({
+            show: showCreateModal,
+            closeModal: () => setShowCreateModal(false),
+          })}
         </CModalBody>
         <CModalFooter>
           <CButton color="danger" onClick={() => setShowCreateModal(false)}>
             Annulla
           </CButton>
-          <CButton color="primary">Si</CButton>
+          <CButton type="submit" form={formId} color="primary">Si</CButton>
         </CModalFooter>
       </CModal>
-      <CModal
+      {/* <CModal
         id="editModal"
         backdrop="static"
         visible={showEditModal}
@@ -143,21 +162,29 @@ const AppMultiData = ({
             Si
           </CButton>
         </CModalFooter>
-      </CModal>
+      </CModal> */}
     </>
   );
 };
 
 AppMultiData.propTypes = {
   title: PropTypes.string,
-  buildRowsFn: PropTypes.func.isRequired,
-  createFormComponent: PropTypes.node.isRequired,
-  editFormComponent: PropTypes.node.isRequired,
-  deleteFn: PropTypes.func.isRequired,
+  item: PropTypes.string,
+  modalAlign: PropTypes.oneOf(['top', 'center']),
+  modalSize: PropTypes.oneOf(['sm', 'lg', 'xl']),
+  createFormComponent: PropTypes.func.isRequired,
+  formId: PropTypes.string.isRequired,
+  data: PropTypes.arrayOf(PropTypes.any) || null,
+  columns: PropTypes.arrayOf(PropTypes.string),
 };
 
 AppMultiData.defaultProps = {
   title: 'Aggiungi titolo',
+  item: 'Item',
+  data: null,
+  modalSize: 'sm',
+  modalAlign: 'top',
+  columns: [],
 };
 
 export default AppMultiData;
