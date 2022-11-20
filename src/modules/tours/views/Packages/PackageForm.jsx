@@ -105,7 +105,7 @@ const PackageForm = ({
     if (typeof data.id === 'number' && data.id >= 0) {
       const clearData = { ...data };
       delete clearData.id;
-      newState.services[data.id] = (data);
+      newState.services[data.id] = (clearData);
       setValue('services', [...newState.services]);
       setState(newState);
     }
