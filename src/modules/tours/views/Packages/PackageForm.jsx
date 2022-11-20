@@ -27,16 +27,18 @@ const PackageForm = ({
     formState: { errors },
   } = useForm({
     defaultValues: defaultValues || {
-      name: null,
+      id: null,
+      name_option: null,
       price: '',
-      price_type: null,
+      price_type_option: null,
       services: [],
     },
   });
   const [state, setState] = useState(defaultValues || {
-    name: '',
+    id: null,
+    name_option: '',
     price: '',
-    price_type: '',
+    price_type_option: '',
     services: [],
   });
 
@@ -90,18 +92,53 @@ const PackageForm = ({
     });
   });
 
-  const insertService = (data, CreateFormProps) => {
+  const insertService = (data, formProps) => {
     const newState = { ...getValues() };
     newState.services.push(data);
     setValue('services', [...newState.services]);
     setState(newState);
-    CreateFormProps.closeModal();
+    formProps.closeModal();
+  };
+
+  const editService = (data, formProps) => {
+    const newState = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      const clearData = { ...data };
+      delete clearData.id;
+      newState.services[data.id] = (data);
+      setValue('services', [...newState.services]);
+      setState(newState);
+    }
+    formProps.closeModal();
+  };
+
+  const deleteService = (data) => {
+    const newState = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      newState.services.splice(data.id, 1);
+      setValue('services', [...newState.services]);
+      setState(newState);
+    }
   };
 
   useEffect(() => {
-    if (typeof parentProps?.show !== 'undefined' && parentProps.show === false) {
-      reset();
-      setState(defaultValues || {});
+    if (typeof parentProps?.show !== 'undefined') {
+      if (parentProps.show === false) {
+        reset();
+        setState(defaultValues || {});
+      } else {
+        let resolveId = parentProps?.target?.data?.id;
+        if (typeof resolveId !== 'number') resolveId = null;
+        const newData = {
+          id: resolveId,
+          name_option: parentProps?.target?.data?.name_option || null,
+          price: parentProps?.target?.data?.price || '',
+          price_type_option: parentProps?.target?.data?.price_type_option || null,
+          services: [...(parentProps?.target?.data?.services || [])],
+        };
+        reset(newData);
+        setState(newData);
+      }
     }
   }, [parentProps.show]);
 
@@ -111,20 +148,20 @@ const PackageForm = ({
         <CRow>
           <CCol md={6} sm={12}>
             <Controller
-              name="name"
+              name="name_option"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <>
-                  <CFormLabel htmlFor="package-name">Nome</CFormLabel>
+                  <CFormLabel htmlFor="package-name_option">Nome</CFormLabel>
                   <AsyncSelect
-                    inputId="package-name"
+                    inputId="package-name_option"
                     isClearable
                     defaultOptions
                     loadOptions={loadTags}
                     {...field}
                   />
-                  {errors.tag_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.tag_id)}</div> : null}
+                  {errors.name_option ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.name_option)}</div> : null}
                 </>
               )}
             />
@@ -137,6 +174,7 @@ const PackageForm = ({
               name="price"
               control={control}
               rules={{ required: true }}
+              defaultValue=""
               render={({ field }) => (
                 <CFormInput
                   invalid={!!errors.price}
@@ -153,20 +191,20 @@ const PackageForm = ({
           </CCol>
           <CCol md={6} sm={12}>
             <Controller
-              name="price_type"
+              name="price_type_option"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <>
-                  <CFormLabel htmlFor="package-price_type">Tipologia prezzo</CFormLabel>
+                  <CFormLabel htmlFor="package-price_type_option">Tipologia prezzo</CFormLabel>
                   <AsyncSelect
-                    inputId="package-price_type"
+                    inputId="package-price_type_option"
                     isClearable
                     defaultOptions
                     loadOptions={loadPriceTypes}
                     {...field}
                   />
-                  {errors.price_type_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.price_type_id)}</div> : null}
+                  {errors.price_type_option ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.price_type_option)}</div> : null}
                 </>
               )}
             />
@@ -179,14 +217,25 @@ const PackageForm = ({
         item="Servizio"
         formId="servizio-pacchetto"
         createFormComponent={(CreateFormProps) => ServiceForm({
-          formId: 'servizio-pacchetto',
+          formId: 'create_servizio-pacchetto',
           submit: (data) => insertService(data, CreateFormProps),
           parentProps: {
             show: CreateFormProps.show,
           },
         })}
+        editFormComponent={(EditFormProps) => ServiceForm({
+          formId: 'edit_servizio-pacchetto',
+          submit: (data) => editService(data, EditFormProps),
+          parentProps: {
+            show: EditFormProps.show,
+            target: EditFormProps.target,
+          },
+        })}
+        deleteFunction={(deleteProps) => deleteService({
+          id: deleteProps.target,
+        })}
         data={state.services || null}
-        columns={['service']}
+        columns={['service_name']}
         modalAlign="center"
       />
     </>
@@ -195,12 +244,12 @@ const PackageForm = ({
 
 PackageForm.propTypes = {
   defaultValues: PropTypes.shape({
-    name: PropTypes.shape({
+    name_option: PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
     }),
     price: PropTypes.number,
-    price_type: PropTypes.shape({
+    price_type_option: PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
     }),
@@ -213,14 +262,24 @@ PackageForm.propTypes = {
   submit: PropTypes.func.isRequired,
   parentProps: PropTypes.shape({
     show: PropTypes.bool,
+    target: PropTypes.shape({
+      data: PropTypes.shape({
+        id: PropTypes.number,
+        name_option: PropTypes.string,
+        price: PropTypes.string,
+        price_type_option: PropTypes.string,
+        services: PropTypes.arrayOf(PropTypes.string),
+      }),
+    }) || null,
   }),
 };
 
 PackageForm.defaultProps = {
   defaultValues: {
-    name: null,
+    id: null,
+    name_option: null,
     price: '',
-    price_type: null,
+    price_type_option: null,
     services: [],
   },
   parentProps: {},

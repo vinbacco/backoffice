@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
@@ -103,12 +104,35 @@ function ToursDetail() {
   const insertPackage = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
-    formatData.name = formatData.name.label;
-    formatData.price_type = formatData.price_type.label;
+    formatData.name = formatData.name_option.label;
+    formatData.price_type = formatData.price_type_option.label;
     newModel.tags.push(formatData);
     setValue('tags', [...newModel.tags]);
     setState({ ...state, model: newModel });
     formProps.closeModal();
+  };
+
+  const editPackage = (data, formProps) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      const formatData = { ...data };
+      delete formatData.id;
+      formatData.name = formatData.name_option.label;
+      formatData.price_type = formatData.price_type_option.label;
+      newModel.tags[data.id] = (formatData);
+      setValue('tags', [...newModel.tags]);
+      setState({ ...state, model: newModel });
+    }
+    formProps.closeModal();
+  };
+
+  const deletePackage = (data) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      newModel.tags.splice(data.id, 1);
+      setValue('tags', [...newModel.tags]);
+      setState({ ...state, model: newModel });
+    }
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -156,12 +180,21 @@ function ToursDetail() {
                 modalSize="xl"
                 formId="pacchetto"
                 createFormComponent={(formProps) => PackageForm({
-                  formId: 'pacchetto',
+                  formId: 'create_pacchetto',
                   submit: (data) => insertPackage(data, formProps),
                   parentProps: {
                     show: formProps.show,
                   },
                 })}
+                editFormComponent={(formProps) => PackageForm({
+                  formId: 'edit_pacchetto',
+                  submit: (data) => editPackage(data, formProps),
+                  parentProps: {
+                    show: formProps.show,
+                    target: formProps.target,
+                  },
+                })}
+                deleteFunction={(deleteData) => deletePackage(deleteData)}
                 columns={['name', 'price', 'price_type']}
                 data={state?.model?.tags || null}
               />
