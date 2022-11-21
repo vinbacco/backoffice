@@ -101,41 +101,6 @@ function ToursDetail() {
     }
   };
 
-  const uploadMediaContent = (fileData, type) => {
-    const tourService = new TourService();
-    const mediaContentData = {};
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    tourService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
-  };
-
-  const handleChangePreviewImage = (fileData) => {
-    const tourService = new TourService();
-    const mediaContentData = {
-      file: fileData,
-      type: 'tour_preview_image',
-    };
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    tourService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
-  };
-
   const insertPackage = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
@@ -168,6 +133,25 @@ function ToursDetail() {
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
     }
+  };
+
+  const handleChangePreviewImage = (fileData) => {
+    const tourService = new TourService();
+    const mediaContentData = {
+      file: fileData,
+      type: 'tour_preview_image',
+    };
+
+    const okUploadMediaContent = (categoryResponse) => {
+      console.log(categoryResponse?.data);
+    };
+
+    const koUploadMediaContent = (error) => {
+      console.log(error);
+    };
+
+    tourService
+      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -295,10 +279,12 @@ function ToursDetail() {
                 </CCol>
               </CRow>
               <Gallery
+                contentId={id}
+                contentType="tour_image"
+                Service={TourService}
                 title="Galleria del tour"
                 data={tourMediaContents}
-                onUpload={(file) => uploadMediaContent(file, 'tour_image')}
-                onChangeOrder={(imagesArray) => setTourMediaContents(imagesArray)}
+                onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
               />
             </CCol>
           </CRow>

@@ -20,6 +20,7 @@ import ProductCategoriesService from 'src/services/api/ProductCategoriesService'
 import ZonesService from 'src/services/api/ZonesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import Gallery from 'src/components/ui/Images/Gallery';
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const ZonesDetail = () => {
   const { id } = useParams();
@@ -52,21 +53,6 @@ const ZonesDetail = () => {
 
   const handleReset = () => {
     reset({ tag: state.model?.tag, code: state.model?.code });
-  };
-
-  const uploadMediaContent = (fileData, type) => {
-    const mediaContentData = {};
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    zonesService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
 
   const loadProductCategories = (filter) => new Promise((resolve) => {
@@ -116,6 +102,10 @@ const ZonesDetail = () => {
       zonesService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
+
+  if (state.loading === true) return <AppLoadingSpinner />;
+
+  if (state.error) return <p>NO DATA</p>;
 
   return (
     <AppBaseDetail
@@ -176,10 +166,12 @@ const ZonesDetail = () => {
               />
             </CCol>
             <Gallery
+              contentId={id}
+              contentType="region_image"
+              Service={ZonesService}
               title="Galleria zona"
               data={mediaContents}
-              onUpload={(file) => uploadMediaContent(file, 'region_image')}
-              onChangeOrder={(imagesArray) => setMediaContents(imagesArray)}
+              onUpdate={(imagesArray) => setMediaContents(imagesArray)}
             />
             <div className="mb-3" />
           </CRow>

@@ -64,4 +64,14 @@ export default class ZonesService extends ApiProxyService {
     const path = `${this.BASE_PATH}/${itemId}`;
     super.getItem(path, okCallback, koCallback);
   }
+
+  addMediaContent(itemId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
+    super.deleteItem(path, okCallback, koCallback);
+  }
 }

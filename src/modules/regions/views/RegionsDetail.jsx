@@ -16,6 +16,7 @@ import {
 import RegionsService from 'src/services/api/RegionsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import Gallery from 'src/components/ui/Images/Gallery';
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const RegionsDetail = () => {
   const { id } = useParams();
@@ -50,21 +51,6 @@ const RegionsDetail = () => {
     reset({ tag: state.model?.tag, code: state.model?.code });
   };
 
-  const uploadMediaContent = (fileData, type) => {
-    const mediaContentData = {};
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    regionsService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
-  };
-
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
@@ -87,6 +73,10 @@ const RegionsDetail = () => {
       regionsService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
+
+  if (state.loading === true) return <AppLoadingSpinner />;
+
+  if (state.error) return <p>NO DATA</p>;
 
   return (
     <AppBaseDetail
@@ -128,10 +118,12 @@ const RegionsDetail = () => {
               />
             </CCol>
             <Gallery
+              contentId={id}
+              contentType="region_image"
+              Service={RegionsService}
               title="Galleria regione"
               data={mediaContents}
-              onUpload={(file) => uploadMediaContent(file, 'region_image')}
-              onChangeOrder={(imagesArray) => setMediaContents(imagesArray)}
+              onUpdate={(imagesArray) => setMediaContents(imagesArray)}
             />
             <div className="mb-3" />
           </CRow>
