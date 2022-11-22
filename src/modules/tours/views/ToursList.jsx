@@ -131,7 +131,7 @@ function ToursList() {
           rules={{ required: true }}
           render={({ field }) => (
             <>
-              <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
+              <CFormLabel htmlFor="new-tour-contact">Cantina</CFormLabel>
               <AsyncSelect
                 inputId="new-tour-contact"
                 isClearable

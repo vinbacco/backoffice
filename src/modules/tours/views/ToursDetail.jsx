@@ -106,6 +106,8 @@ function ToursDetail() {
     const formatData = { ...data };
     formatData.name = formatData.name_tag.label;
     formatData.price_type = formatData.price_type_tag.label;
+    if (!newModel.attributes) newModel.attributes = { purchase_options: [] };
+    if (!newModel.attributes.purchase_options) newModel.attributes.purchase_options = [];
     newModel.attributes.purchase_options.push(formatData);
     setValue('attributes', newModel.attributes);
     setState({ ...state, model: newModel });
@@ -179,7 +181,7 @@ function ToursDetail() {
                 name="contact_name"
                 control={control}
                 defaultValue=""
-                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
+                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Cantina" {... field} />}
               />
             </CCol>
             <CCol md={6} sm={12}>

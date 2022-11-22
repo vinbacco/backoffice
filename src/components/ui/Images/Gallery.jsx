@@ -43,34 +43,31 @@ const Gallery = ({
     error: null, executing: false, success: null, show: false, target: null,
   });
 
-  const processData = (incomingData) => incomingData.map((currentData) => {
-    console.log(currentData);
-    return ({
-      id: `image-item-${currentData.child_id}`,
-      content: (
-        <span className="gallery-item">
-          <CImage onClick={() => setCurrentPreview(currentData.path)} className="gallery-item-image" thumbnail src={currentData.path} />
-          <CButton
-            className="gallery-item-delete"
-            color="danger"
-            size="sm"
-            onClick={() => (
-              setDeleteState({
-                ...deleteState,
-                target: currentData.child_id,
-                show: true,
-                success: null,
-                error: null,
-              })
-            )}
-          >
-            <CIcon icon={cilX} />
-          </CButton>
-        </span>
-      ),
-      data: currentData,
-    });
-  });
+  const processData = (incomingData) => incomingData.map((currentData) => ({
+    id: `image-item-${currentData.child_id}`,
+    content: (
+      <span className="gallery-item">
+        <CImage onClick={() => setCurrentPreview(currentData.path)} className="gallery-item-image" thumbnail src={currentData.path} />
+        <CButton
+          className="gallery-item-delete"
+          color="danger"
+          size="sm"
+          onClick={() => (
+            setDeleteState({
+              ...deleteState,
+              target: currentData.child_id,
+              show: true,
+              success: null,
+              error: null,
+            })
+          )}
+        >
+          <CIcon icon={cilX} />
+        </CButton>
+      </span>
+    ),
+    data: currentData,
+  }));
 
   const [galleryState, setGalleryState] = useState({
     items: processData(data),

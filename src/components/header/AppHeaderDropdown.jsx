@@ -1,37 +1,45 @@
 import React from 'react';
 import {
   CAvatar,
-  CBadge,
+  // CBadge,
   CDropdown,
-  CDropdownDivider,
+  // CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react';
 import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilLockLocked,
-  cilSettings,
-  cilTask,
-  cilUser,
+  // cilBell,
+  // cilCreditCard,
+  // cilCommentSquare,
+  // cilEnvelopeOpen,
+  // cilFile,
+  // cilLockLocked,
+  // cilSettings,
+  // cilTask,
+  // cilUser,
+  cilAccountLogout,
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 
-import avatar8 from '../../assets/images/avatars/8.jpg';
+import AuthService from 'src/services/api/authService';
+
+import avatar8 from '../../assets/images/avatars/2.jpg';
 
 function AppHeaderDropdown() {
+  const handleLogout = () => {
+    const authService = new AuthService();
+    authService.logout();
+  };
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
         <CAvatar src={avatar8} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
+        {/* <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
         <CDropdownItem href="#">
           <CIcon icon={cilBell} className="me-2" />
           Updates
@@ -83,10 +91,11 @@ function AppHeaderDropdown() {
             42
           </CBadge>
         </CDropdownItem>
-        <CDropdownDivider />
-        <CDropdownItem href="#">
-          <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+        <CDropdownDivider /> */}
+        <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
+        <CDropdownItem href="#" onClick={handleLogout}>
+          <CIcon icon={cilAccountLogout} className="me-2" />
+          Esci
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

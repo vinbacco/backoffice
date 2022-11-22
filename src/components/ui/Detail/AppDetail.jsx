@@ -25,10 +25,11 @@ import {
 const Buttons = ({ saveAction }) => (
   <CRow className="mb-4 justify-content-end">
     <CCol xs="auto">
-      <CDropdown variant="btn-group">
-        <CButton color="primary" onClick={() => saveAction('save')}>Salva bozza</CButton>
-        <CDropdownToggle color="primary" split />
+      <CDropdown direction="center">
+        <CDropdownToggle color="primary"><span className="ps-2 pe-2">Scegli azione</span></CDropdownToggle>
         <CDropdownMenu>
+          <CDropdownItem className="cursor-pointer" onClick={() => saveAction('save')}>Salva bozza</CDropdownItem>
+          <CDropdownDivider />
           <CDropdownItem className="cursor-pointer" onClick={() => saveAction('publish')}>Pubblica</CDropdownItem>
           <CDropdownDivider />
           <CDropdownItem className="cursor-pointer" onClick={() => saveAction('publishNow')}>Pubblica ora</CDropdownItem>
