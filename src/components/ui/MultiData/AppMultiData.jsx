@@ -24,20 +24,41 @@ import {
   cilTrash,
 } from '@coreui/icons';
 
+import utils from 'src/services/api/utils/utils';
+
 const AppMultiData = ({
   title,
   item,
   data,
   modalSize,
   modalAlign,
-  createFormComponent = null,
+  createFormComponent,
+  editFormComponent,
+  deleteFunction,
   formId,
   columns,
 }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const tableData = null;
+  const [editModalState, setEditModalState] = useState({ show: false, target: null });
+  const [deleteModalState, setDeleteModalState] = useState({ show: false, target: null });
+
+  const handleDeleteFunction = () => {
+    deleteFunction({ target: deleteModalState.target });
+    setDeleteModalState({ show: false, target: null });
+  };
+
+  const renderColumnValue = (columnData, columnProps) => {
+    const displayData = columnData[columnProps.index];
+    if (!displayData) return '-';
+    switch (columnProps.type) {
+      case 'currency':
+        return utils.formatCurrency({ number: parseFloat(displayData) });
+      case 'text':
+      default:
+        return displayData;
+    }
+  };
+
   return (
     <>
       <CCard>
@@ -55,7 +76,6 @@ const AppMultiData = ({
           </div>
         </CCardHeader>
         <CCardBody>
-          {tableData}
           <CTable bordered>
             <CTableBody>
               { !data || data.length <= 0
@@ -68,14 +88,16 @@ const AppMultiData = ({
                   <CTableRow key={`multidata_${item}_data_${indexData}`}>
                     {columns.map((currentColumn, indexColumn) => (
                       <CTableDataCell key={`multidata_${item}_data_column_${indexColumn}_${currentColumn}`}>
-                        {currentData[currentColumn] || '-'}
+                        {renderColumnValue(currentData, currentColumn)}
                       </CTableDataCell>
                     ))}
                     <CTableDataCell className="col-1">
                       <CButton
                         color="dark"
                         variant="ghost"
-                        onClick={() => setShowEditModal(!showEditModal)}
+                        onClick={() => setEditModalState({
+                          show: !editModalState.show, target: indexData,
+                        })}
                       >
                         <CIcon icon={cilPencil} />
                       </CButton>
@@ -84,7 +106,9 @@ const AppMultiData = ({
                       <CButton
                         color="danger"
                         variant="ghost"
-                        onClick={() => setShowDeleteModal(!showDeleteModal)}
+                        onClick={() => setDeleteModalState({
+                          show: !deleteModalState.show, target: indexData,
+                        })}
                       >
                         <CIcon icon={cilTrash} />
                       </CButton>
@@ -115,33 +139,54 @@ const AppMultiData = ({
           <CButton color="danger" onClick={() => setShowCreateModal(false)}>
             Annulla
           </CButton>
-          <CButton type="submit" form={formId} color="primary">Si</CButton>
+          <CButton type="submit" form={`create_${formId}`} color="primary">
+            Applica
+          </CButton>
         </CModalFooter>
       </CModal>
-      {/* <CModal
+      <CModal
+        alignment={modalAlign}
+        size={modalSize}
         id="editModal"
         backdrop="static"
-        visible={showEditModal}
+        visible={editModalState.show}
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>
-            {editFormComponent}
+            {`Modifica ${item}`}
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          Body
+          {editFormComponent({
+            show: editModalState.show,
+            closeModal: () => setEditModalState({
+              show: false, target: null,
+            }),
+            target: {
+              data: typeof editModalState.target === 'number' && editModalState.target >= 0
+                ? { ...data[editModalState.target], id: editModalState.target }
+                : {},
+            },
+          })}
         </CModalBody>
         <CModalFooter>
-          <CButton color="danger" onClick={() => setShowEditModal(false)}>
+          <CButton
+            color="danger"
+            onClick={() => setEditModalState({
+              show: false, target: null,
+            })}
+          >
             Annulla
           </CButton>
-          <CButton color="primary">Si</CButton>
+          <CButton type="submit" form={`edit_${formId}`} color="primary">
+            Applica
+          </CButton>
         </CModalFooter>
       </CModal>
       <CModal
         id="deleteModal"
         backdrop="static"
-        visible={showDeleteModal}
+        visible={deleteModalState.show}
       >
         <CModalHeader closeButton={false}>
           <CModalTitle>
@@ -149,20 +194,25 @@ const AppMultiData = ({
           </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          Sei sicuro?
+          Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata.
         </CModalBody>
         <CModalFooter>
-          <CButton color="danger" onClick={() => setShowDeleteModal(false)}>
+          <CButton
+            color="danger"
+            onClick={() => setDeleteModalState({
+              show: false, target: null,
+            })}
+          >
             Annulla
           </CButton>
           <CButton
             color="primary"
-            onClick={() => deleteFn}
+            onClick={() => handleDeleteFunction()}
           >
             Si
           </CButton>
         </CModalFooter>
-      </CModal> */}
+      </CModal>
     </>
   );
 };
@@ -173,9 +223,14 @@ AppMultiData.propTypes = {
   modalAlign: PropTypes.oneOf(['top', 'center']),
   modalSize: PropTypes.oneOf(['sm', 'lg', 'xl']),
   createFormComponent: PropTypes.func.isRequired,
+  editFormComponent: PropTypes.func.isRequired,
+  deleteFunction: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.any) || null,
-  columns: PropTypes.arrayOf(PropTypes.string),
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string,
+    index: PropTypes.string,
+  })),
 };
 
 AppMultiData.defaultProps = {

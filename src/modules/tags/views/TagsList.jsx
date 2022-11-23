@@ -24,16 +24,24 @@ function TagsList() {
       sortable: true,
       _props: { scope: 'col' },
     },
+    {
+      key: 'feed',
+      label: 'Feed',
+      sortable: true,
+      _props: { scope: 'col' },
+    },
   ]);
 
   const buildRowsFn = (item) => ({
     _id: item._id,
     tag: item.tag,
+    feed: item.feed,
   });
 
   const mapListFn = (item) => ({
     _id: item._id,
     tag: item.tag,
+    feed: item.feed.name,
   });
 
   const creationBodyFn = () => (

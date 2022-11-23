@@ -68,6 +68,7 @@ function ToursList() {
       page: 1,
     };
     if (filter.length > 0) filters['??^name'] = filter;
+    filters['?^parent_id'] = 'null';
     productCategoriesService.getList({
       filters,
       okCallback: (res) => okGetProductCategories(res),
@@ -130,7 +131,7 @@ function ToursList() {
           rules={{ required: true }}
           render={({ field }) => (
             <>
-              <CFormLabel htmlFor="new-tour-contact">Contatto</CFormLabel>
+              <CFormLabel htmlFor="new-tour-contact">Cantina</CFormLabel>
               <AsyncSelect
                 inputId="new-tour-contact"
                 isClearable

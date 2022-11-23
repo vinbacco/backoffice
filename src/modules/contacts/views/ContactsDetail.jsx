@@ -15,7 +15,7 @@ import ContactsService from 'src/services/api/ContactsService';
 
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 function ToursDetail() {
@@ -24,8 +24,8 @@ function ToursDetail() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
   } = useForm();
-  const [contactMediaContents, setTourMediaContents] = useState([]);
-  const [contactWineMediaContents, setTourWineMediaContents] = useState([]);
+  const [contactMediaContents, setContactMediaContents] = useState([]);
+  const [contactWineMediaContents, setContactWineMediaContents] = useState([]);
 
   useEffect(() => {
     if (id !== null && typeof id !== 'undefined') {
@@ -52,8 +52,8 @@ function ToursDetail() {
           Array.isArray(contactResponseData.media_contents)
           && contactResponseData.media_contents.length > 0
         ) {
-          setTourMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
-          setTourWineMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'tour_wine_image')]);
+          setContactMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_image')]);
+          setContactWineMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_wine_image')]);
         }
       };
 
@@ -125,26 +125,6 @@ function ToursDetail() {
       default:
         // Azione salva
     }
-  };
-
-  const updateMediaContent = (newImagesArray) => {
-    setTourMediaContents(newImagesArray);
-  };
-
-  const uploadMediaContent = (fileData, type) => {
-    const contactService = new ContactsService();
-    const mediaContentData = {};
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    contactService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -410,16 +390,20 @@ function ToursDetail() {
           <CRow className="g-3">
             <CCol>
               <Gallery
+                contentId={id}
+                contentType="contact_image"
+                Service={ContactsService}
                 title="Galleria della Cantina"
                 data={contactMediaContents}
-                onUpload={(file) => uploadMediaContent(file, 'tour_image')}
-                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_image')}
+                onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
               />
               <Gallery
+                contentId={id}
+                contentType="contact_wine_image"
+                Service={ContactsService}
                 title="Galleria dei vini"
                 data={contactWineMediaContents}
-                onUpload={(file) => uploadMediaContent(file, 'tour_image')}
-                onChangeOrder={(imagesArray) => updateMediaContent(imagesArray, 'tour_image')}
+                onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
               />
             </CCol>
           </CRow>

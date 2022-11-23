@@ -14,7 +14,7 @@ export default class TagsService extends ApiProxyService {
     koCallback,
   }) {
     let queryParams = {
-      paginate, page, order_by: order, sort_by: sort,
+      paginate, page, order_by: order, sort_by: sort, lookup: '[feed_id]',
     };
     if (filters) {
       queryParams = { ...queryParams, ...filters };

@@ -362,9 +362,9 @@ function ContactsList() {
   return (
     <section id="contacts">
       <AppList
-        sectionTitle="Lista Contatti"
+        sectionTitle="Lista Cantine"
         SectionServiceClass={ContactsService}
-        sectionPath="/contacts"
+        sectionPath="/winery"
         mapListFn={mapListFn}
         buildColumnsFn={buildColumnsFn}
         buildRowsFn={buildRowsFn}

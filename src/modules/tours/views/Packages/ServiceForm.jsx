@@ -18,13 +18,17 @@ const ServiceForm = ({
     control, handleSubmit, reset, formState: { errors },
   } = useForm({
     defaultValues: defaultValues || {
-      service: '',
+      name: '',
     },
   });
 
   useEffect(() => {
-    if (typeof parentProps?.show !== 'undefined' && parentProps.show === false) {
-      reset();
+    if (typeof parentProps?.show !== 'undefined') {
+      if (parentProps.show === false) {
+        reset();
+      } else {
+        reset(parentProps?.target?.data || {});
+      }
     }
   }, [parentProps.show]);
 
@@ -33,16 +37,16 @@ const ServiceForm = ({
       <CRow>
         <CCol>
           <Controller
-            name="service"
+            name="name"
             control={control}
             rules={{ required: true }}
             defaultValue=""
             render={({ field }) => (
               <CFormInput
-                invalid={!!errors.service}
-                feedback={errors?.service ? composeErrorFormType(errors.service) : null}
+                invalid={!!errors.name}
+                feedback={errors?.name ? composeErrorFormType(errors.name) : null}
                 type="text"
-                id="service"
+                id="name"
                 label="Servizio"
                 placeholder="Inserisci servizio"
                 {... field}
@@ -58,18 +62,24 @@ const ServiceForm = ({
 
 ServiceForm.propTypes = {
   defaultValues: PropTypes.shape({
-    service: PropTypes.string,
+    name: PropTypes.string,
   }),
   submit: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
   parentProps: PropTypes.shape({
     show: PropTypes.bool,
+    target: PropTypes.shape({
+      data: PropTypes.shape({
+        name: PropTypes.string,
+        id: PropTypes.number,
+      }),
+    }) || null,
   }),
 };
 
 ServiceForm.defaultProps = {
   defaultValues: {
-    service: '',
+    name: '',
   },
   parentProps: {},
 };

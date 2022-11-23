@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
@@ -12,7 +13,8 @@ import TourService from 'src/services/api/TourService';
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
-import Gallery from 'src/components/ui/Gallery/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery';
+import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -23,15 +25,22 @@ function ToursDetail() {
   } = useForm({
     defaultValues: {
       name: '',
+      meta_title: '',
+      meta_keywords: '',
+      meta_description: '',
       base_price: 0,
       abstract: '',
       description: '',
       contact_name: '',
       category_name: '',
       url_friendly_name: '',
+      attributes: {
+        purchase_options: [],
+      },
       tags: [],
     },
   });
+  const [tourPreviewImage, setTourPreviewImage] = useState(null);
   const [tourMediaContents, setTourMediaContents] = useState([]);
 
   useEffect(() => {
@@ -43,11 +52,17 @@ function ToursDetail() {
 
         tourModelData.name = tourResponseData.name;
         tourModelData.base_price = tourResponseData.base_price;
+        tourModelData.meta_title = tourResponseData.meta_title || '';
+        tourModelData.meta_keywords = tourResponseData.meta_keywords || '';
+        tourModelData.meta_description = tourResponseData.meta_description || '';
         tourModelData.abstract = tourResponseData?.abstract || '';
         tourModelData.description = tourResponseData?.description || '';
         tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
         tourModelData.contact_name = tourResponseData?.contact?.business_name;
         tourModelData.category_name = tourResponseData?.product_category?.name;
+        tourModelData.attributes = tourResponseData?.attributes || {
+          purchase_options: [],
+        };
         tourModelData.tags = tourResponseData?.tags || [];
 
         reset(tourModelData || {});
@@ -57,6 +72,7 @@ function ToursDetail() {
           && tourResponseData.media_contents.length > 0
         ) {
           setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourPreviewImage(tourResponseData.media_contents.find((current) => current.type === 'tour_preview_image'));
         }
       };
 
@@ -71,6 +87,7 @@ function ToursDetail() {
   }, []);
 
   const saveAction = (type) => {
+    console.log(getValues());
     switch (type) {
       case 'publish':
         // Azione pubblica
@@ -84,9 +101,48 @@ function ToursDetail() {
     }
   };
 
-  const uploadMediaContent = (fileData, type) => {
+  const insertPackage = (data, formProps) => {
+    const newModel = { ...getValues() };
+    const formatData = { ...data };
+    formatData.name = formatData.name_tag.label;
+    formatData.price_type = formatData.price_type_tag.label;
+    if (!newModel.attributes) newModel.attributes = { purchase_options: [] };
+    if (!newModel.attributes.purchase_options) newModel.attributes.purchase_options = [];
+    newModel.attributes.purchase_options.push(formatData);
+    setValue('attributes', newModel.attributes);
+    setState({ ...state, model: newModel });
+    formProps.closeModal();
+  };
+
+  const editPackage = (data, formProps) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      const formatData = { ...data };
+      delete formatData.id;
+      formatData.name = formatData.name_tag.label;
+      formatData.price_type = formatData.price_type_tag.label;
+      newModel.attributes.purchase_options[data.id] = (formatData);
+      setValue('attributes', newModel.attributes);
+      setState({ ...state, model: newModel });
+    }
+    formProps.closeModal();
+  };
+
+  const deletePackage = (data) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      newModel.attributes.purchase_options.splice(data.id, 1);
+      setValue('attributes', newModel.attributes);
+      setState({ ...state, model: newModel });
+    }
+  };
+
+  const handleChangePreviewImage = (fileData) => {
     const tourService = new TourService();
-    const mediaContentData = {};
+    const mediaContentData = {
+      file: fileData,
+      type: 'tour_preview_image',
+    };
 
     const okUploadMediaContent = (categoryResponse) => {
       console.log(categoryResponse?.data);
@@ -98,17 +154,6 @@ function ToursDetail() {
 
     tourService
       .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
-  };
-
-  const insertPackage = (data, formProps) => {
-    const newModel = { ...getValues() };
-    const formatData = { ...data };
-    formatData.name = formatData.name.label;
-    formatData.price_type = formatData.price_type.label;
-    newModel.tags.push(formatData);
-    setValue('tags', [...newModel.tags]);
-    setState({ ...state, model: newModel });
-    formProps.closeModal();
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -136,18 +181,22 @@ function ToursDetail() {
                 name="contact_name"
                 control={control}
                 defaultValue=""
-                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Contatto" {... field} />}
+                render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Cantina" {... field} />}
               />
             </CCol>
             <CCol md={6} sm={12}>
-              <Controller
-                name="base_price"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <CFormInput type="number" label="Prezzo base (€)" {... field} />
-                )}
-              />
+              <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
+              <CInputGroup>
+                <Controller
+                  name="base_price"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <CFormInput className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
+                  )}
+                />
+                <CInputGroupText id="tour-base_price_append">€</CInputGroupText>
+              </CInputGroup>
             </CCol>
             <CCol md={12}>
               <AppMultiData
@@ -156,14 +205,27 @@ function ToursDetail() {
                 modalSize="xl"
                 formId="pacchetto"
                 createFormComponent={(formProps) => PackageForm({
-                  formId: 'pacchetto',
+                  formId: 'create_pacchetto',
                   submit: (data) => insertPackage(data, formProps),
                   parentProps: {
                     show: formProps.show,
                   },
                 })}
-                columns={['name', 'price', 'price_type']}
-                data={state?.model?.tags || null}
+                editFormComponent={(formProps) => PackageForm({
+                  formId: 'edit_pacchetto',
+                  submit: (data) => editPackage(data, formProps),
+                  parentProps: {
+                    show: formProps.show,
+                    target: formProps.target,
+                  },
+                })}
+                deleteFunction={(deleteData) => deletePackage(deleteData)}
+                columns={[
+                  { index: 'name', type: 'text' },
+                  { index: 'price', type: 'currency' },
+                  { index: 'price_type', type: 'text' },
+                ]}
+                data={state?.model?.attributes?.purchase_options || null}
               />
             </CCol>
           </CRow>
@@ -171,7 +233,38 @@ function ToursDetail() {
         tabContentWeb={(
           <CRow className="g-3">
             <CCol>
-              <CRow className="g-3">
+              <h4>Intestazione</h4>
+              <CRow className="g-3 mb-4">
+                <CCol md={6} sm={12}>
+                  <Controller
+                    name="meta_title"
+                    control={control}
+                    render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-meta_title" {...field} />}
+                  />
+                </CCol>
+                <CCol md={6} sm={12}>
+                  <Controller
+                    name="meta_keywords"
+                    control={control}
+                    render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-meta_keywords" {...field} />}
+                  />
+                </CCol>
+                <CCol md={12}>
+                  <Controller
+                    name="meta_description"
+                    control={control}
+                    render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta_description" rows="3" {...field} />}
+                  />
+                  <small>Non superare i 160 caratteri</small>
+                </CCol>
+              </CRow>
+              <ImageWithPreview
+                title="Immagine di anteprima"
+                data={tourPreviewImage}
+                onUpload={(file) => handleChangePreviewImage(file)}
+              />
+              <h4>Contenuto</h4>
+              <CRow className="g-3 mb-4">
                 <CCol md={12}>
                   <Controller
                     name="abstract"
@@ -188,10 +281,12 @@ function ToursDetail() {
                 </CCol>
               </CRow>
               <Gallery
+                contentId={id}
+                contentType="tour_image"
+                Service={TourService}
                 title="Galleria del tour"
                 data={tourMediaContents}
-                onUpload={(file) => uploadMediaContent(file, 'tour_image')}
-                onChangeOrder={(imagesArray) => setTourMediaContents(imagesArray)}
+                onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
               />
             </CCol>
           </CRow>

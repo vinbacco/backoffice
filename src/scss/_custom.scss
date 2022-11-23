@@ -49,6 +49,11 @@ h1,h2,h3,h4,h5,h6 {
   user-select: none;
 }
 
+.text-align-end {
+  text-align: end;
+}
+
+
 .vinbacco {
   .wrapper {
     background-color: $wrapper-background !important;
@@ -103,6 +108,16 @@ h1,h2,h3,h4,h5,h6 {
   .div-gallery-drag-drop {
     height: 500px;
     overflow-y: auto;
+  }
+
+  .div-image-preview {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    background-color: white;
+    border: 1px solid darkgray;
+    border-radius: 15px;
   }
 
   .div-gallery-preview {

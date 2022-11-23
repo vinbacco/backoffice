@@ -52,6 +52,11 @@ export default class TourService extends ApiProxyService {
     super.uploadItem(path, fileData, okCallback, koCallback);
   }
 
+  deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
+    super.deleteItem(path, okCallback, koCallback);
+  }
+
   deleteItem(deleteInfo, okCallback, koCallback) {
     const deletePromisesArray = [];
     if (typeof deleteInfo === 'string' || typeof deleteInfo === 'number') {
