@@ -25,7 +25,25 @@ function ToursDetail() {
   const [state, setState] = useState({ loading: true, error: null });
   const {
     control, handleSubmit, reset, getValues, setValue, formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      business_name: '',
+      contact_category_id: '',
+      holder: '',
+      foundation_year: '',
+      certified_email: '',
+      registered_address: '',
+      registered_city_id: '',
+      registered_zip_code: '',
+      vat_code: '',
+      commercial_ref_name: '',
+      commercial_ref_phone: '',
+      commercial_ref_email: '',
+      attributes: {
+        wines: [],
+      },
+    },
+  });
   const [contactMediaContents, setContactMediaContents] = useState([]);
   const [contactWineMediaContents, setContactWineMediaContents] = useState([]);
 
@@ -47,6 +65,9 @@ function ToursDetail() {
         contactModelData.commercial_ref_name = contactResponseData.commercial_ref_name;
         contactModelData.commercial_ref_phone = contactResponseData.commercial_ref_phone;
         contactModelData.commercial_ref_email = contactResponseData.commercial_ref_email;
+        contactModelData.attributes = contactModelData?.attributes || {
+          wines: [],
+        };
 
         reset(contactModelData || {});
         setState({ ...state, loading: false });
@@ -146,7 +167,6 @@ function ToursDetail() {
     if (typeof data.id === 'number' && data.id >= 0) {
       const formatData = { ...data };
       delete formatData.id;
-      formatData.name = formatData.name_tag.label;
       formatData.type = formatData.type_tag.label;
       newModel.attributes.wines[data.id] = (formatData);
       setValue('attributes', newModel.attributes);
@@ -426,31 +446,34 @@ function ToursDetail() {
         tabContentWeb={(
           <>
             <AppMultiData
-              title="Pacchetti"
-              item="Pacchetto"
+              className="mb-4"
+              title="Vini"
+              item="Vino"
               modalSize="xl"
-              formId="pacchetto"
-              createFormComponent={(formProps) => WinesForm({
-                formId: 'create_wine',
-                submit: (data) => insertWine(data, formProps),
+              formId="vino-cantina"
+              createFormComponent={(CreateFormProps) => WinesForm({
+                formId: 'create_vino-cantina',
+                submit: (data) => insertWine(data, CreateFormProps),
                 parentProps: {
-                  show: formProps.show,
+                  show: CreateFormProps.show,
                 },
               })}
-              editFormComponent={(formProps) => WinesForm({
-                formId: 'edit_wine',
-                submit: (data) => editWine(data, formProps),
+              editFormComponent={(EditFormProps) => WinesForm({
+                formId: 'edit_vino-cantina',
+                submit: (data) => editWine(data, EditFormProps),
                 parentProps: {
-                  show: formProps.show,
-                  target: formProps.target,
+                  show: EditFormProps.show,
+                  target: EditFormProps.target,
                 },
               })}
-              deleteFunction={(deleteData) => deleteWine(deleteData)}
+              deleteFunction={(deleteProps) => deleteWine({
+                id: deleteProps.target,
+              })}
+              data={state?.model?.attributes?.wines || null}
               columns={[
                 { index: 'name', type: 'text' },
                 { index: 'type', type: 'text' },
               ]}
-              data={state?.model?.attributes?.wines || null}
             />
             <CRow className="g-3">
               <CCol>
