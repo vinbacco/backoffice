@@ -34,6 +34,7 @@ function ToursDetail() {
       contact_name: '',
       category_name: '',
       url_friendly_name: '',
+      tour_warnings: '',
       attributes: {
         purchase_options: [],
       },
@@ -277,6 +278,13 @@ function ToursDetail() {
                     name="description"
                     control={control}
                     render={({ field }) => <CFormTextarea label="Descrizione completa del tour" id="tour-description" rows="5" {...field} />}
+                  />
+                </CCol>
+                <CCol md={12}>
+                  <Controller
+                    name="tour_warnings"
+                    control={control}
+                    render={({ field }) => <CFormTextarea label="Avvertenze" id="tour-warnings" rows="5" {...field} />}
                   />
                 </CCol>
               </CRow>

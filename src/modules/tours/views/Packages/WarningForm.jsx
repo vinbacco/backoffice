@@ -11,7 +11,7 @@ import {
 
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 
-const ServiceForm = ({
+const WarningForm = ({
   defaultValues = null, submit, formId, parentProps,
 }) => {
   const {
@@ -60,7 +60,7 @@ const ServiceForm = ({
   );
 };
 
-ServiceForm.propTypes = {
+WarningForm.propTypes = {
   defaultValues: PropTypes.shape({
     name: PropTypes.string,
   }),
@@ -77,11 +77,11 @@ ServiceForm.propTypes = {
   }),
 };
 
-ServiceForm.defaultProps = {
+WarningForm.defaultProps = {
   defaultValues: {
     name: '',
   },
   parentProps: {},
 };
 
-export default ServiceForm;
+export default WarningForm;

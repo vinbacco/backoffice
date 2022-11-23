@@ -17,12 +17,14 @@ import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import Gallery from 'src/components/ui/Images/Gallery';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
+import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
+import WinesForm from './Wines/WinesForm';
 
 function ToursDetail() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true, error: null });
   const {
-    control, handleSubmit, reset, getValues, formState: { errors },
+    control, handleSubmit, reset, getValues, setValue, formState: { errors },
   } = useForm();
   const [contactMediaContents, setContactMediaContents] = useState([]);
   const [contactWineMediaContents, setContactWineMediaContents] = useState([]);
@@ -124,6 +126,41 @@ function ToursDetail() {
       case 'save':
       default:
         // Azione salva
+    }
+  };
+
+  const insertWine = (data, formProps) => {
+    const newModel = { ...getValues() };
+    const formatData = { ...data };
+    formatData.type = formatData.type_tag.label;
+    if (!newModel.attributes) newModel.attributes = { wines: [] };
+    if (!newModel.attributes.wines) newModel.attributes.wines = [];
+    newModel.attributes.wines.push(formatData);
+    setValue('attributes', newModel.attributes);
+    setState({ ...state, model: newModel });
+    formProps.closeModal();
+  };
+
+  const editWine = (data, formProps) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      const formatData = { ...data };
+      delete formatData.id;
+      formatData.name = formatData.name_tag.label;
+      formatData.type = formatData.type_tag.label;
+      newModel.attributes.wines[data.id] = (formatData);
+      setValue('attributes', newModel.attributes);
+      setState({ ...state, model: newModel });
+    }
+    formProps.closeModal();
+  };
+
+  const deleteWine = (data) => {
+    const newModel = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      newModel.attributes.wines.splice(data.id, 1);
+      setValue('attributes', newModel.attributes);
+      setState({ ...state, model: newModel });
     }
   };
 
@@ -387,26 +424,55 @@ function ToursDetail() {
           </CRow>
         )}
         tabContentWeb={(
-          <CRow className="g-3">
-            <CCol>
-              <Gallery
-                contentId={id}
-                contentType="contact_image"
-                Service={ContactsService}
-                title="Galleria della Cantina"
-                data={contactMediaContents}
-                onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
-              />
-              <Gallery
-                contentId={id}
-                contentType="contact_wine_image"
-                Service={ContactsService}
-                title="Galleria dei vini"
-                data={contactWineMediaContents}
-                onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
-              />
-            </CCol>
-          </CRow>
+          <>
+            <AppMultiData
+              title="Pacchetti"
+              item="Pacchetto"
+              modalSize="xl"
+              formId="pacchetto"
+              createFormComponent={(formProps) => WinesForm({
+                formId: 'create_wine',
+                submit: (data) => insertWine(data, formProps),
+                parentProps: {
+                  show: formProps.show,
+                },
+              })}
+              editFormComponent={(formProps) => WinesForm({
+                formId: 'edit_wine',
+                submit: (data) => editWine(data, formProps),
+                parentProps: {
+                  show: formProps.show,
+                  target: formProps.target,
+                },
+              })}
+              deleteFunction={(deleteData) => deleteWine(deleteData)}
+              columns={[
+                { index: 'name', type: 'text' },
+                { index: 'type', type: 'text' },
+              ]}
+              data={state?.model?.attributes?.wines || null}
+            />
+            <CRow className="g-3">
+              <CCol>
+                <Gallery
+                  contentId={id}
+                  contentType="contact_image"
+                  Service={ContactsService}
+                  title="Galleria della Cantina"
+                  data={contactMediaContents}
+                  onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
+                />
+                <Gallery
+                  contentId={id}
+                  contentType="contact_wine_image"
+                  Service={ContactsService}
+                  title="Galleria dei vini"
+                  data={contactWineMediaContents}
+                  onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
+                />
+              </CCol>
+            </CRow>
+          </>
         )}
       />
     </CForm>

@@ -27,6 +27,7 @@ import {
 import utils from 'src/services/api/utils/utils';
 
 const AppMultiData = ({
+  className,
   title,
   item,
   data,
@@ -36,6 +37,8 @@ const AppMultiData = ({
   editFormComponent,
   deleteFunction,
   formId,
+  singleField,
+  singleFieldType,
   columns,
 }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -47,8 +50,8 @@ const AppMultiData = ({
     setDeleteModalState({ show: false, target: null });
   };
 
-  const renderColumnValue = (columnData, columnProps) => {
-    const displayData = columnData[columnProps.index];
+  const renderCellValue = (columnData, columnProps, isSingleField = false) => {
+    const displayData = isSingleField ? columnData : columnData[columnProps.index];
     if (!displayData) return '-';
     switch (columnProps.type) {
       case 'currency':
@@ -59,8 +62,30 @@ const AppMultiData = ({
     }
   };
 
+  const renderCells = (currentData) => {
+    if (singleField === true) {
+      return (
+        <CTableDataCell>
+          {renderCellValue(currentData, singleFieldType, true)}
+        </CTableDataCell>
+      );
+    }
+    return (columns.map((currentColumn, indexColumn) => (
+      <CTableDataCell key={`multidata_${item}_data_column_${indexColumn}_${currentColumn}`}>
+        {renderCellValue(currentData, currentColumn)}
+      </CTableDataCell>
+    )));
+  };
+
+  const processDataType = () => {
+    if (typeof data[editModalState.target] === 'object') {
+      return { ...data[editModalState.target], id: editModalState.target };
+    }
+    return { value: data[editModalState.target], id: editModalState.target };
+  };
+
   return (
-    <>
+    <div className={className}>
       <CCard>
         <CCardHeader className="d-flex justify-content-start align-items-center">
           <div className="me-4">
@@ -86,11 +111,7 @@ const AppMultiData = ({
                 )
                 : data.map((currentData, indexData) => (
                   <CTableRow key={`multidata_${item}_data_${indexData}`}>
-                    {columns.map((currentColumn, indexColumn) => (
-                      <CTableDataCell key={`multidata_${item}_data_column_${indexColumn}_${currentColumn}`}>
-                        {renderColumnValue(currentData, currentColumn)}
-                      </CTableDataCell>
-                    ))}
+                    {renderCells(currentData)}
                     <CTableDataCell className="col-1">
                       <CButton
                         color="dark"
@@ -164,7 +185,7 @@ const AppMultiData = ({
             }),
             target: {
               data: typeof editModalState.target === 'number' && editModalState.target >= 0
-                ? { ...data[editModalState.target], id: editModalState.target }
+                ? processDataType()
                 : {},
             },
           })}
@@ -213,7 +234,7 @@ const AppMultiData = ({
           </CButton>
         </CModalFooter>
       </CModal>
-    </>
+    </div>
   );
 };
 
@@ -227,10 +248,13 @@ AppMultiData.propTypes = {
   deleteFunction: PropTypes.func.isRequired,
   formId: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.any) || null,
+  singleField: PropTypes.bool,
+  singleFieldType: PropTypes.string,
   columns: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string,
     index: PropTypes.string,
   })),
+  className: PropTypes.string,
 };
 
 AppMultiData.defaultProps = {
@@ -239,7 +263,10 @@ AppMultiData.defaultProps = {
   data: null,
   modalSize: 'sm',
   modalAlign: 'top',
+  singleField: false,
+  singleFieldType: 'string',
   columns: [],
+  className: '',
 };
 
 export default AppMultiData;
