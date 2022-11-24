@@ -105,6 +105,7 @@ function ToursDetail() {
   const insertPackage = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
+    delete formatData.id;
     if (!newModel.attributes) newModel.attributes = { purchase_options: [] };
     if (!newModel.attributes.purchase_options) newModel.attributes.purchase_options = [];
     newModel.attributes.purchase_options.push(formatData);

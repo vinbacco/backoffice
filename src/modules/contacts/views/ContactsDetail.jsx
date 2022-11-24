@@ -20,7 +20,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import WinesForm from './Wines/WinesForm';
 
-function ToursDetail() {
+function ContactsDetail() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true, error: null });
   const {
@@ -153,7 +153,7 @@ function ToursDetail() {
   const insertWine = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
-    formatData.type = formatData.type_tag.label;
+    delete formatData.id;
     if (!newModel.attributes) newModel.attributes = { wines: [] };
     if (!newModel.attributes.wines) newModel.attributes.wines = [];
     newModel.attributes.wines.push(formatData);
@@ -167,7 +167,6 @@ function ToursDetail() {
     if (typeof data.id === 'number' && data.id >= 0) {
       const formatData = { ...data };
       delete formatData.id;
-      formatData.type = formatData.type_tag.label;
       newModel.attributes.wines[data.id] = (formatData);
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
@@ -522,4 +521,4 @@ function ToursDetail() {
   );
 }
 
-export default ToursDetail;
+export default ContactsDetail;
