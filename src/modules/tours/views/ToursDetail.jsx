@@ -105,8 +105,6 @@ function ToursDetail() {
   const insertPackage = (data, formProps) => {
     const newModel = { ...getValues() };
     const formatData = { ...data };
-    formatData.name = formatData.name_tag.label;
-    formatData.price_type = formatData.price_type_tag.label;
     if (!newModel.attributes) newModel.attributes = { purchase_options: [] };
     if (!newModel.attributes.purchase_options) newModel.attributes.purchase_options = [];
     newModel.attributes.purchase_options.push(formatData);
@@ -120,8 +118,6 @@ function ToursDetail() {
     if (typeof data.id === 'number' && data.id >= 0) {
       const formatData = { ...data };
       delete formatData.id;
-      formatData.name = formatData.name_tag.label;
-      formatData.price_type = formatData.price_type_tag.label;
       newModel.attributes.purchase_options[data.id] = (formatData);
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
@@ -222,9 +218,9 @@ function ToursDetail() {
                 })}
                 deleteFunction={(deleteData) => deletePackage(deleteData)}
                 columns={[
-                  { index: 'name', type: 'text' },
+                  { index: 'name_tag', type: 'select' },
                   { index: 'price', type: 'currency' },
-                  { index: 'price_type', type: 'text' },
+                  { index: 'price_type_tag', type: 'select' },
                 ]}
                 data={state?.model?.attributes?.purchase_options || null}
               />

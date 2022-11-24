@@ -32,16 +32,16 @@ const PackageForm = ({
       name_tag: null,
       price: '',
       price_type_tag: null,
-      services: [],
+      included_services: [],
       warnings: [],
     },
   });
   const [state, setState] = useState(defaultValues || {
     id: null,
-    name_tag: '',
+    name_tag: null,
     price: '',
-    price_type_tag: '',
-    services: [],
+    price_type_tag: null,
+    included_services: [],
     warnings: [],
   });
 
@@ -97,8 +97,8 @@ const PackageForm = ({
 
   const insertService = (data, formProps) => {
     const newState = { ...getValues() };
-    newState.services.push(data.name);
-    setValue('services', [...newState.services]);
+    newState.included_services.push(data.name);
+    setValue('included_services', [...newState.included_services]);
     setState(newState);
     formProps.closeModal();
   };
@@ -108,8 +108,8 @@ const PackageForm = ({
     if (typeof data.id === 'number' && data.id >= 0) {
       const clearData = { ...data };
       delete clearData.id;
-      newState.services[data.id] = (clearData.name);
-      setValue('services', [...newState.services]);
+      newState.included_services[data.id] = (clearData.name);
+      setValue('included_services', [...newState.included_services]);
       setState(newState);
     }
     formProps.closeModal();
@@ -118,8 +118,8 @@ const PackageForm = ({
   const deleteService = (data) => {
     const newState = { ...getValues() };
     if (typeof data.id === 'number' && data.id >= 0) {
-      newState.services.splice(data.id, 1);
-      setValue('services', [...newState.services]);
+      newState.included_services.splice(data.id, 1);
+      setValue('included_services', [...newState.included_services]);
       setState(newState);
     }
   };
@@ -166,7 +166,7 @@ const PackageForm = ({
           name_tag: parentProps?.target?.data?.name_tag || null,
           price: parentProps?.target?.data?.price || '',
           price_type_tag: parentProps?.target?.data?.price_type_tag || null,
-          services: [...(parentProps?.target?.data?.services || [])],
+          included_services: [...(parentProps?.target?.data?.included_services || [])],
           warnings: [...(parentProps?.target?.data?.warnings || [])],
         };
         reset(newData);
@@ -273,7 +273,7 @@ const PackageForm = ({
         deleteFunction={(deleteProps) => deleteService({
           id: deleteProps.target,
         })}
-        data={state.services || null}
+        data={state.included_services || null}
         singleField
         modalAlign="center"
       />
@@ -319,7 +319,7 @@ PackageForm.propTypes = {
       label: PropTypes.string,
       value: PropTypes.string,
     }),
-    services: PropTypes.arrayOf({
+    included_services: PropTypes.arrayOf({
       _id: string,
       description: string,
     }) || null,
@@ -334,7 +334,7 @@ PackageForm.propTypes = {
         name_tag: PropTypes.string,
         price: PropTypes.string,
         price_type_tag: PropTypes.string,
-        services: PropTypes.arrayOf(PropTypes.string),
+        included_services: PropTypes.arrayOf(PropTypes.string),
         warnings: PropTypes.arrayOf(PropTypes.string),
       }),
     }) || null,
@@ -347,7 +347,7 @@ PackageForm.defaultProps = {
     name_tag: null,
     price: '',
     price_type_tag: null,
-    services: [],
+    included_services: [],
     warnings: [],
   },
   parentProps: {},

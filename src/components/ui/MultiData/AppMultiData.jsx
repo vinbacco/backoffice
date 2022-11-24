@@ -56,6 +56,8 @@ const AppMultiData = ({
     switch (columnProps.type) {
       case 'currency':
         return utils.formatCurrency({ number: parseFloat(displayData) });
+      case 'select':
+        return displayData.label;
       case 'text':
       default:
         return displayData;
