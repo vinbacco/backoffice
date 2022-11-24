@@ -110,14 +110,23 @@ h1,h2,h3,h4,h5,h6 {
     overflow-y: auto;
   }
 
+  .div-image-preview-placeholder {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    border: 1px solid darkgray;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
   .div-image-preview {
     display: inline-block;
     width: 200px;
     height: 200px;
     object-fit: contain;
     background-color: white;
-    border: 1px solid darkgray;
-    border-radius: 15px;
+    border: none,
   }
 
   .div-gallery-preview {

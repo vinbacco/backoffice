@@ -134,23 +134,9 @@ function ToursDetail() {
     }
   };
 
-  const handleChangePreviewImage = (fileData) => {
-    const tourService = new TourService();
-    const mediaContentData = {
-      file: fileData,
-      type: 'tour_preview_image',
-    };
-
-    const okUploadMediaContent = (categoryResponse) => {
-      console.log(categoryResponse?.data);
-    };
-
-    const koUploadMediaContent = (error) => {
-      console.log(error);
-    };
-
-    tourService
-      .addMediaContent(id, mediaContentData, okUploadMediaContent, koUploadMediaContent);
+  const handleChangePreviewImage = (response) => {
+    if (response.job === 'delete') return setTourPreviewImage(null);
+    return setTourPreviewImage(response.response.data);
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -272,9 +258,12 @@ function ToursDetail() {
                     </CCol>
                   </CRow>
                   <ImageWithPreview
+                    contentId={id}
+                    contentType="tour_preview_image"
+                    Service={TourService}
                     title="Immagine di anteprima"
                     data={tourPreviewImage}
-                    onUpload={(file) => handleChangePreviewImage(file)}
+                    onUpdate={(data) => handleChangePreviewImage(data)}
                   />
                   <h4>Contenuto</h4>
                   <CRow className="g-3 mb-4">

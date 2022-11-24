@@ -46,7 +46,7 @@ export default class AbstractService {
     return this.axiosInstance.delete(path);
   }
 
-  upload(path, fileData) {
+  upload(path, fileData, update = false) {
     this.axiosInstance.defaults.headers = this.getHeaders();
     this.axiosInstance.defaults.headers['Content-Type'] = 'multipart/form-data';
 
@@ -56,6 +56,7 @@ export default class AbstractService {
     formData.append('minetype', fileData.file.type);
     formData.append('type', fileData.type);
 
+    if (update === true) return this.axiosInstance.put(path, formData);
     return this.axiosInstance.post(path, formData);
   }
 }
