@@ -14,6 +14,7 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 import TagsService from 'src/services/api/TagsService';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import ServiceForm from './ServiceForm';
+import WarningForm from './WarningForm';
 
 const PackageForm = ({
   defaultValues, submit, formId, parentProps,
@@ -32,6 +33,7 @@ const PackageForm = ({
       price: '',
       price_type_tag: null,
       services: [],
+      warnings: [],
     },
   });
   const [state, setState] = useState(defaultValues || {
@@ -40,6 +42,7 @@ const PackageForm = ({
     price: '',
     price_type_tag: '',
     services: [],
+    warnings: [],
   });
 
   const loadTags = (filter) => new Promise((resolve) => {
@@ -94,7 +97,7 @@ const PackageForm = ({
 
   const insertService = (data, formProps) => {
     const newState = { ...getValues() };
-    newState.services.push(data);
+    newState.services.push(data.name);
     setValue('services', [...newState.services]);
     setState(newState);
     formProps.closeModal();
@@ -105,7 +108,7 @@ const PackageForm = ({
     if (typeof data.id === 'number' && data.id >= 0) {
       const clearData = { ...data };
       delete clearData.id;
-      newState.services[data.id] = (clearData);
+      newState.services[data.id] = (clearData.name);
       setValue('services', [...newState.services]);
       setState(newState);
     }
@@ -117,6 +120,35 @@ const PackageForm = ({
     if (typeof data.id === 'number' && data.id >= 0) {
       newState.services.splice(data.id, 1);
       setValue('services', [...newState.services]);
+      setState(newState);
+    }
+  };
+
+  const insertWarning = (data, formProps) => {
+    const newState = { ...getValues() };
+    newState.warnings.push(data.name);
+    setValue('warnings', [...newState.warnings]);
+    setState(newState);
+    formProps.closeModal();
+  };
+
+  const editWarning = (data, formProps) => {
+    const newState = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      const clearData = { ...data };
+      delete clearData.id;
+      newState.warnings[data.id] = (clearData.name);
+      setValue('warnings', [...newState.warnings]);
+      setState(newState);
+    }
+    formProps.closeModal();
+  };
+
+  const deleteWarning = (data) => {
+    const newState = { ...getValues() };
+    if (typeof data.id === 'number' && data.id >= 0) {
+      newState.warnings.splice(data.id, 1);
+      setValue('warnings', [...newState.warnings]);
       setState(newState);
     }
   };
@@ -135,6 +167,7 @@ const PackageForm = ({
           price: parentProps?.target?.data?.price || '',
           price_type_tag: parentProps?.target?.data?.price_type_tag || null,
           services: [...(parentProps?.target?.data?.services || [])],
+          warnings: [...(parentProps?.target?.data?.warnings || [])],
         };
         reset(newData);
         setState(newData);
@@ -218,6 +251,7 @@ const PackageForm = ({
         </CRow>
       </CForm>
       <AppMultiData
+        className="mb-4"
         title="Servizi inclusi"
         item="Servizio"
         formId="servizio-pacchetto"
@@ -240,7 +274,34 @@ const PackageForm = ({
           id: deleteProps.target,
         })}
         data={state.services || null}
-        columns={[{ index: 'name', type: 'text' }]}
+        singleField
+        modalAlign="center"
+      />
+      <AppMultiData
+        className="mb-4"
+        title="Avvertenze pacchetto"
+        item="Avvertenza"
+        formId="avvertenza-pacchetto"
+        createFormComponent={(CreateFormProps) => WarningForm({
+          formId: 'create_avvertenza-pacchetto',
+          submit: (data) => insertWarning(data, CreateFormProps),
+          parentProps: {
+            show: CreateFormProps.show,
+          },
+        })}
+        editFormComponent={(EditFormProps) => WarningForm({
+          formId: 'edit_avvertenza-pacchetto',
+          submit: (data) => editWarning(data, EditFormProps),
+          parentProps: {
+            show: EditFormProps.show,
+            target: EditFormProps.target,
+          },
+        })}
+        deleteFunction={(deleteProps) => deleteWarning({
+          id: deleteProps.target,
+        })}
+        data={state.warnings || null}
+        singleField
         modalAlign="center"
       />
     </>
@@ -274,6 +335,7 @@ PackageForm.propTypes = {
         price: PropTypes.string,
         price_type_tag: PropTypes.string,
         services: PropTypes.arrayOf(PropTypes.string),
+        warnings: PropTypes.arrayOf(PropTypes.string),
       }),
     }) || null,
   }),
@@ -286,6 +348,7 @@ PackageForm.defaultProps = {
     price: '',
     price_type_tag: null,
     services: [],
+    warnings: [],
   },
   parentProps: {},
 };
