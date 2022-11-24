@@ -10,11 +10,11 @@ import './scss/style.scss';
 import AppLoadingSpinner from './components/ui/AppLoadingSpinner';
 
 // Containers
-const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
+import DefaultLayout from './layout/DefaultLayout';
 
 // Pages
-const Login = React.lazy(() => import('./views/pages/login/Login'));
-const Register = React.lazy(() => import('./views/pages/register/Register'));
+import Login from './views/pages/login/Login';
+import Register from './views/pages/register/Register';
 
 function App() {
   const [appInit, setAppInit] = useState(false);

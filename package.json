@@ -70,8 +70,8 @@
     "sass": "^1.54.4"
   },
   "engines": {
-    "node": "14.14.0",
-    "npm": "6.14.8"
+    "node": "19.0.1",
+    "npm": "8.19.2"
   },
   "browserslist": {
     "production": [
