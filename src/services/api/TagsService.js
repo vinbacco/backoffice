@@ -74,7 +74,7 @@ export default class TagsService extends ApiProxyService {
 
   updateMediaContent(itemId, fileId, fileData, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}/media_contents/${fileId}`;
-    super.uploadItem(path, fileData, okCallback, koCallback, true);
+    super.uploadItem(path, fileData, okCallback, koCallback);
   }
 
   deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
