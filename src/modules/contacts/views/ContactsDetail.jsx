@@ -75,8 +75,8 @@ function ContactsDetail() {
           Array.isArray(contactResponseData.media_contents)
           && contactResponseData.media_contents.length > 0
         ) {
-          setContactMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_image')]);
-          setContactWineMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_wine_image')]);
+          setContactMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
+          setContactWineMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
         }
       };
 

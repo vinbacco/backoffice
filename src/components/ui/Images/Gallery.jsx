@@ -1,8 +1,9 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { Component, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import toast from 'react-hot-toast';
 import {
   CButton,
   CCol,
@@ -21,13 +22,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import AppLoadingSpinner from '../AppLoadingSpinner';
-
-/**
- * TODO:
- * - Verificare il cambio di contenuto quando una nuova immagine viene inserita
- * - Verificare il cambio di contenuto quando un'immagine esistente viene cancellata
- * - Assicurarsi che il cambio ordine delle immagine sorge effetto nel salvataggio del contenuto
- */
 
 const Gallery = ({
   title, label, data, instructions, onUpdate, Service, contentId, contentType,
@@ -79,8 +73,11 @@ const Gallery = ({
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-
-    return result;
+    return result.map((currentItem, index) => {
+      const newItem = { ...currentItem };
+      newItem.order = index;
+      return newItem;
+    });
   };
 
   const grid = 8;
@@ -107,9 +104,47 @@ const Gallery = ({
   });
 
   const processChangeOrder = (newOrder) => {
-    const newArray = [];
-    newOrder.forEach((current) => newArray.push(current.data));
-    onUpdate(newArray);
+    const savePromise = new Promise((resolve, reject) => {
+      const newArray = [];
+      const orderArray = [];
+      newOrder.forEach((current) => {
+        const currentData = { ...current.data };
+        currentData.order = current.order;
+        newArray.push(currentData);
+        orderArray.push({ media_content_id: currentData.child_id, order: currentData.order });
+      });
+      setComponentDisable(true);
+      const okChangeOrderMediaContent = (loadResponse) => {
+        setComponentDisable(false);
+        resolve();
+        onUpdate(newArray);
+      };
+      const koChangeOrderMediaContent = (error) => {
+        setGalleryState({ items: processData(data) });
+        setComponentDisable(false);
+        reject();
+      };
+      sectionService
+        .orderMediaContent(
+          contentId,
+          orderArray,
+          okChangeOrderMediaContent,
+          koChangeOrderMediaContent,
+        );
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando ordinamento delle immagini...',
+      success: 'Ordinamento delle immagini salvato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
   };
 
   const onDragEnd = (result) => {
@@ -271,7 +306,7 @@ const Gallery = ({
           <CCol lg={4} md={6} sm={12}>
             <div className="mt-4">
               <small>{instructions}</small>
-              <div className="mt-2 div-gallery-drag-drop">
+              <div className={`mt-2 div-gallery-drag-drop${componentDisable === true ? ' disabled' : ''}`}>
                 <DragDropContext onDragEnd={onDragEnd}>
                   <Droppable droppableId="droppable" isDropDisabled={componentDisable}>
                     {(droppableProvided, droppableSnapshot) => (
@@ -311,7 +346,7 @@ const Gallery = ({
             </div>
           </CCol>
           <CCol lg={8} md={6} sm={12}>
-            <h6 className="mt-4">Preview immagine scelta</h6>
+            <h6 className="mt-4">Preview</h6>
             <CImage className="div-gallery-preview" src={currentPreview} />
           </CCol>
         </CRow>

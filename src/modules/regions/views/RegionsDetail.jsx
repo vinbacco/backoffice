@@ -62,7 +62,7 @@ const RegionsDetail = () => {
 
         reset(regionModelData || {});
         setState({ ...state, loading: false, model: regionModelData });
-        setMediaContents([...regionResponseData.media_contents.filter((current) => current.type === 'region_image')]);
+        setMediaContents([...regionResponseData.media_contents.filter((current) => current.type === 'region_image').sort((a, b) => a.order - b.order)]);
       };
 
       const koGetCallback = (error) => {

@@ -39,6 +39,7 @@ function ToursDetail() {
       attributes: {
         purchase_options: [],
       },
+      media_contents: [],
       tags: [],
     },
   });
@@ -80,7 +81,7 @@ function ToursDetail() {
           Array.isArray(tourData.media_contents)
           && tourData.media_contents.length > 0
         ) {
-          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image').sort((a, b) => a.order - b.order)]);
           setTourPreviewImage(tourData.media_contents.find((current) => current.type === 'tour_preview_image'));
         }
       };
@@ -104,7 +105,7 @@ function ToursDetail() {
           Array.isArray(tourData.media_contents)
           && tourData.media_contents.length > 0
         ) {
-          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image').sort((a, b) => a.order - b.order)]);
           setTourPreviewImage(tourData.media_contents.find((current) => current.type === 'tour_preview_image'));
         }
         setState({ ...state, loading: false, model: tourData });
