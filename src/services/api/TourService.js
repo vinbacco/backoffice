@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import ApiProxyService from './apiProxyService';
 
 import utils from './utils/utils';
@@ -47,14 +48,9 @@ export default class TourService extends ApiProxyService {
     super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
-  addMediaContent(itemId, fileData, okCallback, koCallback) {
-    const path = `${this.BASE_PATH}/${itemId}/media_contents`;
-    super.uploadItem(path, fileData, okCallback, koCallback);
-  }
-
-  deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
-    const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
-    super.deleteItem(path, okCallback, koCallback);
+  updateItem(itemId, itemData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}`;
+    super.updateItem(path, itemData, okCallback, koCallback);
   }
 
   deleteItem(deleteInfo, okCallback, koCallback) {
@@ -80,5 +76,20 @@ export default class TourService extends ApiProxyService {
         if (rejectedPromises.length <= 0) okCallback();
         else koCallback([...rejectedPromises]);
       });
+  }
+
+  addMediaContent(itemId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  updateMediaContent(itemId, fileId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${fileId}`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
+    super.deleteItem(path, okCallback, koCallback);
   }
 }

@@ -36,6 +36,7 @@ const Gallery = ({
   const [currentPreview, setCurrentPreview] = useState(null);
   const [newImageFile, setNewImageFile] = useState(undefined);
   const inputRef = useRef(null);
+  const [componentDisable, setComponentDisable] = useState(false);
   const [insertState, setInsertState] = useState({
     error: null, executing: false, success: null, show: false,
   });
@@ -195,7 +196,7 @@ const Gallery = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             disabled={deleteState.executing === true}
             onClick={() => (
               setDeleteState({
@@ -230,7 +231,7 @@ const Gallery = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             disabled={insertState.executing === true}
             onClick={() => (
               setInsertState({
@@ -272,7 +273,7 @@ const Gallery = ({
               <small>{instructions}</small>
               <div className="mt-2 div-gallery-drag-drop">
                 <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="droppable">
+                  <Droppable droppableId="droppable" isDropDisabled={componentDisable}>
                     {(droppableProvided, droppableSnapshot) => (
                       <div
                         {...droppableProvided.droppableProps}
@@ -280,7 +281,12 @@ const Gallery = ({
                         style={getListStyle(droppableSnapshot.isDraggingOver)}
                       >
                         {galleryState.items.map((item, index) => (
-                          <Draggable key={item.id} draggableId={item.id} index={index}>
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                            isDragDisabled={componentDisable}
+                          >
                             {(draggableProvided, draggableSnapshot) => (
                               <div
                                 ref={draggableProvided.innerRef}

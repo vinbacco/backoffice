@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -21,7 +22,7 @@ function ToursDetail() {
   const { id } = useParams();
   const [state, setState] = useState({ loading: true, error: null });
   const {
-    control, handleSubmit, reset, getValues, setValue,
+    control, reset, getValues, setValue,
   } = useForm({
     defaultValues: {
       name: '',
@@ -44,36 +45,43 @@ function ToursDetail() {
   const [tourPreviewImage, setTourPreviewImage] = useState(null);
   const [tourMediaContents, setTourMediaContents] = useState([]);
 
+  const formatModel = (response) => {
+    const tourResponseData = { ...response?.data || {} };
+    const tourModelData = {};
+    tourModelData.product_category_id = tourResponseData.product_category_id;
+    tourModelData.contact_id = tourResponseData.contact_id;
+    tourModelData.name = tourResponseData.name;
+    tourModelData.base_price = tourResponseData.base_price;
+    tourModelData.meta_title = tourResponseData.meta_title || '';
+    tourModelData.meta_keywords = tourResponseData.meta_keywords || '';
+    tourModelData.meta_description = tourResponseData.meta_description || '';
+    tourModelData.abstract = tourResponseData?.abstract || '';
+    tourModelData.description = tourResponseData?.description || '';
+    tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
+    tourModelData.contact_name = tourResponseData?.contact?.business_name;
+    tourModelData.category_name = tourResponseData?.product_category?.name;
+    tourModelData.attributes = tourResponseData?.attributes || {
+      purchase_options: [],
+    };
+    tourModelData.tags = tourResponseData?.tags || [];
+    tourModelData.media_contents = tourResponseData?.media_contents || [];
+
+    return tourModelData;
+  };
+
   useEffect(() => {
     if (id !== null && typeof id !== 'undefined') {
       const tourService = new TourService();
       const okGetDetails = (response) => {
-        const tourResponseData = { ...response?.data || {} };
-        const tourModelData = {};
-
-        tourModelData.name = tourResponseData.name;
-        tourModelData.base_price = tourResponseData.base_price;
-        tourModelData.meta_title = tourResponseData.meta_title || '';
-        tourModelData.meta_keywords = tourResponseData.meta_keywords || '';
-        tourModelData.meta_description = tourResponseData.meta_description || '';
-        tourModelData.abstract = tourResponseData?.abstract || '';
-        tourModelData.description = tourResponseData?.description || '';
-        tourModelData.url_friendly_name = tourResponseData.url_friendly_name;
-        tourModelData.contact_name = tourResponseData?.contact?.business_name;
-        tourModelData.category_name = tourResponseData?.product_category?.name;
-        tourModelData.attributes = tourResponseData?.attributes || {
-          purchase_options: [],
-        };
-        tourModelData.tags = tourResponseData?.tags || [];
-
-        reset(tourModelData || {});
-        setState({ ...state, loading: false, model: tourModelData });
+        const tourData = formatModel(response);
+        reset(tourData);
+        setState({ ...state, loading: false, model: tourData });
         if (
-          Array.isArray(tourResponseData.media_contents)
-          && tourResponseData.media_contents.length > 0
+          Array.isArray(tourData.media_contents)
+          && tourData.media_contents.length > 0
         ) {
-          setTourMediaContents([...tourResponseData.media_contents.filter((current) => current.type === 'tour_image')]);
-          setTourPreviewImage(tourResponseData.media_contents.find((current) => current.type === 'tour_preview_image'));
+          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourPreviewImage(tourData.media_contents.find((current) => current.type === 'tour_preview_image'));
         }
       };
 
@@ -88,18 +96,64 @@ function ToursDetail() {
   }, []);
 
   const saveAction = (type) => {
-    console.log(getValues());
-    switch (type) {
-      case 'publish':
-        // Azione pubblica
-        break;
-      case 'publishNow':
-        // Azione pubblica ora
-        break;
-      case 'save':
-      default:
-        // Azione salva
-    }
+    const savePromise = new Promise((resolve, reject) => {
+      const okEditCallback = (response) => {
+        const tourData = formatModel(response);
+        reset(tourData);
+        if (
+          Array.isArray(tourData.media_contents)
+          && tourData.media_contents.length > 0
+        ) {
+          setTourMediaContents([...tourData.media_contents.filter((current) => current.type === 'tour_image')]);
+          setTourPreviewImage(tourData.media_contents.find((current) => current.type === 'tour_preview_image'));
+        }
+        setState({ ...state, loading: false, model: tourData });
+        resolve();
+      };
+
+      const koEditCallback = (response) => {
+        setState({ loading: false, error: response?.error });
+        reject();
+      };
+
+      const tourService = new TourService();
+      const formData = getValues();
+      switch (type) {
+        case 'publish':
+          // Azione pubblica
+          break;
+        case 'publishNow':
+          // Azione pubblica ora
+          break;
+        case 'save':
+        default:
+          tourService.updateItem(id, formData, okEditCallback, koEditCallback);
+      }
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando le modifiche...',
+      success: 'Dato modificato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
+  };
+
+  const getBasePrice = (purchaseOptions) => {
+    if (purchaseOptions.length <= 0) return 0;
+    if (purchaseOptions.length === 1) return purchaseOptions[0].price;
+    const lowerPricePackage = purchaseOptions.reduce((prev, curr) => {
+      const prevPrice = parseInt(prev.price, 10);
+      const currPrice = parseInt(curr.price, 10);
+      if (prevPrice <= currPrice) return prev; return curr;
+    });
+    return parseInt(lowerPricePackage.price, 10);
   };
 
   const insertPackage = (data, formProps) => {
@@ -109,6 +163,8 @@ function ToursDetail() {
     if (!newModel.attributes) newModel.attributes = { purchase_options: [] };
     if (!newModel.attributes.purchase_options) newModel.attributes.purchase_options = [];
     newModel.attributes.purchase_options.push(formatData);
+    newModel.base_price = getBasePrice(newModel.attributes.purchase_options);
+    setValue('base_price', newModel.base_price);
     setValue('attributes', newModel.attributes);
     setState({ ...state, model: newModel });
     formProps.closeModal();
@@ -120,6 +176,8 @@ function ToursDetail() {
       const formatData = { ...data };
       delete formatData.id;
       newModel.attributes.purchase_options[data.id] = (formatData);
+      newModel.base_price = getBasePrice(newModel.attributes.purchase_options);
+      setValue('base_price', newModel.base_price);
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
     }
@@ -130,6 +188,8 @@ function ToursDetail() {
     const newModel = { ...getValues() };
     if (typeof data.id === 'number' && data.id >= 0) {
       newModel.attributes.purchase_options.splice(data.id, 1);
+      newModel.base_price = getBasePrice(newModel.attributes.purchase_options);
+      setValue('base_price', newModel.base_price);
       setValue('attributes', newModel.attributes);
       setState({ ...state, model: newModel });
     }
@@ -189,7 +249,7 @@ function ToursDetail() {
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
-                        <CFormInput className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
+                        <CFormInput readOnly disabled className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
                       )}
                     />
                     <CInputGroupText id="tour-base_price_append">€</CInputGroupText>

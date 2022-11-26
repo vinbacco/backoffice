@@ -109,7 +109,7 @@ const ImageWithPreview = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             disabled={deleteState.executing === true}
             onClick={() => (
               setDeleteState({
@@ -144,7 +144,7 @@ const ImageWithPreview = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             disabled={insertState.executing === true}
             onClick={() => (
               setInsertState({
