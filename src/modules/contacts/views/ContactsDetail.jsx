@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import {
   CForm, CCol, CFormInput, CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel,
 } from '@coreui/react';
+import toast from 'react-hot-toast';
 
 import ContactCategoriesService from 'src/services/api/ContactCategoriesService';
 import CitiesService from 'src/services/api/CitiesService';
@@ -47,36 +48,43 @@ function ContactsDetail() {
   const [contactMediaContents, setContactMediaContents] = useState([]);
   const [contactWineMediaContents, setContactWineMediaContents] = useState([]);
 
+  const formatModel = (response) => {
+    const contactResponseData = { ...response?.data || {} };
+    const contactModelData = {};
+    contactModelData.business_name = contactResponseData.business_name;
+    contactModelData.contact_category_id = contactResponseData.contact_category_id;
+    contactModelData.holder = contactResponseData.holder;
+    contactModelData.foundation_year = contactResponseData.foundation_year;
+    contactModelData.certified_email = contactResponseData.certified_email;
+    contactModelData.registered_address = contactResponseData.registered_address;
+    contactModelData.registered_city_id = contactResponseData.registered_city_id;
+    contactModelData.registered_zip_code = contactResponseData.registered_zip_code;
+    contactModelData.vat_code = contactResponseData.vat_code;
+    contactModelData.commercial_ref_name = contactResponseData.commercial_ref_name;
+    contactModelData.commercial_ref_phone = contactResponseData.commercial_ref_phone;
+    contactModelData.commercial_ref_email = contactResponseData.commercial_ref_email;
+    contactModelData.attributes = contactModelData?.attributes || {
+      wines: [],
+    };
+    contactModelData.media_contents = contactModelData?.media_contents || [];
+
+    return contactModelData;
+  };
+
   useEffect(() => {
     if (id !== null && typeof id !== 'undefined') {
       const contactService = new ContactsService();
       const okGetDetails = (response) => {
-        const contactResponseData = { ...response?.data || {} };
-        const contactModelData = {};
-        contactModelData.business_name = contactResponseData.business_name;
-        contactModelData.contact_category_id = contactResponseData.contact_category_id;
-        contactModelData.holder = contactResponseData.holder;
-        contactModelData.foundation_year = contactResponseData.foundation_year;
-        contactModelData.certified_email = contactResponseData.certified_email;
-        contactModelData.registered_address = contactResponseData.registered_address;
-        contactModelData.registered_city_id = contactResponseData.registered_city_id;
-        contactModelData.registered_zip_code = contactResponseData.registered_zip_code;
-        contactModelData.vat_code = contactResponseData.vat_code;
-        contactModelData.commercial_ref_name = contactResponseData.commercial_ref_name;
-        contactModelData.commercial_ref_phone = contactResponseData.commercial_ref_phone;
-        contactModelData.commercial_ref_email = contactResponseData.commercial_ref_email;
-        contactModelData.attributes = contactModelData?.attributes || {
-          wines: [],
-        };
+        const contactModelData = formatModel(response);
 
-        reset(contactModelData || {});
+        reset(contactModelData);
         setState({ ...state, loading: false });
         if (
-          Array.isArray(contactResponseData.media_contents)
-          && contactResponseData.media_contents.length > 0
+          Array.isArray(contactModelData.media_contents)
+          && contactModelData.media_contents.length > 0
         ) {
-          setContactMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
-          setContactWineMediaContents([...contactResponseData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
+          setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
+          setContactWineMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
         }
       };
 
@@ -137,17 +145,53 @@ function ContactsDetail() {
   });
 
   const saveAction = (type) => {
-    switch (type) {
-      case 'publish':
-        // Azione pubblica
-        break;
-      case 'publishNow':
-        // Azione pubblica ora
-        break;
-      case 'save':
-      default:
-        // Azione salva
-    }
+    const savePromise = new Promise((resolve, reject) => {
+      const okEditCallback = (response) => {
+        const contactModelData = formatModel(response);
+        reset(contactModelData);
+        if (
+          Array.isArray(contactModelData.media_contents)
+          && contactModelData.media_contents.length > 0
+        ) {
+          setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
+          setContactWineMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
+        }
+        setState({ ...state, loading: false, model: contactModelData });
+        resolve();
+      };
+
+      const koEditCallback = (response) => {
+        setState({ loading: false, error: response?.error });
+        reject();
+      };
+
+      const contactService = new ContactsService();
+      const formData = getValues();
+      switch (type) {
+        case 'publish':
+          resolve(); // TODO: Azione pubblica
+          break;
+        case 'publishNow':
+          resolve(); // TODO: Azione pubblica ora
+          break;
+        case 'save':
+        default:
+          contactService.updateItem(id, formData, okEditCallback, koEditCallback);
+      }
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando le modifiche...',
+      success: 'Dato modificato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
   };
 
   const insertWine = (data, formProps) => {

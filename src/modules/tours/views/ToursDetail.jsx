@@ -121,10 +121,10 @@ function ToursDetail() {
       const formData = getValues();
       switch (type) {
         case 'publish':
-          // Azione pubblica
+          resolve(); // TODO: Azione pubblica
           break;
         case 'publishNow':
-          // Azione pubblica ora
+          resolve(); // TODO: Azione pubblica ora
           break;
         case 'save':
         default:
