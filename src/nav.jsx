@@ -1,7 +1,7 @@
 import React from 'react';
 import CIcon from '@coreui/icons-react';
 import {
-  cilSpeedometer, cilTerrain, cilList, cilMap, cilBusAlt,
+  cilSpeedometer, cilTerrain, cilList, cilMap, cilBusAlt, cilUser,
 } from '@coreui/icons';
 import { CNavItem, CNavGroup } from '@coreui/react';
 
@@ -58,6 +58,12 @@ const nav = [
         name: 'Tipologie Prodotti',
         to: '/product-types',
         icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      },
+      {
+        component: CNavItem,
+        name: 'Utenti',
+        to: '/users',
+        icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
       },
     ],
   },

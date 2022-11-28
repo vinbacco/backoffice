@@ -14,6 +14,8 @@ import TagsDetail from './modules/tags/views/TagsDetail';
 import ZonesList from './modules/zones/views/ZonesList';
 import ZonesDetail from './modules/zones/views/ZonesDetail';
 import NotFound from './views/pages/page404/Page404';
+import UsersList from './modules/users/views/UsersList';
+import UsersDetail from './modules/users/views/UsersDetail';
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -32,6 +34,8 @@ const routes = [
   { path: '/tours/:id', name: 'Dettaglio Tour', element: ToursDetail },
   { path: '/zones', name: 'Zones', element: ZonesList },
   { path: '/zones/:id', name: 'Zones Details', element: ZonesDetail },
+  { path: '/users', name: 'Utenti', element: UsersList },
+  { path: '/users/:id', name: 'Dettaglio utente', element: UsersDetail },
   { path: '*', name: 'NotFound', element: NotFound },
 ];
 
