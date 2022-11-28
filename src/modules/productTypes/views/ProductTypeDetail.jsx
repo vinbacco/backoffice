@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
@@ -10,28 +9,32 @@ import {
   CRow,
   CCol,
   CFormInput,
-  CFormTextarea,
+  CAlert,
+  CAlertHeading,
 } from '@coreui/react';
 // SERVICES
-import RegionsService from 'src/services/api/RegionsService';
+import FeedsService from 'src/services/api/FeedsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Images/Gallery';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
-const RegionsDetail = () => {
+const ProductTypeDetail = () => {
   const { id } = useParams();
   const {
     control,
     handleSubmit,
+    setValue,
     reset,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: '',
+    },
+  });
   const [state, setState] = useState({
     loading: true,
     model: null,
   });
-  const [mediaContents, setMediaContents] = useState([]);
 
-  const regionsService = new RegionsService();
+  const feedsService = new FeedsService();
 
   const onSubmit = (data) => {
     const okEditCallback = (response) => {
@@ -44,25 +47,18 @@ const RegionsDetail = () => {
       toast.error('Ops, si è verificato un errore!');
     };
 
-    regionsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+    feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
   };
 
   const handleReset = () => {
-    reset({ tag: state.model?.tag, code: state.model?.code });
+    reset({ name: state.model?.name, code: state.model?.code });
   };
 
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
-        const regionResponseData = { ...response?.data || {} };
-        const regionModelData = {};
-
-        regionModelData.name = regionResponseData?.name || '';
-        regionModelData.description = regionResponseData?.description || '';
-
-        reset(regionModelData || {});
-        setState({ ...state, loading: false, model: regionModelData });
-        setMediaContents([...regionResponseData.media_contents.filter((current) => current.type === 'region_image').sort((a, b) => a.order - b.order)]);
+        setValue('name', response.data.name);
+        setState({ ...state, loading: false, model: { ...response.data } });
       };
 
       const koGetCallback = (error) => {
@@ -70,61 +66,46 @@ const RegionsDetail = () => {
         setState({ ...state, loading: false, error: errorMessage });
         throw new Error(errorMessage);
       };
-      regionsService.getItem(id, okGetCallback, koGetCallback);
+
+      feedsService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
 
   if (state.loading === true) return <AppLoadingSpinner />;
 
-  if (state.error) return <p>NO DATA</p>;
+  if (state.error) {
+    return (
+      <CAlert color="danger">
+        <CAlertHeading tag="h4">Si è verificato un errore!</CAlertHeading>
+        <p>{state.error}</p>
+      </CAlert>
+    );
+  }
 
   return (
     <AppBaseDetail
-      type="regione"
+      type="tipologia prodotto"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >
-      <section id="region-detail">
+      <section id="product-type-detail">
         <CForm
           className="row g-3"
           onSubmit={handleSubmit(onSubmit)}
         >
           <CRow>
-            <CCol md={12}>
+            <CCol md={6}>
               <Controller
                 name="name"
                 control={control}
                 render={({ field }) => (
                   <CFormInput
-                    label="Nome Regione"
-                    placeholder="Inserisci nome regione"
+                    label="Nome"
                     {...field}
                   />
                 )}
               />
             </CCol>
-            <CCol md={12}>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <CFormTextarea
-                    label="Descrizione"
-                    placeholder="Inserisci descrizione regione"
-                    rows={10}
-                    {...field}
-                  />
-                )}
-              />
-            </CCol>
-            <Gallery
-              contentId={id}
-              contentType="region_image"
-              Service={RegionsService}
-              title="Galleria regione"
-              data={mediaContents}
-              onUpdate={(imagesArray) => setMediaContents(imagesArray)}
-            />
             <div className="mb-3" />
           </CRow>
         </CForm>
@@ -133,4 +114,4 @@ const RegionsDetail = () => {
   );
 };
 
-export default RegionsDetail;
+export default ProductTypeDetail;

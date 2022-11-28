@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-empty-pattern */
 import React, { useState } from 'react';
@@ -45,9 +46,9 @@ Buttons.propTypes = {
 
 const AppDetail = (props) => {
   const {
-    name, urlFriendlyName, tabContentMain, tabContentWeb, saveAction,
+    name, urlFriendlyName, tabsContents, saveAction, tabsHeaders,
   } = props;
-  const [activeKey, setActiveKey] = useState(1);
+  const [activeTab, setActiveTab] = useState(tabsHeaders[0]?.index || null);
 
   return (
     <div style={{ marginBottom: '4em' }}>
@@ -65,32 +66,30 @@ const AppDetail = (props) => {
         </CCardHeader>
         <CCardBody>
           <CNav variant="pills" role="tablist">
-            <CNavItem>
-              <CNavLink
-                className="cursor-pointer"
-                active={activeKey === 1}
-                onClick={() => setActiveKey(1)}
-              >
-                Dati principali
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                className="cursor-pointer"
-                active={activeKey === 2}
-                onClick={() => setActiveKey(2)}
-              >
-                Dati web
-              </CNavLink>
-            </CNavItem>
+            {tabsHeaders.map((currentTab, tabIndex) => (
+              <CNavItem key={`app-detail-tab-header-${tabIndex}_${currentTab}`}>
+                <CNavLink
+                  className="cursor-pointer"
+                  active={activeTab === currentTab.index}
+                  onClick={() => setActiveTab(currentTab.index)}
+                >
+                  {currentTab.label}
+                </CNavLink>
+              </CNavItem>
+            ))}
           </CNav>
           <CTabContent>
-            <CTabPane className="p-3" role="tabpanel" aria-labelledby="main-tab" visible={activeKey === 1}>
-              {tabContentMain}
-            </CTabPane>
-            <CTabPane className="p-3" role="tabpanel" aria-labelledby="web-tab" visible={activeKey === 2}>
-              {tabContentWeb}
-            </CTabPane>
+            {tabsContents.map((currentTab, tabIndex) => (
+              <CTabPane
+                key={`app-detail-tab-content-${tabIndex}_${currentTab}`}
+                className="p-3"
+                role="tabpanel"
+                aria-labelledby="main-tab"
+                visible={activeTab === currentTab.index}
+              >
+                {currentTab.content}
+              </CTabPane>
+            ))}
           </CTabContent>
         </CCardBody>
         <CCardFooter>
@@ -106,8 +105,14 @@ AppDetail.propTypes = {
   name: PropTypes.string,
   urlFriendlyName: PropTypes.string,
   saveAction: PropTypes.func.isRequired,
-  tabContentMain: PropTypes.element.isRequired,
-  tabContentWeb: PropTypes.element.isRequired,
+  tabsHeaders: PropTypes.arrayOf(PropTypes.shape({
+    index: PropTypes.string,
+    label: PropTypes.string,
+  })).isRequired,
+  tabsContents: PropTypes.arrayOf(PropTypes.shape({
+    index: PropTypes.string,
+    content: PropTypes.element,
+  })).isRequired,
 };
 
 AppDetail.defaultProps = {

@@ -6,6 +6,7 @@ import ContactsDetail from './modules/contacts/views/ContactsDetail';
 import FeedsList from './modules/feeds/views/FeedsList';
 import FeedsDetail from './modules/feeds/views/FeedsDetail';
 import ProductTypesList from './modules/productTypes/views/ProductTypesList';
+import ProductTypeDetail from './modules/productTypes/views/ProductTypeDetail';
 import RegionsList from './modules/regions/views/RegionsList';
 import RegionsDetail from './modules/regions/views/RegionsDetail';
 import TagsList from './modules/tags/views/TagsList';
@@ -21,7 +22,8 @@ const routes = [
   { path: '/feeds/:id', name: 'Feeds Detail', element: FeedsDetail },
   { path: '/winery', name: 'Cantine', element: ContactsList },
   { path: '/winery/:id', name: 'Dettaglio cantina', element: ContactsDetail },
-  { path: '/product-types', name: 'ProductTypes', element: ProductTypesList },
+  { path: '/product-types', name: 'Product Types', element: ProductTypesList },
+  { path: '/product-types/:id', name: 'Product Type', element: ProductTypeDetail },
   { path: '/regions', name: 'Tags', element: RegionsList },
   { path: '/regions/:id', name: 'Regions Details', element: RegionsDetail },
   { path: '/tags', name: 'Tags', element: TagsList },
