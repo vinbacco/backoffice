@@ -100,7 +100,7 @@ function ToursList() {
   const mapListFn = (item) => ({
     _id: item._id,
     name: item.name,
-    business_name: item.contact.business_name,
+    business_name: item.contact?.business_name || '',
   });
 
   const creationBodyFn = () => (
