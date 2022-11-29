@@ -43,13 +43,11 @@ const UsersDetail = () => {
     const savePromise = new Promise((resolve, reject) => {
       const okEditCallback = (response) => {
         setState({ loading: false, model: { ...response.data } });
-        toast.success('Dato modificato con successo!');
         resolve();
       };
 
       const koEditCallback = (response) => {
         setState({ loading: false, error: response?.error });
-        toast.error('Ops, si è verificato un errore!');
         reject();
       };
 

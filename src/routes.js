@@ -14,6 +14,8 @@ import TagsDetail from './modules/tags/views/TagsDetail';
 import ZonesList from './modules/zones/views/ZonesList';
 import ZonesDetail from './modules/zones/views/ZonesDetail';
 import NotFound from './views/pages/page404/Page404';
+import ContactCategoriesList from './modules/contactCategories/views/ContactCategoriesList';
+import ContactCategoriesDetail from './modules/contactCategories/views/ContactCategoriesDetail';
 import UsersList from './modules/users/views/UsersList';
 import UsersDetail from './modules/users/views/UsersDetail';
 
@@ -34,6 +36,8 @@ const routes = [
   { path: '/tours/:id', name: 'Dettaglio Tour', element: ToursDetail },
   { path: '/zones', name: 'Zones', element: ZonesList },
   { path: '/zones/:id', name: 'Zones Details', element: ZonesDetail },
+  { path: '/contact-categories', name: 'Categorie contatto', element: ContactCategoriesList },
+  { path: '/contact-categories/:id', name: 'Dettaglio categoria contatto', element: ContactCategoriesDetail },
   { path: '/users', name: 'Utenti', element: UsersList },
   { path: '/users/:id', name: 'Dettaglio utente', element: UsersDetail },
   { path: '*', name: 'NotFound', element: NotFound },
