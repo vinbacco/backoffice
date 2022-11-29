@@ -16,6 +16,7 @@ import {
 import ContactCategoriesService from 'src/services/api/ContactCategoriesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
 const ContactCategoriesDetail = () => {
   const { id } = useParams();
@@ -24,6 +25,7 @@ const ContactCategoriesDetail = () => {
     handleSubmit,
     setValue,
     reset,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       name: '',
@@ -109,15 +111,43 @@ const ContactCategoriesDetail = () => {
           className="row g-3"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <CRow>
+          <CRow className="mt-3">
             <CCol md={6}>
               <Controller
                 name="name"
                 control={control}
+                rules={{ required: true }}
+                defaultValue=""
                 render={({ field }) => (
                   <CFormInput
+                    invalid={!!errors.name}
+                    feedback={errors?.name ? composeErrorFormType(errors.name) : null}
+                    type="text"
+                    id="contact-category-name"
                     label="Nome"
-                    {...field}
+                    placeholder="Inserisci nome"
+                    {... field}
+                  />
+                )}
+              />
+            </CCol>
+            <CCol md={6}>
+              <Controller
+                name="category_name"
+                control={control}
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field }) => (
+                  <CFormInput
+                    invalid={!!errors.category_name}
+                    feedback={errors?.category_name
+                      ? composeErrorFormType(errors.category_name)
+                      : null}
+                    type="text"
+                    id="contact-category-category_name"
+                    label="Categoria contatto"
+                    placeholder="Inserisci categoria contatto"
+                    {... field}
                   />
                 )}
               />

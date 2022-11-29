@@ -25,16 +25,24 @@ function ContactCategoriesList() {
       sortable: true,
       _props: { scope: 'col' },
     },
+    {
+      key: 'category_name',
+      label: 'Nome categoria',
+      sortable: true,
+      _props: { scope: 'col' },
+    },
   ]);
 
   const buildRowsFn = (item) => ({
     _id: item._id,
     name: item.name,
+    category_name: item.category_name,
   });
 
   const mapListFn = (item) => ({
     _id: item._id,
     name: item.name,
+    category_name: item.category_name,
   });
 
   const creationBodyFn = () => (
@@ -51,8 +59,27 @@ function ContactCategoriesList() {
               feedback={errors?.name ? composeErrorFormType(errors.name) : null}
               type="text"
               id="contact-category-name"
-              label="Nome categoria contatto"
-              placeholder="Inserisci nome categoria contatto"
+              label="Nome"
+              placeholder="Inserisci nome"
+              {... field}
+            />
+          )}
+        />
+      </CCol>
+      <CCol md={6}>
+        <Controller
+          name="category_name"
+          control={control}
+          rules={{ required: true }}
+          defaultValue=""
+          render={({ field }) => (
+            <CFormInput
+              invalid={!!errors.category_name}
+              feedback={errors?.category_name ? composeErrorFormType(errors.category_name) : null}
+              type="text"
+              id="contact-category-category_name"
+              label="Categoria contatto"
+              placeholder="Inserisci categoria contatto"
               {... field}
             />
           )}
