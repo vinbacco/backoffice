@@ -2,14 +2,16 @@
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
+import Select from 'react-select';
 import {
   CCol,
   CFormInput,
+  CFormLabel,
   CRow,
 } from '@coreui/react';
 import { useForm, Controller } from 'react-hook-form';
 
-import UsersService, { getUserGroup } from 'src/services/api/UsersService';
+import UsersService, { USER_GROUPS, getUserGroup } from 'src/services/api/UsersService';
 import AppList from 'src/components/ui/List/AppList';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 
@@ -22,7 +24,7 @@ function UsersList() {
   const buildColumnsFn = () => ([
     {
       key: 'user_group',
-      label: 'Tipologia contatto',
+      label: 'Tipologia permessi',
       sortable: true,
       _props: { scope: 'col' },
     },
@@ -38,24 +40,32 @@ function UsersList() {
       sortable: true,
       _props: { scope: 'col' },
     },
+    {
+      key: 'contact_category',
+      label: 'Tipologia contatto',
+      sortable: true,
+      _props: { scope: 'col' },
+    },
   ]);
 
   const buildRowsFn = (item) => ({
     _id: item._id,
-    user_group: item.user_group || '',
+    user_group: item.user_group || '-',
     name: item.name || '-',
     email: item.email || '-',
+    contact_category: item.contact_category || '-',
   });
 
   const mapListFn = (item) => ({
     _id: item._id,
-    user_group: getUserGroup(item.user_group)?.label || '',
+    user_group: getUserGroup(item.user_group)?.label || '-',
     name: item.name || '-',
     email: item.email || '-',
+    contact_category: item.contact_category_name || '-',
   });
 
   const creationBodyFn = () => (
-    <CRow md={{ cols: 2, gutter: 2 }}>
+    <CRow className="mb-3" md={{ cols: 2, gutter: 2 }}>
       <CCol md={6}>
         <Controller
           name="first_name"
@@ -89,6 +99,94 @@ function UsersList() {
               id="user-last_name"
               label="Cognome utente"
               placeholder="Inserisci cognome utente"
+              {... field}
+            />
+          )}
+        />
+      </CCol>
+      <CCol md={6}>
+        <Controller
+          name="email"
+          control={control}
+          rules={{ required: true }}
+          defaultValue=""
+          render={({ field }) => (
+            <CFormInput
+              invalid={!!errors.email}
+              feedback={errors?.email ? composeErrorFormType(errors.email) : null}
+              type="email"
+              id="user-email"
+              label="Email"
+              placeholder="Inserisci email"
+              {... field}
+            />
+          )}
+        />
+      </CCol>
+      <CCol md={6}>
+        <Controller
+          name="user_group"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <>
+              <CFormLabel htmlFor="user-user_group">Tipologia permessi</CFormLabel>
+              <Select
+                inputId="user-user_group"
+                isClearable
+                defaultOptions
+                options={USER_GROUPS}
+                {...field}
+              />
+              {errors.user_group ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.user_group)}</div> : null}
+            </>
+          )}
+        />
+      </CCol>
+      <CCol md={6}>
+        <Controller
+          name="password"
+          control={control}
+          rules={{
+            required: true,
+          }}
+          defaultValue=""
+          render={({ field }) => (
+            <CFormInput
+              invalid={!!errors.password}
+              feedback={errors?.password ? composeErrorFormType(errors.password) : null}
+              type="password"
+              id="user-password"
+              label="Password"
+              minLength={8}
+              placeholder="Inserisci password"
+              {... field}
+            />
+          )}
+        />
+      </CCol>
+      <CCol md={6}>
+        <Controller
+          name="password_repeat"
+          control={control}
+          rules={{
+            required: true,
+            validate: {
+              equalPassword: (v) => v === getValues().password,
+            },
+          }}
+          defaultValue=""
+          render={({ field }) => (
+            <CFormInput
+              invalid={!!errors.password_repeat}
+              feedback={errors?.password_repeat
+                ? composeErrorFormType(errors.password_repeat)
+                : null}
+              type="password"
+              id="user-password_repeat"
+              label="Ripete password"
+              placeholder="Ripete  password"
+              minLength={8}
               {... field}
             />
           )}

@@ -50,7 +50,12 @@ export default class UsersService extends ApiProxyService {
 
   addItem(body, okCallback, koCallback) {
     const path = `${this.BASE_PATH}`;
-    super.addItem(path, body, okCallback, koCallback);
+
+    const creationData = { ...body };
+    creationData.name = `${creationData.first_name} ${creationData.last_name}`;
+    creationData.user_group = creationData?.user_group?.value || null;
+
+    super.addItem(path, creationData, okCallback, koCallback);
   }
 
   updateItem(id, body, okCallback, koCallback) {

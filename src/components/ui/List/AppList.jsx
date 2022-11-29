@@ -363,7 +363,7 @@ function AppList({
                 )}
               />
               <CButton disabled={tableData.data === null} type="submit" name="filter" color="primary" id="filter-button">Filtra</CButton>
-              <CButton disabled={tableData.data === null || tableData.search.length <= 0} type="submit" name="reset" color="danger" id="filter-button">Cancella</CButton>
+              <CButton disabled={tableData.data === null || tableData.search.length <= 0} type="submit" name="reset" color="danger" id="filter-button-cleear">Cancella</CButton>
             </CInputGroup>
           </CForm>
         </CCol>
