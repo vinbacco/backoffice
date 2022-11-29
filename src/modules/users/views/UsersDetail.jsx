@@ -1,6 +1,7 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
+import Select from 'react-select';
 import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -11,9 +12,11 @@ import {
   CFormInput,
   CAlert,
   CAlertHeading,
+  CFormLabel,
+  CButton,
 } from '@coreui/react';
 // SERVICES
-import UsersService from 'src/services/api/UsersService';
+import UsersService, { USER_GROUPS, getUserGroup } from 'src/services/api/UsersService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
@@ -22,8 +25,10 @@ const UsersDetail = () => {
   const { id } = useParams();
   const {
     control,
+    unregister,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm({
@@ -36,6 +41,7 @@ const UsersDetail = () => {
     loading: true,
     model: null,
   });
+  const [changePassword, setChangePassword] = useState(false);
 
   const usersService = new UsersService();
 
@@ -43,6 +49,11 @@ const UsersDetail = () => {
     const savePromise = new Promise((resolve, reject) => {
       const okEditCallback = (response) => {
         setState({ loading: false, model: { ...response.data } });
+        if (changePassword === true) {
+          unregister('password');
+          unregister('password_repeat');
+          setChangePassword(false);
+        }
         resolve();
       };
 
@@ -69,7 +80,10 @@ const UsersDetail = () => {
   };
 
   const handleReset = () => {
-    reset({ first_name: state.model?.first_name, last_name: state.model?.last_name });
+    reset({
+      first_name: state.model?.first_name,
+      last_name: state.model?.last_name,
+    });
   };
 
   useEffect(() => {
@@ -77,6 +91,8 @@ const UsersDetail = () => {
       const okGetCallback = (response) => {
         setValue('first_name', response.data.first_name);
         setValue('last_name', response.data.last_name);
+        setValue('email', response.data.email);
+        setValue('user_group', getUserGroup(response.data.user_group));
         setState({ ...state, loading: false, model: { ...response.data } });
       };
 
@@ -89,6 +105,15 @@ const UsersDetail = () => {
       usersService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
+
+  const toggleChangePassword = () => {
+    const newChangePassword = !changePassword;
+    if (newChangePassword === false) {
+      unregister('password');
+      unregister('password_repeat');
+    }
+    setChangePassword(newChangePassword);
+  };
 
   if (state.loading === true) return <AppLoadingSpinner />;
 
@@ -109,7 +134,7 @@ const UsersDetail = () => {
     >
       <section id="users-detail">
         <CForm
-          className="row g-3"
+          className="row g-3 mt-3 mb-3"
           onSubmit={handleSubmit(onSubmit)}
         >
           <CRow>
@@ -151,7 +176,102 @@ const UsersDetail = () => {
                 )}
               />
             </CCol>
+            <CCol md={6}>
+              <Controller
+                name="email"
+                control={control}
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field }) => (
+                  <CFormInput
+                    invalid={!!errors.email}
+                    feedback={errors?.email ? composeErrorFormType(errors.email) : null}
+                    type="email"
+                    id="user-email"
+                    label="Email"
+                    placeholder="Inserisci email"
+                    {... field}
+                  />
+                )}
+              />
+            </CCol>
+            <CCol md={6}>
+              <Controller
+                name="user_group"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <>
+                    <CFormLabel htmlFor="user-user_group">Tipologia permessi</CFormLabel>
+                    <Select
+                      inputId="user-user_group"
+                      isClearable
+                      defaultOptions
+                      options={USER_GROUPS}
+                      {...field}
+                    />
+                    {errors.user_group ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.user_group)}</div> : null}
+                  </>
+                )}
+              />
+            </CCol>
           </CRow>
+          {changePassword === true && (
+            <CRow className="mt-3 mb-3">
+              <CCol md={6}>
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <CFormInput
+                      invalid={!!errors.password}
+                      feedback={errors?.password ? composeErrorFormType(errors.password) : null}
+                      type="password"
+                      id="user-password"
+                      label="Password"
+                      minLength={8}
+                      placeholder="Inserisci password"
+                      {... field}
+                    />
+                  )}
+                />
+              </CCol>
+              <CCol md={6}>
+                <Controller
+                  name="password_repeat"
+                  control={control}
+                  rules={{
+                    required: true,
+                    validate: {
+                      equalPassword: (v) => v === getValues().password,
+                    },
+                  }}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <CFormInput
+                      invalid={!!errors.password_repeat}
+                      feedback={errors?.password_repeat
+                        ? composeErrorFormType(errors.password_repeat)
+                        : null}
+                      type="password"
+                      id="user-password_repeat"
+                      label="Ripete password"
+                      placeholder="Ripete  password"
+                      minLength={8}
+                      {... field}
+                    />
+                  )}
+                />
+              </CCol>
+            </CRow>
+          )}
+          <div className="d-grid gap-2">
+            <CButton onClick={toggleChangePassword}>{changePassword === false ? 'Cambia password' : 'Annulla cambia password'}</CButton>
+          </div>
         </CForm>
       </section>
     </AppBaseDetail>
