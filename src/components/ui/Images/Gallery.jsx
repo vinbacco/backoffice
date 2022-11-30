@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import {
@@ -42,7 +42,7 @@ const Gallery = ({
     id: `image-item-${currentData.child_id}`,
     content: (
       <span className="gallery-item">
-        <CImage onClick={() => setCurrentPreview(currentData.path)} className="gallery-item-image" thumbnail src={currentData.path} />
+        <CImage onClick={() => setCurrentPreview({ id: `image-item-${currentData.child_id}`, data: currentData })} className="gallery-item-image" thumbnail src={currentData.path} />
         <CButton
           className="gallery-item-delete"
           color="danger"
@@ -82,17 +82,25 @@ const Gallery = ({
 
   const grid = 8;
 
-  const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-    borderRadius: 15,
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
-    // styles we need to apply on draggables
-    ...draggableStyle,
-  });
+  const getItemStyle = (isDragging, draggableStyle, itemId) => {
+    let backgroundColor = 'grey';
+    if (currentPreview !== null && currentPreview.id === itemId) {
+      backgroundColor = 'green';
+    } else if (isDragging) {
+      backgroundColor = 'lightgreen';
+    }
+    return ({
+      // some basic styles to make the items look a bit nicer
+      userSelect: 'none',
+      padding: grid * 2,
+      margin: `0 0 ${grid}px 0`,
+      borderRadius: 15,
+      // change background colour if dragging
+      background: backgroundColor,
+      // styles we need to apply on draggables
+      ...draggableStyle,
+    });
+  };
 
   const getListStyle = () => ({
     background: 'lightgrey',
@@ -281,6 +289,14 @@ const Gallery = ({
     );
   };
 
+  useEffect(() => {
+    if (!!galleryState.items.length && galleryState.items.length > 0) {
+      if (currentPreview === null) {
+        setCurrentPreview(galleryState.items[0]);
+      }
+    }
+  }, [galleryState.items]);
+
   return (
     <>
       <div className="pt-4 pb-4">
@@ -330,6 +346,7 @@ const Gallery = ({
                                 style={getItemStyle(
                                   draggableSnapshot.isDragging,
                                   draggableProvided.draggableProps.style,
+                                  item.id,
                                 )}
                               >
                                 {item.content}
@@ -347,7 +364,7 @@ const Gallery = ({
           </CCol>
           <CCol lg={8} md={6} sm={12}>
             <h6 className="mt-4">Preview</h6>
-            <CImage className="div-gallery-preview" src={currentPreview} />
+            <CImage className="div-gallery-preview" src={currentPreview?.data?.path} />
           </CCol>
         </CRow>
       </div>
