@@ -21,6 +21,7 @@ import {
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
+import ImagePlaceholder from 'src/assets/images/placeholder.png';
 import AppLoadingSpinner from '../AppLoadingSpinner';
 
 const Gallery = ({
@@ -291,10 +292,16 @@ const Gallery = ({
 
   useEffect(() => {
     if (!!galleryState.items.length && galleryState.items.length > 0) {
-      if (currentPreview === null) {
+      let currentPreviewIndex = -1;
+      if (currentPreview !== null) {
+        currentPreviewIndex = galleryState.items.findIndex(
+          (currentGallery) => currentGallery.id === currentPreview.id,
+        );
+        if (currentPreviewIndex === -1) setCurrentPreview(galleryState.items[0]);
+      } else {
         setCurrentPreview(galleryState.items[0]);
       }
-    }
+    } else if (currentPreview !== null) setCurrentPreview(null);
   }, [galleryState.items]);
 
   return (
@@ -364,7 +371,9 @@ const Gallery = ({
           </CCol>
           <CCol lg={8} md={6} sm={12}>
             <h6 className="mt-4">Preview</h6>
-            <CImage className="div-gallery-preview" src={currentPreview?.data?.path} />
+            <div className="div-gallery-preview-container">
+              <CImage className="div-gallery-preview" src={currentPreview?.data?.path || ImagePlaceholder} />
+            </div>
           </CCol>
         </CRow>
       </div>
