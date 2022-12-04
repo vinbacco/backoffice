@@ -16,7 +16,7 @@ import ContactsService from 'src/services/api/ContactsService';
 
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import WinesForm from './Wines/WinesForm';

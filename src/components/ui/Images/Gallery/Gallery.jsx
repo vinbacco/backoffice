@@ -22,10 +22,11 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import ImagePlaceholder from 'src/assets/images/placeholder.png';
-import AppLoadingSpinner from '../AppLoadingSpinner';
+import AppLoadingSpinner from '../../AppLoadingSpinner';
+import GalleryItem from './GalleryItem';
 
 const Gallery = ({
-  title, label, data, instructions, onUpdate, Service, contentId, contentType,
+  title, label, data, instructions, onUpdate, Service, contentId, contentType, changeTitle,
 }) => {
   const sectionService = new Service();
   const [currentPreview, setCurrentPreview] = useState(null);
@@ -39,28 +40,63 @@ const Gallery = ({
     error: null, executing: false, success: null, show: false, target: null,
   });
 
+  const changeImageName = (imageId, newName) => {
+    const imageIndexArray = data.findIndex((currentImage) => currentImage.child_id === imageId);
+    const imageData = data.find((currentImage) => currentImage.child_id === imageId);
+    if (typeof imageData !== 'undefined' && imageIndexArray >= 0 && imageData.filename !== newName) {
+      const updatePromise = new Promise((resolve, reject) => {
+        setComponentDisable(true);
+        const newImageData = { ...imageData };
+        newImageData.filename = newName;
+        const okChangeNameMediaContent = (loadResponse) => {
+          const newArray = [...data];
+          newArray[imageIndexArray] = { ...loadResponse };
+          onUpdate(newArray);
+          setComponentDisable(false);
+          resolve();
+        };
+
+        const koChangeNameMediaContent = (error) => {
+          setComponentDisable(false);
+          reject();
+        };
+
+        sectionService
+          .updateMediaContentData(
+            contentId,
+            imageId,
+            newImageData,
+            okChangeNameMediaContent,
+            koChangeNameMediaContent,
+          );
+      });
+
+      toast.promise(updatePromise, {
+        loading: 'Attendere, salvando nome dell\'immagine...',
+        success: 'Nome dell\'immagine salvato con successo!',
+        error: 'Ops, si è verificato un errore nel cambio nome!',
+      }, {
+        success: {
+          duration: 5000,
+        },
+        error: {
+          duration: 5000,
+        },
+      });
+    }
+  };
+
   const processData = (incomingData) => incomingData.map((currentData) => ({
     id: `image-item-${currentData.child_id}`,
     content: (
-      <span className="gallery-item">
-        <CImage onClick={() => setCurrentPreview({ id: `image-item-${currentData.child_id}`, data: currentData })} className="gallery-item-image" thumbnail src={currentData.path} />
-        <CButton
-          className="gallery-item-delete"
-          color="danger"
-          size="sm"
-          onClick={() => (
-            setDeleteState({
-              ...deleteState,
-              target: currentData.child_id,
-              show: true,
-              success: null,
-              error: null,
-            })
-          )}
-        >
-          <CIcon icon={cilX} />
-        </CButton>
-      </span>
+      <GalleryItem
+        changeTitle={changeTitle}
+        currentData={currentData}
+        setCurrentPreview={setCurrentPreview}
+        changeImageName={changeImageName}
+        deleteState={deleteState}
+        setDeleteState={setDeleteState}
+      />
     ),
     data: currentData,
   }));
@@ -392,6 +428,7 @@ Gallery.propTypes = {
   label: PropTypes.string,
   instructions: PropTypes.string,
   onUpdate: PropTypes.func.isRequired,
+  changeTitle: PropTypes.bool,
 };
 
 Gallery.defaultProps = {
@@ -399,6 +436,7 @@ Gallery.defaultProps = {
   title: 'Galleria',
   label: 'Inserisci qui la tua immagine',
   instructions: "Trascina e rilascia le immagini per cambiare l'ordine",
+  changeTitle: false,
 };
 
 export default Gallery;

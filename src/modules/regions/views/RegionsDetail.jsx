@@ -15,7 +15,7 @@ import {
 // SERVICES
 import RegionsService from 'src/services/api/RegionsService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const RegionsDetail = () => {

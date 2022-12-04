@@ -14,7 +14,7 @@ import TourService from 'src/services/api/TourService';
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import PackageForm from './Packages/PackageForm';
 
@@ -358,6 +358,7 @@ function ToursDetail() {
                     title="Galleria del tour"
                     data={tourMediaContents}
                     onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
+                    changeTitle
                   />
                 </CCol>
               </CRow>

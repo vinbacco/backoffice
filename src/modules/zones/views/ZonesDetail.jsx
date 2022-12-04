@@ -19,7 +19,7 @@ import {
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 import ZonesService from 'src/services/api/ZonesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const ZonesDetail = () => {

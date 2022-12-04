@@ -88,6 +88,11 @@ export default class TourService extends ApiProxyService {
     super.uploadItem(path, fileData, okCallback, koCallback);
   }
 
+  updateMediaContentData(itemId, fileId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${fileId}`;
+    super.updateItem(path, fileData, okCallback, koCallback);
+  }
+
   orderMediaContent(itemId, mediaContents, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}/order_media_contents`;
     super.postItem(path, mediaContents, okCallback, koCallback);
