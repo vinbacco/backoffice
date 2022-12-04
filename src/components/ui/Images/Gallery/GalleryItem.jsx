@@ -10,6 +10,14 @@ function GalleryItem(props) {
   } = props;
   const [currentChangeName, setCurrentChangeName] = useState(currentData.filename);
 
+  const handleChangeName = (event) => {
+    if (!event.target.value || event.target.value.length === 0) {
+      setCurrentChangeName(currentData.filename);
+    } else {
+      changeImageName(currentData.child_id, event.target.value);
+    }
+  };
+
   return (
     <span className="gallery-item">
       <CImage onClick={() => setCurrentPreview({ id: `image-item-${currentData.child_id}`, data: currentData })} className="gallery-item-image" thumbnail src={currentData.path} />
@@ -35,8 +43,9 @@ function GalleryItem(props) {
         type="text"
         value={currentChangeName}
         onFocus={() => setCurrentChangeName(currentData.filename)}
+        onKeyDown={(event) => (event.key === 'Enter' ? event.target.blur() : null)}
         onChange={(event) => setCurrentChangeName(event.target.value)}
-        onBlur={(event) => changeImageName(currentData.child_id, event.target.value)}
+        onBlur={(event) => handleChangeName(event)}
       />
       )}
     </span>

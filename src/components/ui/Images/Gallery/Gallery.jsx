@@ -43,14 +43,18 @@ const Gallery = ({
   const changeImageName = (imageId, newName) => {
     const imageIndexArray = data.findIndex((currentImage) => currentImage.child_id === imageId);
     const imageData = data.find((currentImage) => currentImage.child_id === imageId);
-    if (typeof imageData !== 'undefined' && imageIndexArray >= 0 && imageData.filename !== newName) {
+    if (
+      typeof imageData !== 'undefined' &&
+      imageIndexArray >= 0 &&
+      imageData.filename !== newName
+    ) {
       const updatePromise = new Promise((resolve, reject) => {
         setComponentDisable(true);
         const newImageData = { ...imageData };
         newImageData.filename = newName;
         const okChangeNameMediaContent = (loadResponse) => {
           const newArray = [...data];
-          newArray[imageIndexArray] = { ...loadResponse };
+          newArray[imageIndexArray] = { ...loadResponse.data };
           onUpdate(newArray);
           setComponentDisable(false);
           resolve();
