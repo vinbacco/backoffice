@@ -71,6 +71,7 @@ function TagsList() {
   return (
     <section id="tags">
       <AppList
+        sectionId="tags"
         sectionTitle="Lista Tags"
         SectionServiceClass={TagsService}
         sectionPath="/tags"

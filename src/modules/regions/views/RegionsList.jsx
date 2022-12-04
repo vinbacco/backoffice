@@ -67,6 +67,7 @@ function RegionsList() {
   return (
     <section id="regions">
       <AppList
+        sectionId="regions"
         sectionTitle="Lista Regioni"
         SectionServiceClass={RegionsService}
         sectionPath="/regions"

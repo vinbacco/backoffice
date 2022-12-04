@@ -94,6 +94,7 @@ function FeedsList() {
   return (
     <section id="feeds">
       <AppList
+        sectionId="feeds"
         sectionTitle="Lista Feeds"
         SectionServiceClass={FeedsService}
         sectionPath="/feeds"

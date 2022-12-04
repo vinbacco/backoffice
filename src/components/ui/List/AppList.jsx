@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-underscore-dangle */
@@ -27,6 +28,7 @@ import CIcon from '@coreui/icons-react';
 import {
   cilFile, cilPencil, cilPlus, cilTrash,
 } from '@coreui/icons';
+import { useSelector } from 'react-redux';
 
 import AppTable from 'src/components/ui/List/AppTable';
 import Pagination from 'src/components/ui/List/Pagination';
@@ -34,6 +36,7 @@ import dataToQueryParams from 'src/utils/dataToQueryParams';
 import AppLoadingSpinner from '../AppLoadingSpinner';
 
 function AppList({
+  sectionId,
   SectionServiceClass,
   sectionPath,
   sectionTitle,
@@ -47,6 +50,14 @@ function AppList({
   formatCreationData,
   initialSortField,
 }) {
+  const userData = useSelector((state) => state.user.value);
+  const permissions = {
+    group: userData.user_group,
+    create: userData.permissions.find((current) => current === `${sectionId}_create`) !== undefined,
+    edit: userData.permissions.find((current) => current === `${sectionId}_edit`) !== undefined,
+    delete: userData.permissions.find((current) => current === `${sectionId}_delete`) !== undefined,
+  };
+
   const sectionService = new SectionServiceClass();
   const location = useLocation();
   const [state, setState] = useState({ selectedItems: [] });
@@ -368,22 +379,30 @@ function AppList({
           </CForm>
         </CCol>
         <CCol md={12} lg={6} className="list-actions mt-2">
-          <CButton color="primary" disabled={tableData.data === null} onClick={() => showCreationModalAndClearModel()}>
-            <CIcon icon={cilPlus} className="icon-button" />
-            Nuovo
-          </CButton>
-          <CButton color="primary" disabled={tableData === null || state.selectedItems.length !== 1} onClick={() => (state.selectedItems[0]) && editItem(state.selectedItems[0])}>
-            <CIcon icon={cilPencil} className="icon-button" />
-            Modifica
-          </CButton>
-          <CButton color="primary" disabled={tableData.data === null || state.selectedItems.length === 0} onClick={() => showDeleteModalAndClearModel()}>
-            <CIcon icon={cilTrash} className="icon-button" />
-            Elimina
-          </CButton>
-          <CButton color="primary" disabled={tableData.data === null}>
-            <CIcon icon={cilFile} className="icon-button" />
-            Esporta
-          </CButton>
+          {permissions.create === true && (
+            <CButton color="primary" disabled={tableData.data === null} onClick={() => showCreationModalAndClearModel()}>
+              <CIcon icon={cilPlus} className="icon-button" />
+              Nuovo
+            </CButton>
+          )}
+          {permissions.edit === true && (
+            <CButton color="primary" disabled={tableData === null || state.selectedItems.length !== 1} onClick={() => (state.selectedItems[0]) && editItem(state.selectedItems[0])}>
+              <CIcon icon={cilPencil} className="icon-button" />
+              Modifica
+            </CButton>
+          )}
+          {permissions.delete === true && (
+            <CButton color="primary" disabled={tableData.data === null || state.selectedItems.length === 0} onClick={() => showDeleteModalAndClearModel()}>
+              <CIcon icon={cilTrash} className="icon-button" />
+              Elimina
+            </CButton>
+          )}
+          {permissions.group === 'admin' && (
+            <CButton color="primary" disabled={tableData.data === null}>
+              <CIcon icon={cilFile} className="icon-button" />
+              Esporta
+            </CButton>
+          )}
         </CCol>
       </CRow>
       <AppTable
@@ -432,6 +451,7 @@ function AppList({
 }
 
 AppList.propTypes = {
+  sectionId: PropTypes.string.isRequired,
   SectionServiceClass: PropTypes.func.isRequired,
   sectionPath: PropTypes.string.isRequired,
   sectionTitle: PropTypes.string,

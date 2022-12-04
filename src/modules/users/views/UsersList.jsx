@@ -197,6 +197,7 @@ function UsersList() {
   return (
     <section id="users">
       <AppList
+        sectionId="users"
         sectionTitle="Lista Utenti"
         SectionServiceClass={UsersService}
         sectionPath="/users"

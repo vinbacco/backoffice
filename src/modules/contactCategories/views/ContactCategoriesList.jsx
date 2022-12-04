@@ -91,6 +91,7 @@ function ContactCategoriesList() {
   return (
     <section id="contact-categories">
       <AppList
+        sectionId="contact_categories"
         sectionTitle="Lista categorie contatto"
         SectionServiceClass={ContactCategoriesService}
         sectionPath="/contact-categories"

@@ -170,6 +170,7 @@ function ToursList() {
   return (
     <section id="tour">
       <AppList
+        sectionId="products"
         title="Lista Tour"
         SectionServiceClass={TourService}
         sectionPath="/tours"
