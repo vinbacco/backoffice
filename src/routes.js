@@ -18,6 +18,7 @@ import ContactCategoriesList from './modules/contactCategories/views/ContactCate
 import ContactCategoriesDetail from './modules/contactCategories/views/ContactCategoriesDetail';
 import UsersList from './modules/users/views/UsersList';
 import UsersDetail from './modules/users/views/UsersDetail';
+import UserProfile from './modules/users/views/UserProfile';
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -40,6 +41,7 @@ const routes = [
   { path: '/contact-categories/:id', name: 'Dettaglio categoria contatto', element: ContactCategoriesDetail },
   { path: '/users', name: 'Utenti', element: UsersList },
   { path: '/users/:id', name: 'Dettaglio utente', element: UsersDetail },
+  { path: '/users/profile', name: 'Il tuo profilo', element: UserProfile },
   { path: '*', name: 'NotFound', element: NotFound },
 ];
 

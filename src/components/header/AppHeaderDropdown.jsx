@@ -3,6 +3,7 @@ import {
   CAvatar,
   // CBadge,
   CDropdown,
+  CDropdownDivider,
   // CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
@@ -19,7 +20,7 @@ import {
   // cilSettings,
   // cilTask,
   // cilUser,
-  cilAccountLogout,
+  cilAccountLogout, cilUser,
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 
@@ -92,8 +93,13 @@ function AppHeaderDropdown() {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider /> */}
-        <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
-        <CDropdownItem href="#" onClick={handleLogout}>
+        <CDropdownHeader className="bg-light fw-semibold py-2 mb-2">Account</CDropdownHeader>
+        <CDropdownItem href="/users/profile">
+          <CIcon icon={cilUser} className="me-2" />
+          Profilo
+        </CDropdownItem>
+        <CDropdownDivider />
+        <CDropdownItem href="/#" onClick={handleLogout}>
           <CIcon icon={cilAccountLogout} className="me-2" />
           Esci
         </CDropdownItem>
