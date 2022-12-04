@@ -205,7 +205,6 @@ const UsersDetail = () => {
                     <CFormLabel htmlFor="user-user_group">Tipologia permessi</CFormLabel>
                     <Select
                       inputId="user-user_group"
-                      isClearable
                       defaultOptions
                       options={USER_GROUPS}
                       {...field}
