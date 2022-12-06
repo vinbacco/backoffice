@@ -213,49 +213,31 @@ function ToursDetail() {
         urlFriendlyName={getValues('url_friendly_name')}
         tabsHeaders={[
           {
-            index: 'main-tab',
-            label: 'Dati principali',
+            index: 'package-tab',
+            label: 'PACCHETTI TOUR',
+          },
+          {
+            index: 'cover-tab',
+            label: 'COPERTINA TOUR',
+          },
+          {
+            index: 'gallery-tab',
+            label: 'GALLERIA TOUR',
           },
           {
             index: 'web-tab',
-            label: 'Dati web',
+            label: 'META DATI SEO',
+          },
+          {
+            index: 'main-tab',
+            label: 'TESTI',
           },
         ]}
         tabsContents={[
           {
-            index: 'main-tab',
+            index: 'package-tab',
             content: (
-              <CRow className="g-3">
-                <CCol md={6} sm={12}>
-                  <Controller
-                    name="category_name"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
-                  />
-                </CCol>
-                <CCol md={6} sm={12}>
-                  <Controller
-                    name="contact_name"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Cantina" {... field} />}
-                  />
-                </CCol>
-                <CCol md={6} sm={12}>
-                  <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
-                  <CInputGroup>
-                    <Controller
-                      name="base_price"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <CFormInput readOnly disabled className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
-                      )}
-                    />
-                    <CInputGroupText id="tour-base_price_append">€</CInputGroupText>
-                  </CInputGroup>
-                </CCol>
+              <CRow>
                 <CCol md={12}>
                   <AppMultiData
                     title="Pacchetti"
@@ -284,6 +266,41 @@ function ToursDetail() {
                       { index: 'price_type_tag', type: 'select' },
                     ]}
                     data={state?.model?.attributes?.purchase_options || null}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'cover-tab',
+            content: (
+              <CRow>
+                <CCol>
+                  <ImageWithPreview
+                    contentId={id}
+                    contentType="tour_preview_image"
+                    Service={TourService}
+                    title="Copertina del tour"
+                    data={tourPreviewImage}
+                    onUpdate={(data) => handleChangePreviewImage(data)}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'gallery-tab',
+            content: (
+              <CRow>
+                <CCol>
+                  <Gallery
+                    contentId={id}
+                    contentType="tour_image"
+                    Service={TourService}
+                    title="Galleria del tour"
+                    data={tourMediaContents}
+                    onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
+                    changeTitle
                   />
                 </CCol>
               </CRow>
@@ -319,14 +336,15 @@ function ToursDetail() {
                       <small>Non superare i 160 caratteri</small>
                     </CCol>
                   </CRow>
-                  <ImageWithPreview
-                    contentId={id}
-                    contentType="tour_preview_image"
-                    Service={TourService}
-                    title="Immagine di anteprima"
-                    data={tourPreviewImage}
-                    onUpdate={(data) => handleChangePreviewImage(data)}
-                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'main-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
                   <h4>Contenuto</h4>
                   <CRow className="g-3 mb-4">
                     <CCol md={12}>
@@ -351,15 +369,6 @@ function ToursDetail() {
                       />
                     </CCol>
                   </CRow>
-                  <Gallery
-                    contentId={id}
-                    contentType="tour_image"
-                    Service={TourService}
-                    title="Galleria del tour"
-                    data={tourMediaContents}
-                    onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
-                    changeTitle
-                  />
                 </CCol>
               </CRow>
             ),
