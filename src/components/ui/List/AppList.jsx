@@ -420,7 +420,7 @@ function AppList({
           </CForm>
         </CModalBody>
         <CModalFooter>
-          <CButton color="danger" disabled={creationAction.executing === true} onClick={() => closeCreateModal()}>
+          <CButton color="secondary" disabled={creationAction.executing === true} onClick={() => closeCreateModal()}>
             Annulla
           </CButton>
           <CButton type="submit" disabled={creationAction.executing === true} form="creationForm" color="primary">Crea</CButton>

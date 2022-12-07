@@ -35,9 +35,49 @@ export default class ContactsService extends ApiProxyService {
     super.addItem(path, body, okCallback, koCallback);
   }
 
+  updateItem(itemId, itemData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}`;
+    super.updateItem(path, itemData, okCallback, koCallback);
+  }
+
+  deleteItem(deleteInfo, okCallback, koCallback) {
+    const deletePromisesArray = [];
+    if (typeof deleteInfo === 'string' || typeof deleteInfo === 'number') {
+      deletePromisesArray.push(
+        new Promise((resolve, reject) => {
+          super.deleteItem(`${this.BASE_PATH}/${deleteInfo}`, (res) => resolve(res), (err) => reject(err));
+        }),
+      );
+    } else if (Array.isArray(deleteInfo)) {
+      deleteInfo.forEach((currentItem) => {
+        deletePromisesArray.push(
+          new Promise((resolve, reject) => {
+            super.deleteItem(`${this.BASE_PATH}/${currentItem}`, (res) => resolve(res), (err) => reject(err));
+          }),
+        );
+      });
+    }
+    Promise.allSettled(deletePromisesArray)
+      .then((results) => {
+        const rejectedPromises = results.filter((currentResult) => currentResult.status === 'rejected');
+        if (rejectedPromises.length <= 0) okCallback();
+        else koCallback([...rejectedPromises]);
+      });
+  }
+
   addMediaContent(itemId, fileData, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}/media_contents`;
     super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  updateMediaContent(itemId, fileId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${fileId}`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  orderMediaContent(itemId, mediaContents, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/order_media_contents`;
+    super.postItem(path, mediaContents, okCallback, koCallback);
   }
 
   deleteMediaContent(itemId, mediaId, okCallback, koCallback) {

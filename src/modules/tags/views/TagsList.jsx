@@ -41,7 +41,7 @@ function TagsList() {
   const mapListFn = (item) => ({
     _id: item._id,
     tag: item.tag,
-    feed: item.feed.name,
+    feed: item?.feed?.name || '',
   });
 
   const creationBodyFn = () => (

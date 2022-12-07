@@ -91,7 +91,7 @@ const ZonesDetail = () => {
 
         reset(zoneModelData || {});
         setState({ ...state, loading: false, model: zoneModelData });
-        setMediaContents([...zoneResponseData.media_contents.filter((current) => current.type === 'region_image')]);
+        setMediaContents([...zoneResponseData.media_contents.filter((current) => current.type === 'region_image').sort((a, b) => a.order - b.order)]);
       };
 
       const koGetCallback = (error) => {

@@ -29,6 +29,10 @@ export default class ApiProxyService extends AbstractService {
     return AuthProxy(this.authService, super.post.bind(this, path, body), okCallback, koCallback);
   }
 
+  postItem(path, body, okCallback, koCallback) {
+    return AuthProxy(this.authService, super.post.bind(this, path, body), okCallback, koCallback);
+  }
+
   updateItem(path, body, okCallback, koCallback) {
     return AuthProxy(this.authService, super.put.bind(this, path, body), okCallback, koCallback);
   }

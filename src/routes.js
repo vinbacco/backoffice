@@ -1,20 +1,19 @@
-import React from 'react';
-
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
-const ToursList = React.lazy(() => import('./modules/tours/views/ToursList'));
-const ToursDetail = React.lazy(() => import('./modules/tours/views/ToursDetail'));
-const ContactsList = React.lazy(() => import('./modules/contacts/views/ContactsList'));
-const ContactsDetail = React.lazy(() => import('./modules/contacts/views/ContactsDetail'));
-const FeedsList = React.lazy(() => import('./modules/feeds/views/FeedsList'));
-const FeedsDetail = React.lazy(() => import('./modules/feeds/views/FeedsDetail'));
-const ProductTypesList = React.lazy(() => import('./modules/productTypes/views/ProductTypesList'));
-const RegionsList = React.lazy(() => import('./modules/regions/views/RegionsList'));
-const RegionsDetail = React.lazy(() => import('./modules/regions/views/RegionsDetail'));
-const TagsList = React.lazy(() => import('./modules/tags/views/TagsList'));
-const TagsDetail = React.lazy(() => import('./modules/tags/views/TagsDetail'));
-const ZonesList = React.lazy(() => import('./modules/zones/views/ZonesList'));
-const ZonesDetail = React.lazy(() => import('./modules/zones/views/ZonesDetail'));
-const NotFound = React.lazy(() => import('./views/pages/page404/Page404'));
+import Dashboard from './views/dashboard/Dashboard';
+import ToursList from './modules/tours/views/ToursList';
+import ToursDetail from './modules/tours/views/ToursDetail';
+import ContactsList from './modules/contacts/views/ContactsList';
+import ContactsDetail from './modules/contacts/views/ContactsDetail';
+import FeedsList from './modules/feeds/views/FeedsList';
+import FeedsDetail from './modules/feeds/views/FeedsDetail';
+import ProductTypesList from './modules/productTypes/views/ProductTypesList';
+import ProductTypeDetail from './modules/productTypes/views/ProductTypeDetail';
+import RegionsList from './modules/regions/views/RegionsList';
+import RegionsDetail from './modules/regions/views/RegionsDetail';
+import TagsList from './modules/tags/views/TagsList';
+import TagsDetail from './modules/tags/views/TagsDetail';
+import ZonesList from './modules/zones/views/ZonesList';
+import ZonesDetail from './modules/zones/views/ZonesDetail';
+import NotFound from './views/pages/page404/Page404';
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -23,7 +22,8 @@ const routes = [
   { path: '/feeds/:id', name: 'Feeds Detail', element: FeedsDetail },
   { path: '/winery', name: 'Cantine', element: ContactsList },
   { path: '/winery/:id', name: 'Dettaglio cantina', element: ContactsDetail },
-  { path: '/product-types', name: 'ProductTypes', element: ProductTypesList },
+  { path: '/product-types', name: 'Product Types', element: ProductTypesList },
+  { path: '/product-types/:id', name: 'Product Type', element: ProductTypeDetail },
   { path: '/regions', name: 'Tags', element: RegionsList },
   { path: '/regions/:id', name: 'Regions Details', element: RegionsDetail },
   { path: '/tags', name: 'Tags', element: TagsList },

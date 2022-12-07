@@ -46,7 +46,7 @@ const AppMultiData = ({
   const [deleteModalState, setDeleteModalState] = useState({ show: false, target: null });
 
   const handleDeleteFunction = () => {
-    deleteFunction({ target: deleteModalState.target });
+    deleteFunction({ id: deleteModalState.target });
     setDeleteModalState({ show: false, target: null });
   };
 
@@ -56,6 +56,8 @@ const AppMultiData = ({
     switch (columnProps.type) {
       case 'currency':
         return utils.formatCurrency({ number: parseFloat(displayData) });
+      case 'select':
+        return displayData.label;
       case 'text':
       default:
         return displayData;
@@ -157,7 +159,7 @@ const AppMultiData = ({
           })}
         </CModalBody>
         <CModalFooter>
-          <CButton color="danger" onClick={() => setShowCreateModal(false)}>
+          <CButton color="secondary" onClick={() => setShowCreateModal(false)}>
             Annulla
           </CButton>
           <CButton type="submit" form={`create_${formId}`} color="primary">
@@ -192,7 +194,7 @@ const AppMultiData = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             onClick={() => setEditModalState({
               show: false, target: null,
             })}
@@ -219,7 +221,7 @@ const AppMultiData = ({
         </CModalBody>
         <CModalFooter>
           <CButton
-            color="danger"
+            color="secondary"
             onClick={() => setDeleteModalState({
               show: false, target: null,
             })}

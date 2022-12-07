@@ -30,9 +30,15 @@ const WinesForm = ({
     const okGetTags = (response) => {
       let responseData = [];
       if (Array.isArray(response.data) && response.data.length > 0) {
-        responseData = response.data.map((currentItem) => (
-          { value: currentItem._id, label: currentItem.tag }
-        ));
+        responseData = response.data.map((currentItem) => {
+          let resolveImagePath = null;
+          if (
+            Array.isArray(currentItem.media_contents) &&
+            !!currentItem.media_contents[0] &&
+            !!currentItem.media_contents[0].path
+          ) resolveImagePath = currentItem.media_contents[0].path;
+          return ({ value: currentItem._id, label: currentItem.tag, image_path: resolveImagePath });
+        });
       }
       resolve(responseData);
     };

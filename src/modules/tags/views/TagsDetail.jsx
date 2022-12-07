@@ -20,9 +20,11 @@ import composeErrorFormType from 'src/utils/composeErrorFormType';
 // COMPONENTS
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
+import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 
 const TagsDetail = () => {
   const { id } = useParams();
+  const [tagPreviewImage, setTagPreviewImage] = useState(null);
   const {
     control,
     handleSubmit,
@@ -73,6 +75,11 @@ const TagsDetail = () => {
 
     if (feedCurrent !== null) responseData.feed_id = feedCurrent;
 
+    if (Array.isArray(responseData.media_contents)) {
+      const tagImage = responseData.media_contents.find((current) => current.type === 'tag_image');
+      if (tagImage !== null || typeof tagImage !== 'undefined') setTagPreviewImage(tagImage);
+    }
+
     setValue('tag', responseData.tag);
     setValue('color', responseData.color);
     setValue('feed_id', responseData.feed_id);
@@ -110,6 +117,11 @@ const TagsDetail = () => {
     });
   };
 
+  const onChangeTagPreviewImage = (response) => {
+    if (response.job === 'delete') return setTagPreviewImage(null);
+    return setTagPreviewImage(response.response.data);
+  };
+
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
@@ -139,55 +151,69 @@ const TagsDetail = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <CRow className="mb-3">
-            <CCol>
-              <Controller
-                name="feed_id"
-                control={control}
-                rules={{ required: true }}
-                defaultValue={state?.model?.feed_id || null}
-                render={({ field }) => (
-                  <>
-                    <CFormLabel htmlFor="feed_id">Feed</CFormLabel>
-                    <AsyncSelect
-                      inputId="feed_id"
-                      isClearable
-                      defaultOptions
-                      loadOptions={loadFeeds}
-                      {...field}
-                    />
-                    {errors.feed_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.feed_id)}</div> : null}
-                  </>
-                )}
-              />
-            </CCol>
-          </CRow>
-          <CRow className="mb-3">
-            <CCol>
-              <Controller
-                name="tag"
-                defaultValue=""
-                control={control}
-                render={({ field }) => (
-                  <CFormInput
-                    label="Nome tag"
-                    {...field}
+            <CCol md={8} sm={12}>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="feed_id"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue={state?.model?.feed_id || null}
+                    render={({ field }) => (
+                      <>
+                        <CFormLabel htmlFor="feed_id">Feed</CFormLabel>
+                        <AsyncSelect
+                          inputId="feed_id"
+                          isClearable
+                          defaultOptions
+                          loadOptions={loadFeeds}
+                          {...field}
+                        />
+                        {errors.feed_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.feed_id)}</div> : null}
+                      </>
+                    )}
                   />
-                )}
-              />
-            </CCol>
-          </CRow>
-          <CRow className="mb-3">
-            <CCol>
-              <Controller
-                name="color"
-                defaultValue="#ffffff"
-                control={control}
-                render={({ field }) => (
-                  <CFormInput
-                    label="Colore tag"
-                    {...field}
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tag"
+                    defaultValue=""
+                    control={control}
+                    render={({ field }) => (
+                      <CFormInput
+                        label="Nome tag"
+                        {...field}
+                      />
+                    )}
                   />
-                )}
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="color"
+                    defaultValue="#ffffff"
+                    control={control}
+                    render={({ field }) => (
+                      <CFormInput
+                        label="Colore tag"
+                        {...field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+            </CCol>
+            <CCol md={4} sm={12}>
+              <ImageWithPreview
+                contentId={id}
+                contentType="tag_image"
+                Service={TagsService}
+                title="Immagine tag"
+                data={tagPreviewImage}
+                onUpdate={(data) => onChangeTagPreviewImage(data)}
               />
             </CCol>
           </CRow>

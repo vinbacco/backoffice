@@ -66,4 +66,19 @@ export default class TagsService extends ApiProxyService {
         else koCallback([...rejectedPromises]);
       });
   }
+
+  addMediaContent(itemId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  updateMediaContent(itemId, fileId, fileData, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${fileId}`;
+    super.uploadItem(path, fileData, okCallback, koCallback);
+  }
+
+  deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
+    const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
+    super.deleteItem(path, okCallback, koCallback);
+  }
 }
