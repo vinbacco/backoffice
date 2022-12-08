@@ -19,6 +19,8 @@ import ContactCategoriesDetail from './modules/contactCategories/views/ContactCa
 import UsersList from './modules/users/views/UsersList';
 import UsersDetail from './modules/users/views/UsersDetail';
 import UserProfile from './modules/users/views/UserProfile';
+import OrdersList from './modules/orders/views/OrdersList';
+import OrdersDetail from './modules/orders/views/OrdersDetail';
 
 // FIXME: Permessi giusti per zones e per regions
 
@@ -122,6 +124,21 @@ const routes = [
     element: ToursDetail,
     roles: ['admin'],
     permissions: ['products_view', 'products_edit'],
+  },
+
+  {
+    path: '/orders',
+    name: 'Prenotazioni',
+    element: OrdersList,
+    roles: ['admin'],
+    permissions: ['orders_view'],
+  },
+  {
+    path: '/orders/:id',
+    name: 'Dettaglio prenotazione',
+    element: OrdersDetail,
+    roles: ['admin'],
+    permissions: ['orders_view', 'orders_edit'],
   },
   {
     path: '/zones',

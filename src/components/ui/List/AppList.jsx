@@ -36,6 +36,7 @@ import dataToQueryParams from 'src/utils/dataToQueryParams';
 import AppLoadingSpinner from '../AppLoadingSpinner';
 
 function AppList({
+  scrollable,
   sectionId,
   SectionServiceClass,
   sectionPath,
@@ -405,15 +406,19 @@ function AppList({
           )}
         </CCol>
       </CRow>
-      <AppTable
-        columns={columns()}
-        items={renderTableData()}
-        loading={tableData.data === null}
-        orderBy={tableData.order}
-        sortBy={tableData.sort}
-        onChangeOrderSort={onChangeOrderSort}
-        rowAction={editItem}
-      />
+      <div className="table-placeholder">
+        <div className={scrollable === true ? ' table-scrollable' : ''}>
+          <AppTable
+            columns={columns()}
+            items={renderTableData()}
+            loading={tableData.data === null}
+            orderBy={tableData.order}
+            sortBy={tableData.sort}
+            onChangeOrderSort={onChangeOrderSort}
+            rowAction={editItem}
+          />
+        </div>
+      </div>
       <Pagination
         tableData={tableData}
         setSelectedItems={setState}
@@ -451,6 +456,7 @@ function AppList({
 }
 
 AppList.propTypes = {
+  scrollable: PropTypes.bool,
   sectionId: PropTypes.string.isRequired,
   SectionServiceClass: PropTypes.func.isRequired,
   sectionPath: PropTypes.string.isRequired,
@@ -467,6 +473,7 @@ AppList.propTypes = {
 };
 
 AppList.defaultProps = {
+  scrollable: false,
   sectionTitle: 'Lista',
   creationBodyFn: null,
   evalCreation: null,

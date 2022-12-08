@@ -2,7 +2,15 @@
 import React from 'react';
 import CIcon from '@coreui/icons-react';
 import {
-  cilSpeedometer, cilTerrain, cilList, cilMap, cilBusAlt, cilUser, cilContact, cilPeople,
+  cilSpeedometer,
+  cilTerrain,
+  cilList,
+  cilMap,
+  cilBusAlt,
+  cilUser,
+  cilContact,
+  cilPeople,
+  cilAddressBook,
 } from '@coreui/icons';
 import { CNavItem, CNavGroup } from '@coreui/react';
 import { useSelector } from 'react-redux';
@@ -35,6 +43,15 @@ const nav = () => {
         name: 'Cantine',
         to: '/winery',
         icon: <CIcon icon={cilTerrain} customClassName="nav-icon" />,
+      });
+    }
+    // Orders
+    if (userData.permissions.find((current) => current === 'orders_view') !== undefined) {
+      navigationArray.push({
+        component: CNavItem,
+        name: 'Prenotazioni',
+        to: '/orders',
+        icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
       });
     }
     // Settings

@@ -154,6 +154,18 @@ h1,h2,h3,h4,h5,h6 {
     border: 1px solid darkgray;
     border-radius: 15px;
   }
+
+  .table-placeholder {
+    display: block;
+    box-sizing: border-box;
+    margin-bottom: 2em;
+    height: auto;
+    width: 100%;
+    overflow-x: auto;
+    & > .table-scrollable {
+      min-width: 800px;
+    }
+  }
 }
 
 @media screen and (min-width: 992px) {
