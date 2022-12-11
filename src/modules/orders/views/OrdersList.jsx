@@ -1,7 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { CCol, CFormInput, CRow } from '@coreui/react';
+import {
+  CBadge,
+  CCol,
+  CFormInput,
+  CRow,
+} from '@coreui/react';
 import { useForm, Controller } from 'react-hook-form';
 
 import OrdersService from 'src/services/api/OrdersService';
@@ -77,11 +82,25 @@ function OrdersList() {
     price_person: item.price_person,
     user_email: item.user_email,
     user_phone: item.user_phone,
-    order_status: item.order_status,
+    order_status: (
+      <CBadge color={item.order_status.color}>{item.order_status.label}</CBadge>
+    ),
   });
 
   const mapListFn = (item) => {
     const tourData = item.products[0];
+    const orderStatus = {
+      label: 'In lavorazione',
+      color: 'warning',
+    };
+    if (item.status === 'completed') {
+      orderStatus.label = 'Completato';
+      orderStatus.color = 'success';
+    }
+    if (item.status === 'rejected') {
+      orderStatus.label = 'Rifiutato';
+      orderStatus.color = 'danger';
+    }
     return ({
       _id: item._id,
       name: item.user?.name || '-',
@@ -89,9 +108,9 @@ function OrdersList() {
       tour_name: tourData.name,
       guests: tourData.product_quantity,
       price_person: tourData.base_price,
-      user_email: item.shipment_data?.email || '-',
-      user_phone: item.shipment_data?.phone || '-',
-      order_status: item.status,
+      user_email: item.invoice_data?.email || '-',
+      user_phone: item.invoice_data?.phone || '-',
+      order_status: orderStatus,
     });
   };
 

@@ -6,7 +6,7 @@ export const USER_GROUPS = [
     label: 'Amministratore',
   },
   {
-    value: 'cantina',
+    value: 'winery',
     label: 'Cantina',
   },
   {
