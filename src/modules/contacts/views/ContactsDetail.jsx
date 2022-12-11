@@ -29,7 +29,6 @@ function ContactsDetail() {
   } = useForm({
     defaultValues: {
       business_name: '',
-      contact_category_id: '',
       holder: '',
       foundation_year: '',
       certified_email: '',
@@ -52,7 +51,6 @@ function ContactsDetail() {
     const contactResponseData = { ...response?.data || {} };
     const contactModelData = {};
     contactModelData.business_name = contactResponseData.business_name;
-    contactModelData.contact_category_id = contactResponseData.contact_category_id;
     contactModelData.holder = contactResponseData.holder;
     contactModelData.foundation_year = contactResponseData.foundation_year;
     contactModelData.certified_email = contactResponseData.certified_email;
@@ -270,26 +268,6 @@ function ContactsDetail() {
                           placeholder="Inserisci nome cantina"
                           {... field}
                         />
-                      )}
-                    />
-                  </CCol>
-                  <CCol md={6}>
-                    <Controller
-                      name="contact_category_id"
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <>
-                          <CFormLabel htmlFor="new-contact-category">Categoria contatto</CFormLabel>
-                          <AsyncSelect
-                            inputId="new-contact-category"
-                            isClearable
-                            defaultOptions
-                            loadOptions={loadContactCategories}
-                            {...field}
-                          />
-                          {errors.contact_category_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_category_id)}</div> : null}
-                        </>
                       )}
                     />
                   </CCol>

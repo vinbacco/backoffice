@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -20,6 +21,7 @@ import UsersService, { USER_GROUPS, getUserGroup } from 'src/services/api/UsersS
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
+import ContactsService from 'src/services/api/ContactsService';
 
 const UsersDetail = () => {
   const { id } = useParams();
@@ -27,7 +29,6 @@ const UsersDetail = () => {
     control,
     unregister,
     handleSubmit,
-    setValue,
     getValues,
     reset,
     formState: { errors },
@@ -43,12 +44,63 @@ const UsersDetail = () => {
   });
   const [changePassword, setChangePassword] = useState(false);
 
+  const loadContacts = (filter) => new Promise((resolve) => {
+    const contactsService = new ContactsService();
+    const okGetContacts = (response) => {
+      let responseData = [];
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        responseData = response.data.map((currentItem) => (
+          { value: currentItem._id, label: currentItem.business_name }
+        ));
+      }
+      resolve(responseData);
+    };
+    const koGetContacts = () => resolve([]);
+    const filters = {
+      paginate: 5,
+      page: 1,
+    };
+    if (filter.length > 0) filters['??^business_name'] = filter;
+    contactsService.getList({
+      filters,
+      okCallback: (res) => okGetContacts(res),
+      koCallback: (err) => koGetContacts(err),
+    });
+  });
+
   const usersService = new UsersService();
+
+  const formatModel = (response) => {
+    const userResponseData = { ...response?.data || {} };
+    const userModelData = {};
+    let userContactData = null;
+
+    if (
+      userResponseData.contact_id &&
+      userResponseData.contact &&
+      userResponseData.contact.business_name
+    ) {
+      userContactData = {
+        label: userResponseData.contact.business_name,
+        value: userResponseData.contact_id,
+      };
+    }
+
+    userModelData.first_name = userResponseData.first_name || '';
+    userModelData.last_name = userResponseData.last_name || '';
+    userModelData.email = userResponseData.email || '';
+    userModelData.user_group = getUserGroup(userResponseData.user_group);
+    userModelData.contact_id = userContactData;
+
+    return userModelData;
+  };
 
   const onSubmit = (data) => {
     const savePromise = new Promise((resolve, reject) => {
       const okEditCallback = (response) => {
-        setState({ loading: false, model: { ...response.data } });
+        const userModelData = formatModel(response);
+        reset(userModelData);
+        setState({ loading: false, model: userModelData });
         if (changePassword === true) {
           unregister('password');
           unregister('password_repeat');
@@ -62,7 +114,7 @@ const UsersDetail = () => {
         reject();
       };
 
-      usersService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      usersService.updateItem(id, data, okEditCallback, koEditCallback);
     });
 
     toast.promise(savePromise, {
@@ -80,20 +132,15 @@ const UsersDetail = () => {
   };
 
   const handleReset = () => {
-    reset({
-      first_name: state.model?.first_name,
-      last_name: state.model?.last_name,
-    });
+    reset(state.model);
   };
 
   useEffect(() => {
     if (id) {
       const okGetCallback = (response) => {
-        setValue('first_name', response.data.first_name);
-        setValue('last_name', response.data.last_name);
-        setValue('email', response.data.email);
-        setValue('user_group', getUserGroup(response.data.user_group));
-        setState({ ...state, loading: false, model: { ...response.data } });
+        const userModelData = formatModel(response);
+        reset(userModelData);
+        setState({ ...state, loading: false, model: userModelData });
       };
 
       const koGetCallback = (error) => {
@@ -210,6 +257,25 @@ const UsersDetail = () => {
                       {...field}
                     />
                     {errors.user_group ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.user_group)}</div> : null}
+                  </>
+                )}
+              />
+            </CCol>
+            <CCol md={6}>
+              <Controller
+                name="contact_id"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <CFormLabel htmlFor="user-contact">Contatto</CFormLabel>
+                    <AsyncSelect
+                      inputId="user-contact"
+                      isClearable
+                      defaultOptions
+                      loadOptions={loadContacts}
+                      {...field}
+                    />
+                    {errors.contact_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_id)}</div> : null}
                   </>
                 )}
               />

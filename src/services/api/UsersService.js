@@ -1,4 +1,5 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
 export const USER_GROUPS = [
   {
@@ -34,7 +35,7 @@ export default class UsersService extends ApiProxyService {
     koCallback,
   }) {
     let queryParams = {
-      paginate, page, order_by: order, sort_by: sort,
+      paginate, page, order_by: order, sort_by: sort, lookup: '[contact_id]',
     };
     if (filters) {
       queryParams = { ...queryParams, ...filters };
@@ -45,7 +46,8 @@ export default class UsersService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
@@ -54,6 +56,7 @@ export default class UsersService extends ApiProxyService {
     const creationData = { ...body };
     creationData.name = `${creationData.first_name} ${creationData.last_name}`;
     creationData.user_group = creationData?.user_group?.value || null;
+    creationData.contact_id = creationData.contact_id?.value || null;
 
     super.addItem(path, creationData, okCallback, koCallback);
   }
@@ -64,8 +67,13 @@ export default class UsersService extends ApiProxyService {
     const creationData = { ...body };
     creationData.name = `${creationData.first_name} ${creationData.last_name}`;
     creationData.user_group = creationData?.user_group?.value || null;
+    creationData.contact_id = creationData.contact_id?.value || null;
 
-    super.updateItem(path, creationData, okCallback, koCallback);
+    const handleOkCallback = (response) => {
+      this.getItem(id, okCallback, okCallback(response));
+    };
+
+    super.updateItem(path, creationData, handleOkCallback, koCallback);
   }
 
   deleteItem(deleteInfo, okCallback, koCallback) {

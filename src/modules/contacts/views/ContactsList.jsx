@@ -1,9 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
-/**
- * TODO:
- * Pulire array selezionati dopo la risposta del elimina, una volta sia implementato.
- */
 import React from 'react';
 import AsyncSelect from 'react-select/async';
 import {
@@ -14,36 +10,12 @@ import { useForm, Controller } from 'react-hook-form';
 import ContactsService from 'src/services/api/ContactsService';
 import AppList from 'src/components/ui/List/AppList';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
-import ContactCategoriesService from 'src/services/api/ContactCategoriesService';
 import CitiesService from 'src/services/api/CitiesService';
 
 function ContactsList() {
   const {
     control, handleSubmit, reset, getValues, formState: { errors },
   } = useForm();
-
-  const loadContactCategories = () => new Promise((resolve) => {
-    const contactCategoriesService = new ContactCategoriesService();
-    const okGetContactCategories = (response) => {
-      let responseData = [];
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        responseData = response.data.map((currentItem) => (
-          { value: currentItem._id, label: currentItem.category_name }
-        ));
-      }
-      resolve(responseData);
-    };
-    const koGetContactCategories = () => resolve([]);
-    const filters = {
-      paginate: 5,
-      page: 1,
-    };
-    contactCategoriesService.getList({
-      filters,
-      okCallback: (res) => okGetContactCategories(res),
-      koCallback: (err) => koGetContactCategories(err),
-    });
-  });
 
   const loadCities = () => new Promise((resolve) => {
     const citiesService = new CitiesService();
@@ -105,7 +77,6 @@ function ContactsList() {
 
   const formatCreationData = (data) => {
     const newData = { ...data };
-    newData.contact_category_id = newData.contact_category_id.value;
     newData.registered_city_id = newData.registered_city_id.value;
     return newData;
   };
@@ -128,26 +99,6 @@ function ContactsList() {
               placeholder="Inserisci nome cantina"
               {... field}
             />
-          )}
-        />
-      </CCol>
-      <CCol md={6}>
-        <Controller
-          name="contact_category_id"
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <>
-              <CFormLabel htmlFor="new-contact-category">Categoria contatto</CFormLabel>
-              <AsyncSelect
-                inputId="new-contact-category"
-                isClearable
-                defaultOptions
-                loadOptions={loadContactCategories}
-                {...field}
-              />
-              {errors.contact_category_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_category_id)}</div> : null}
-            </>
           )}
         />
       </CCol>

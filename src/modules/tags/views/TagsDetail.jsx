@@ -83,8 +83,6 @@ const TagsDetail = () => {
     setValue('tag', responseData.tag);
     setValue('color', responseData.color);
     setValue('feed_id', responseData.feed_id);
-    setState({ ...state, loading: false, model: { ...responseData } });
-
     return responseData;
   };
 

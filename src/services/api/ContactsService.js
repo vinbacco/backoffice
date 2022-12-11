@@ -4,6 +4,8 @@ import utils from './utils/utils';
 export default class ContactsService extends ApiProxyService {
   BASE_PATH = '/contacts';
 
+  CONTACT_CATEGORY_ID_WINERY = '63495f81b1bc41beb9fb70fd';
+
   getList({
     paginate,
     page,
@@ -32,7 +34,9 @@ export default class ContactsService extends ApiProxyService {
 
   addItem(body, okCallback, koCallback) {
     const path = this.BASE_PATH;
-    super.addItem(path, body, okCallback, koCallback);
+    const newBody = { ...body };
+    newBody.contact_category_id = this.CONTACT_CATEGORY_ID_WINERY;
+    super.addItem(path, newBody, okCallback, koCallback);
   }
 
   updateItem(itemId, itemData, okCallback, koCallback) {
