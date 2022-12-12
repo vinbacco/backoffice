@@ -21,10 +21,10 @@ const Pagination = ({
       setTableData(newTableData);
     }
   };
-  const totalsText = `Pagina ${tableData.page} 
+  const totalsText = tableData.total ? `Pagina ${tableData.page} 
                       di ${Math.ceil(tableData.total / tableData.paginate)}
                       (${tableData.total} risultat${tableData.total === 1 ? 'o' : 'i'})
-  `;
+  ` : '';
   return (
     <CRow className="align-items-center mb-5">
       <CCol>
