@@ -67,7 +67,7 @@ Pagination.propTypes = {
     order: PropTypes.oneOf(['asc', 'desc']),
     sort: PropTypes.string,
     search: PropTypes.string,
-    data: PropTypes.oneOfType([PropTypes.array, null]),
+    data: PropTypes.array || null,
   }),
   setSelectedItems: PropTypes.func.isRequired,
   setTableData: PropTypes.func.isRequired,
