@@ -19,6 +19,8 @@ import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import TimeTable from 'src/components/ui/TimeTable/TimeTable';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import ServicesCheckbox from 'src/components/ui/ServicesCheckbox/ServicesCheckbox';
+import LanguagesCheckbox from 'src/components/ui/LanguagesCheckbox/LanguagesCheckbox';
+import TastingTimesCheckbox from 'src/components/ui/TastingTimesCheckbox/TastingTimesCheckbox';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -213,6 +215,18 @@ function ToursDetail() {
     setState({ ...state, model: newModel });
   };
 
+  const updateTourLanguages = (tourLanguagesData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.languages = [...tourLanguagesData];
+    setState({ ...state, model: newModel });
+  };
+
+  const updateTourTastingTime = (tourTastingTimesData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.tastingTimes = [...tourTastingTimesData];
+    setState({ ...state, model: newModel });
+  };
+
   const handleChangePreviewImage = (response) => {
     if (response.job === 'delete') return setTourPreviewImage(null);
     return setTourPreviewImage(response.response.data);
@@ -395,7 +409,10 @@ function ToursDetail() {
                     </CCol>
                   </CRow>
                   <hr />
-                  <h4>Lingue del tour</h4>
+                  <LanguagesCheckbox
+                    data={state?.model?.attributes?.languages}
+                    onChange={(value) => updateTourLanguages(value)}
+                  />
                 </CCol>
               </CRow>
             ),
@@ -421,6 +438,11 @@ function ToursDetail() {
                   <TimeTable
                     data={state?.model?.attributes?.timeTable}
                     onChange={(value) => updateTimeTable(value)}
+                  />
+                  <hr />
+                  <TastingTimesCheckbox
+                    data={state?.model?.attributes?.tastingTimes}
+                    onChange={(value) => updateTourTastingTime(value)}
                   />
                 </CCol>
               </CRow>

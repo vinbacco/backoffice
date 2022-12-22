@@ -594,8 +594,6 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
-      <hr />
-      <h4>Orari di degustazione</h4>
     </>
   );
 }
