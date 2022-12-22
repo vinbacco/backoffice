@@ -6,6 +6,10 @@ import utils from './utils/utils';
 export default class TourService extends ApiProxyService {
   TOUR_PRODUCT_TYPE_ID = '633dbfe8c843f55df6fa2a0e';
 
+  TOUR_SERVICES_TYPE_ID = '63a35d7fa0de56247399109f';
+
+  TOUR_LANGUAGES_TYPE_ID = '63a35911a0de56247399108c';
+
   BASE_PATH = '/products';
 
   getList({
@@ -101,5 +105,39 @@ export default class TourService extends ApiProxyService {
   deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
     super.deleteItem(path, okCallback, koCallback);
+  }
+
+  getTourAvailableLanguages(okCallback, koCallback) {
+    // FIXME: Rimuovere filtro manuale, usare quello della chiamata una volta torna funzionale.
+    const handleOkCallback = (res) => {
+      const { data } = res;
+      const filterServices = data.filter(
+        (current) => current.feed_id === this.TOUR_LANGUAGES_TYPE_ID,
+      );
+      return okCallback(filterServices);
+    };
+
+    const queryParams = {
+      // feed_id: this.TOUR_PRODUCT_TYPE_ID,
+    };
+    const path = '/tags';
+    super.getList(path, queryParams, handleOkCallback, koCallback);
+  }
+
+  getTourGenericServices(okCallback, koCallback) {
+    // FIXME: Rimuovere filtro manuale, usare quello della chiamata una volta torna funzionale.
+    const handleOkCallback = (res) => {
+      const { data } = res;
+      const filterServices = data.filter(
+        (current) => current.feed_id === this.TOUR_SERVICES_TYPE_ID,
+      );
+      return okCallback(filterServices);
+    };
+
+    const queryParams = {
+      // feed_id: this.TOUR_PRODUCT_TYPE_ID,
+    };
+    const path = '/tags';
+    super.getList(path, queryParams, handleOkCallback, koCallback);
   }
 }

@@ -22,7 +22,7 @@ function TimeInput(props) {
       hour: propValueFormat[0] || '00',
       minute: propValueFormat[1] || '00',
     });
-  }, value);
+  }, [value]);
 
   const handleChangeTime = (fieldName, fieldValue) => {
     let valueIsValid = true;

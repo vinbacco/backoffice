@@ -18,6 +18,7 @@ import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import TimeTable from 'src/components/ui/TimeTable/TimeTable';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
+import ServicesCheckbox from 'src/components/ui/ServicesCheckbox/ServicesCheckbox';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -206,6 +207,12 @@ function ToursDetail() {
     setState({ ...state, model: newModel });
   };
 
+  const updateTourServices = (tourServicesData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.services = [...tourServicesData];
+    setState({ ...state, model: newModel });
+  };
+
   const handleChangePreviewImage = (response) => {
     if (response.job === 'delete') return setTourPreviewImage(null);
     return setTourPreviewImage(response.response.data);
@@ -241,6 +248,10 @@ function ToursDetail() {
           {
             index: 'main-tab',
             label: 'DESCRIZIONE',
+          },
+          {
+            index: 'services-tab',
+            label: 'SERVIZI',
           },
           {
             index: 'datetime-tab',
@@ -385,6 +396,19 @@ function ToursDetail() {
                   </CRow>
                   <hr />
                   <h4>Lingue del tour</h4>
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'services-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <ServicesCheckbox
+                    data={state?.model?.attributes?.services}
+                    onChange={(value) => updateTourServices(value)}
+                  />
                 </CCol>
               </CRow>
             ),

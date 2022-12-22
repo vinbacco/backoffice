@@ -1,18 +1,12 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable no-empty-pattern */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useForm, Controller } from 'react-hook-form';
 import {
-  CForm,
   CRow,
   CCol,
-  CFormInput,
   CFormCheck,
 } from '@coreui/react';
 
-import composeErrorFormType from 'src/utils/composeErrorFormType';
 import TimeInput from './TimeInput';
 
 function TimeTable(props) {
@@ -135,7 +129,9 @@ function TimeTable(props) {
 
   return (
     <>
-      <h4>Orari del tour</h4>
+      <CRow className="pb-4">
+        <h4>Orari del tour</h4>
+      </CRow>
       <CRow className="pb-4">
         <CCol md={4}>
           <h5>LUNEDÌ</h5>
