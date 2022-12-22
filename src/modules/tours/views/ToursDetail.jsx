@@ -6,7 +6,8 @@ import toast from 'react-hot-toast';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput, CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel,
+  CForm, CCol, CFormInput,
+  CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel, CFormCheck,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -15,6 +16,7 @@ import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
 import Gallery from 'src/components/ui/Images/Gallery/Gallery';
+import TimeTable from 'src/components/ui/TimeTable/TimeTable';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import PackageForm from './Packages/PackageForm';
 
@@ -38,6 +40,7 @@ function ToursDetail() {
       tour_warnings: '',
       attributes: {
         purchase_options: [],
+        TimeTable: {},
       },
       media_contents: [],
       tags: [],
@@ -63,6 +66,7 @@ function ToursDetail() {
     tourModelData.category_name = tourResponseData?.product_category?.name;
     tourModelData.attributes = tourResponseData?.attributes || {
       purchase_options: [],
+      timeTable: {},
     };
     tourModelData.tags = tourResponseData?.tags || [];
     tourModelData.media_contents = tourResponseData?.media_contents || [];
@@ -196,6 +200,12 @@ function ToursDetail() {
     }
   };
 
+  const updateTimeTable = (timeTableData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.timeTable = { ...timeTableData };
+    setState({ ...state, model: newModel });
+  };
+
   const handleChangePreviewImage = (response) => {
     if (response.job === 'delete') return setTourPreviewImage(null);
     return setTourPreviewImage(response.response.data);
@@ -230,7 +240,11 @@ function ToursDetail() {
           },
           {
             index: 'main-tab',
-            label: 'TESTI',
+            label: 'DESCRIZIONE',
+          },
+          {
+            index: 'datetime-tab',
+            label: 'ORARI',
           },
         ]}
         tabsContents={[
@@ -369,6 +383,21 @@ function ToursDetail() {
                       />
                     </CCol>
                   </CRow>
+                  <hr />
+                  <h4>Lingue del tour</h4>
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'datetime-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <TimeTable
+                    data={state?.model?.attributes?.timeTable}
+                    onChange={(value) => updateTimeTable(value)}
+                  />
                 </CCol>
               </CRow>
             ),
