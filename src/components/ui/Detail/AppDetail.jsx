@@ -71,7 +71,7 @@ const AppDetail = (props) => {
                 {tabsHeaders.map((currentTab, tabIndex) => (
                   <CNavItem key={`app-detail-tab-header-${tabIndex}_${currentTab}`}>
                     <CNavLink
-                      className="cursor-pointer"
+                      className="cursor-pointer nav-pill-border"
                       active={activeTab.index === currentTab.index}
                       onClick={() => setActiveTab(currentTab)}
                     >

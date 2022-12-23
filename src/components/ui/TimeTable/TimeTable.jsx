@@ -134,7 +134,7 @@ function TimeTable(props) {
       </CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>LUNEDÌ</h5>
+          <h4>LUNEDÌ</h4>
           <CFormCheck
             inline
             id="mondayAvailableCheckbox"
@@ -144,7 +144,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -171,7 +171,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -198,9 +198,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>MARTEDÌ</h5>
+          <h4>MARTEDÌ</h4>
           <CFormCheck
             inline
             id="tuesdayAvailableCheckbox"
@@ -210,7 +211,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -237,7 +238,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -264,9 +265,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>MERCOLEDÌ</h5>
+          <h4>MERCOLEDÌ</h4>
           <CFormCheck
             inline
             id="wednesdayAvailableCheckbox"
@@ -276,7 +278,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -303,7 +305,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -330,9 +332,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>GIOVEDÌ</h5>
+          <h4>GIOVEDÌ</h4>
           <CFormCheck
             inline
             id="thursdayAvailableCheckbox"
@@ -342,7 +345,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -369,7 +372,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -396,9 +399,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>VENERDÌ</h5>
+          <h4>VENERDÌ</h4>
           <CFormCheck
             inline
             id="fridayAvailableCheckbox"
@@ -408,7 +412,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -435,7 +439,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -462,9 +466,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>SABATO</h5>
+          <h4>SABATO</h4>
           <CFormCheck
             inline
             id="saturdayAvailableCheckbox"
@@ -474,7 +479,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -501,7 +506,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -528,9 +533,10 @@ function TimeTable(props) {
           </CRow>
         </CCol>
       </CRow>
+      <CRow className="pb-4"><hr /></CRow>
       <CRow className="pb-4">
         <CCol md={4}>
-          <h5>DOMENICA</h5>
+          <h4>DOMENICA</h4>
           <CFormCheck
             inline
             id="sundayAvailableCheckbox"
@@ -540,7 +546,7 @@ function TimeTable(props) {
           />
         </CCol>
         <CCol md={4}>
-          <h6>Mattina</h6>
+          <h5 style={{ textAlign: 'center' }}>Mattina</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput
@@ -567,7 +573,7 @@ function TimeTable(props) {
           </CRow>
         </CCol>
         <CCol md={4}>
-          <h6>Pomeriggio</h6>
+          <h5 style={{ textAlign: 'center' }}>Pomeriggio</h5>
           <CRow>
             <CCol md={6}>
               <TimeInput

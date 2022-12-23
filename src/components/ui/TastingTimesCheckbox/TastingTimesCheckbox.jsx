@@ -33,7 +33,6 @@ function TastingTimesCheckbox(props) {
     } else {
       newSelectedTimes.push(timeValue);
     }
-    if (newSelectedTimes.length > 6) newSelectedTimes.shift();
     setSelectedTimes(newSelectedTimes);
     onChange(newSelectedTimes);
   };
@@ -42,20 +41,23 @@ function TastingTimesCheckbox(props) {
     <>
       <CRow className="pb-4">
         <h4>Orari di degustazione</h4>
-        <small>Deve scegliere un massimo di 6 orari di degustazione</small>
+        <small>Seleziona fino a 6 orari in cui offri il tuo servizio</small>
       </CRow>
       <CRow className="pb-4">
-        {TASTING_TIMES_VALUES.map((currentTime) => (
-          <CCol md={4} className="pb-4" key={`${currentTime}_tasting-time-checkbox_key`}>
-            <CFormCheck
-              inline
-              id={`${currentTime}_tasting-time-checkbox`}
-              label={currentTime}
-              checked={isTimeSelected(currentTime)}
-              onChange={() => toggleSelectedTime(currentTime)}
-            />
-          </CCol>
-        ))}
+        <CCol>
+          <div className="checkbox-container-grid">
+            {TASTING_TIMES_VALUES.map((currentTime) => (
+              <CFormCheck
+                inline
+                disabled={!isTimeSelected(currentTime) && selectedTimes.length === 6}
+                id={`${currentTime}_tasting-time-checkbox`}
+                label={currentTime}
+                checked={isTimeSelected(currentTime)}
+                onChange={() => toggleSelectedTime(currentTime)}
+              />
+            ))}
+          </div>
+        </CCol>
       </CRow>
     </>
   );

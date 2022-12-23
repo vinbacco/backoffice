@@ -248,28 +248,32 @@ function ToursDetail() {
             label: 'PACCHETTI TOUR',
           },
           {
-            index: 'cover-tab',
-            label: 'COPERTINA TOUR',
-          },
-          {
-            index: 'gallery-tab',
-            label: 'GALLERIA TOUR',
-          },
-          {
-            index: 'web-tab',
-            label: 'META DATI SEO',
+            index: 'datetime-tab',
+            label: 'ORARI E GIORNI',
           },
           {
             index: 'main-tab',
             label: 'DESCRIZIONE',
           },
           {
-            index: 'services-tab',
-            label: 'SERVIZI',
+            index: 'cover-tab',
+            label: 'FOTO COPERTINA',
           },
           {
-            index: 'datetime-tab',
-            label: 'ORARI',
+            index: 'gallery-tab',
+            label: 'FOTO GALLERIA',
+          },
+          {
+            index: 'services-tab',
+            label: 'SERVIZI TOUR',
+          },
+          {
+            index: 'language-tab',
+            label: 'LINGUA TOUR',
+          },
+          {
+            index: 'web-tab',
+            label: 'META DATI SEO',
           },
         ]}
         tabsContents={[
@@ -408,7 +412,15 @@ function ToursDetail() {
                       />
                     </CCol>
                   </CRow>
-                  <hr />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'language-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
                   <LanguagesCheckbox
                     data={state?.model?.attributes?.languages}
                     onChange={(value) => updateTourLanguages(value)}
