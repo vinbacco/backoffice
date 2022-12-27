@@ -7,7 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
   CForm, CCol, CFormInput,
-  CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel, CFormCheck,
+  CRow, CFormTextarea,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -209,9 +209,9 @@ function ToursDetail() {
     setState({ ...state, model: newModel });
   };
 
-  const updateTourServices = (tourServicesData) => {
+  const updateToursSelections = (field, selectionData) => {
     const newModel = { ...getValues() };
-    newModel.attributes.services = [...tourServicesData];
+    newModel.attributes[field] = [...selectionData];
     setState({ ...state, model: newModel });
   };
 
@@ -264,8 +264,8 @@ function ToursDetail() {
             label: 'FOTO GALLERIA',
           },
           {
-            index: 'services-tab',
-            label: 'SERVIZI TOUR',
+            index: 'tasting-tab',
+            label: 'DEGUSTAZIONI',
           },
           {
             index: 'language-tab',
@@ -430,19 +430,6 @@ function ToursDetail() {
             ),
           },
           {
-            index: 'services-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <ServicesCheckbox
-                    data={state?.model?.attributes?.services}
-                    onChange={(value) => updateTourServices(value)}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
             index: 'datetime-tab',
             content: (
               <CRow className="g-3">
@@ -455,6 +442,21 @@ function ToursDetail() {
                   <TastingTimesCheckbox
                     data={state?.model?.attributes?.tastingTimes}
                     onChange={(value) => updateTourTastingTime(value)}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'tasting-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <ServicesCheckbox
+                    serviceType="tasting"
+                    label="Tipologia degustazione"
+                    data={state?.model?.attributes?.tastingTypes}
+                    onChange={(value) => updateToursSelections('tastingTypes', value)}
                   />
                 </CCol>
               </CRow>

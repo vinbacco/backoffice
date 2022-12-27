@@ -4,15 +4,17 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { CCol, CFormCheck, CRow } from '@coreui/react';
-import TourService from 'src/services/api/TourService';
+import TagsService from 'src/services/api/TagsService';
 
 function ServicesCheckbox(props) {
-  const { data, onChange } = props;
+  const {
+    data, onChange, label, serviceType,
+  } = props;
   const [servicesData, setServicesData] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
 
   useEffect(() => {
-    const tourService = new TourService();
+    const tagsService = new TagsService();
     const okCallback = (res) => {
       setServicesData(res);
       setSelectedServices(data);
@@ -22,7 +24,7 @@ function ServicesCheckbox(props) {
       console.err(err);
     };
 
-    tourService.getTourGenericServices(okCallback, koCallback);
+    tagsService.getGenericTags(serviceType, okCallback, koCallback);
   }, []);
 
   const isServiceSelected = (serviceId) => {
@@ -45,7 +47,7 @@ function ServicesCheckbox(props) {
   return (
     <>
       <CRow className="pb-4">
-        <h4>Servizi del tour</h4>
+        <h4>{label}</h4>
       </CRow>
       <CRow className="pb-4">
         {servicesData.map((currentService) => (
@@ -66,11 +68,16 @@ function ServicesCheckbox(props) {
 
 ServicesCheckbox.propTypes = {
   data: PropTypes.any,
+  label: PropTypes.string,
+  serviceType: PropTypes.oneOf([
+    'experiences', 'activities', 'tasting', 'tourServices',
+  ]).isRequired,
   onChange: PropTypes.func.isRequired,
 };
 
 ServicesCheckbox.defaultProps = {
   data: [],
+  label: 'Services',
 };
 
 export default ServicesCheckbox;

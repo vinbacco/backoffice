@@ -36,12 +36,15 @@ export default class ContactsService extends ApiProxyService {
     const path = this.BASE_PATH;
     const newBody = { ...body };
     newBody.contact_category_id = this.CONTACT_CATEGORY_ID_WINERY;
+    newBody.registered_city_id = body.registered_city_id.value;
     super.addItem(path, newBody, okCallback, koCallback);
   }
 
   updateItem(itemId, itemData, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.updateItem(path, itemData, okCallback, koCallback);
+    const newBody = { ...itemData };
+    newBody.registered_city_id = itemData.registered_city.value;
+    super.updateItem(path, newBody, okCallback, koCallback);
   }
 
   deleteItem(deleteInfo, okCallback, koCallback) {
