@@ -1,4 +1,5 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
 export default class OrdersService extends ApiProxyService {
   BASE_PATH = '/orders';
@@ -24,7 +25,8 @@ export default class OrdersService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[user_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {

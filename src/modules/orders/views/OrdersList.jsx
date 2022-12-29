@@ -101,10 +101,13 @@ function OrdersList() {
       orderStatus.label = 'Rifiutato';
       orderStatus.color = 'danger';
     }
+
+    const tourDate = '-';
+    console.log(tourData.variants);
     return ({
       _id: item._id,
       name: item.user?.name || '-',
-      date: '-',
+      date: tourDate,
       tour_name: tourData.name,
       guests: tourData.product_quantity,
       price_person: tourData.base_price,

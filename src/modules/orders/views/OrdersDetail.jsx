@@ -43,7 +43,19 @@ const OrdersDetail = () => {
 
   const formatModel = (response) => {
     const responseData = { ...response.data };
-    setState({ ...state, loading: false, model: { ...responseData } });
+    console.log(responseData);
+    const invoiceData = responseData.invoice_data;
+    const tourData = responseData.products[0];
+    const contactData = tourData.contact;
+    setValue('user_name', responseData.user?.name || '');
+    setValue('user_email', invoiceData.email || '');
+    setValue('user_phone', invoiceData.phone || '');
+    setValue('tour_date', `${tourData.variants.date}, ${tourData.variants.time[0]} - ${tourData.variants.time[1]}`);
+    setValue('tour_quantity', tourData.product_quantity || '');
+    setValue('tour_price', invoiceData.phone || '');
+    setValue('tour_name', invoiceData.phone || '');
+    setValue('tour_package', invoiceData.phone || '');
+    setValue('tour_contact', invoiceData.phone || '');
     return responseData;
   };
 
@@ -105,10 +117,239 @@ const OrdersDetail = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <CRow className="mb-3">
-            <CCol md={8} sm={12}>
+            <CCol md={12} sm={12}>
               <CRow className="mb-3">
                 <CCol>
-                  DATA
+                  <Controller
+                    name="user_name"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.user_name}
+                        feedback={
+                            errors?.user_name
+                              ? composeErrorFormType(errors.user_name)
+                              : null
+                        }
+                        type="text"
+                        id="order-user_name"
+                        label="Nome utente"
+                        placeholder="Inserisci nome utente"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="user_email"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.user_email}
+                        feedback={
+                            errors?.user_email
+                              ? composeErrorFormType(errors.user_email)
+                              : null
+                        }
+                        type="email"
+                        id="order-user_email"
+                        label="Email utente"
+                        placeholder="Inserisci email utente"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="user_phone"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.user_phone}
+                        feedback={
+                            errors?.user_phone
+                              ? composeErrorFormType(errors.user_phone)
+                              : null
+                        }
+                        type="text"
+                        id="order-user_phone"
+                        label="Telefono utente"
+                        placeholder="Inserisci telefono utente"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_date"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_date}
+                        feedback={
+                            errors?.tour_date
+                              ? composeErrorFormType(errors.tour_date)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_date"
+                        label="Data tour"
+                        placeholder="Inserisci data tour"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_quantity"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_quantity}
+                        feedback={
+                            errors?.tour_quantity
+                              ? composeErrorFormType(errors.tour_quantity)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_quantity"
+                        label="Numero di persone"
+                        placeholder="Inserisci numero di persone"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_price"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_price}
+                        feedback={
+                            errors?.tour_price
+                              ? composeErrorFormType(errors.tour_price)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_price"
+                        label="Prezzo tour"
+                        placeholder="Inserisci prezzo tour"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_name"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_name}
+                        feedback={
+                            errors?.tour_name
+                              ? composeErrorFormType(errors.tour_name)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_name"
+                        label="Nome tour"
+                        placeholder="Inserisci nome tour"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_package"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_package}
+                        feedback={
+                            errors?.tour_package
+                              ? composeErrorFormType(errors.tour_package)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_package"
+                        label="Pacchetto scelto"
+                        placeholder="Inserisci pacchetto scelto"
+                        {... field}
+                      />
+                    )}
+                  />
+                </CCol>
+              </CRow>
+              <CRow className="mb-3">
+                <CCol>
+                  <Controller
+                    name="tour_contact"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <CFormInput
+                        readOnly
+                        invalid={!!errors.tour_contact}
+                        feedback={
+                            errors?.tour_contact
+                              ? composeErrorFormType(errors.tour_contact)
+                              : null
+                        }
+                        type="text"
+                        id="order-tour_contact"
+                        label="Nome cantina"
+                        placeholder="Inserisci nome cantina"
+                        {... field}
+                      />
+                    )}
+                  />
                 </CCol>
               </CRow>
             </CCol>
