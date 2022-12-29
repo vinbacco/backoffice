@@ -171,7 +171,7 @@ function UsersList() {
         </CCol>
         <CCol md={6}>
           <Controller
-            name="contact_id"
+            name="contact"
             control={control}
             render={({ field }) => (
               <>
@@ -183,7 +183,7 @@ function UsersList() {
                   loadOptions={loadContacts}
                   {...field}
                 />
-                {errors.contact_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_id)}</div> : null}
+                {errors.contact ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact)}</div> : null}
               </>
             )}
           />

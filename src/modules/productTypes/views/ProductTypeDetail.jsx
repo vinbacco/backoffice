@@ -13,7 +13,7 @@ import {
   CAlertHeading,
 } from '@coreui/react';
 // SERVICES
-import FeedsService from 'src/services/api/FeedsService';
+import ProductTypesService from 'src/services/api/ProductTypesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
@@ -34,7 +34,7 @@ const ProductTypeDetail = () => {
     model: null,
   });
 
-  const feedsService = new FeedsService();
+  const productTypesService = new ProductTypesService();
 
   const onSubmit = (data) => {
     const savePromise = new Promise((resolve, reject) => {
@@ -48,7 +48,7 @@ const ProductTypeDetail = () => {
         reject();
       };
 
-      feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      productTypesService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
     });
 
     toast.promise(savePromise, {
@@ -82,7 +82,7 @@ const ProductTypeDetail = () => {
         throw new Error(errorMessage);
       };
 
-      feedsService.getItem(id, okGetCallback, koGetCallback);
+      productTypesService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
 
@@ -99,7 +99,7 @@ const ProductTypeDetail = () => {
 
   return (
     <AppBaseDetail
-      type="tipologia prodotto"
+      type="Tipologia prodotto"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >

@@ -1,7 +1,7 @@
 import ApiProxyService from './apiProxyService';
 
 export default class ProductTypesService extends ApiProxyService {
-  TOUR_PRODUCT_TYPE_ID = '633dbfe8c843f55df6fa2a0e';
+  BASE_PATH = '/product_types';
 
   getList({
     paginate,
@@ -18,8 +18,8 @@ export default class ProductTypesService extends ApiProxyService {
     if (filters) {
       queryParams = { ...queryParams, ...filters };
     }
-    const path = '/product_types';
-    super.getList(path, queryParams, okCallback, koCallback);
+
+    super.getList(this.BASE_PATH, queryParams, okCallback, koCallback);
   }
 
   getZones({
@@ -37,12 +37,11 @@ export default class ProductTypesService extends ApiProxyService {
     if (filters) {
       queryParams = { ...queryParams, ...filters };
     }
-    const path = '/product_types';
-    super.getList(path, queryParams, okCallback, koCallback);
+
+    super.getList(this.BASE_PATH, queryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
-    const path = '/product_types';
     const creationData = { ...body };
     creationData.contact_id = creationData?.contact_id?.value || null;
     creationData.product_category_id = creationData?.product_category_id?.value || null;
@@ -53,11 +52,12 @@ export default class ProductTypesService extends ApiProxyService {
         name: creationData.name,
       },
     };
-    super.addItem(path, creationData, okCallback, koCallback);
+
+    super.addItem(this.BASE_PATH, creationData, okCallback, koCallback);
   }
 
   getItem(itemId, okCallback, koCallback) {
-    const path = `/product_types/${itemId}`;
+    const path = `${this.BASE_PATH}/${itemId}`;
     super.getItem(path, okCallback, koCallback);
   }
 }

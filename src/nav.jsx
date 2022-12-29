@@ -28,7 +28,7 @@ const nav = () => {
   ];
   if (Array.isArray(userData.permissions) && userData.permissions.length > 0) {
     // Tours
-    if (userData.permissions.find((current) => current === 'products_view') !== undefined) {
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'products_view') !== undefined) {
       navigationArray.push({
         component: CNavItem,
         name: 'Tours',
@@ -37,7 +37,7 @@ const nav = () => {
       });
     }
     // Contacts
-    if (userData.permissions.find((current) => current === 'contacts_view') !== undefined) {
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'contacts_view') !== undefined) {
       navigationArray.push({
         component: CNavItem,
         name: 'Cantine',
@@ -46,7 +46,7 @@ const nav = () => {
       });
     }
     // Orders
-    if (userData.permissions.find((current) => current === 'orders_view') !== undefined) {
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'orders_view') !== undefined) {
       navigationArray.push({
         component: CNavItem,
         name: 'Prenotazioni',
@@ -55,80 +55,84 @@ const nav = () => {
       });
     }
     // Settings
-    if (userData.permissions.find((current) => current === 'settings_view') !== undefined) {
-      const settingsNav = [];
-      // Feeds
-      if (userData.permissions.find((current) => current === 'feeds_view') !== undefined) {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Feeds',
-          to: '/feeds',
-          icon: <CIcon icon={cilList} customClassName="nav-icon" />,
-        });
-      }
-      // Tags
-      if (userData.permissions.find((current) => current === 'tags_view') !== undefined) {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Tags',
-          to: '/tags',
-          icon: <CIcon icon={cilList} customClassName="nav-icon" />,
-        });
-      }
-      // Regions // TODO:
+    const settingsNav = [];
+    // Feeds
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'feeds_view') !== undefined) {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Feeds',
+        to: '/feeds',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      });
+    }
+    // Tags
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'tags_view') !== undefined) {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Tags',
+        to: '/tags',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      });
+    }
+    // Regions // TODO:
+    if (userData.user_group === 'admin') {
       settingsNav.push({
         component: CNavItem,
         name: 'Regioni',
         to: '/regions',
         icon: <CIcon icon={cilList} customClassName="nav-icon" />,
       });
-      // Zones // TODO:
+    }
+    // Zones // TODO:
+    if (userData.user_group === 'admin') {
       settingsNav.push({
         component: CNavItem,
         name: 'Zone',
         to: '/zones',
         icon: <CIcon icon={cilMap} customClassName="nav-icon" />,
       });
-      // Product types
-      if (userData.permissions.find((current) => current === 'product_types_view') !== undefined) {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Tipologie Prodotti',
-          to: '/product-types',
-          icon: <CIcon icon={cilList} customClassName="nav-icon" />,
-        });
-      }
-      // Contact categories
-      if (userData.permissions.find((current) => current === 'contact_categories_view') !== undefined) {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Categorie contatto',
-          to: '/contact-categories',
-          icon: <CIcon icon={cilContact} customClassName="nav-icon" />,
-        });
-      }
-      // Users
-      if (
-        userData.permissions.find((current) => current === 'users_create') !== undefined &&
-        userData.permissions.find((current) => current === 'users_edit') !== undefined &&
-        userData.permissions.find((current) => current === 'users_delete') !== undefined
-      ) {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Utenti',
-          to: '/users',
-          icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-        });
-      // Profile
-      } else {
-        settingsNav.push({
-          component: CNavItem,
-          name: 'Profilo',
-          to: '/users/profile',
-          icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-        });
-      }
+    }
+    // Product types
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'product_types_view') !== undefined) {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Tipologie Prodotti',
+        to: '/product-types',
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+      });
+    }
+    // Contact categories
+    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'contact_categories_view') !== undefined) {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Categorie contatto',
+        to: '/contact-categories',
+        icon: <CIcon icon={cilContact} customClassName="nav-icon" />,
+      });
+    }
+    // Users
+    if (userData.user_group === 'admin' &&
+      userData.permissions.find((current) => current === 'users_create') !== undefined &&
+      userData.permissions.find((current) => current === 'users_edit') !== undefined &&
+      userData.permissions.find((current) => current === 'users_delete') !== undefined
+    ) {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Utenti',
+        to: '/users',
+        icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+      });
+    // Profile
+    } else {
+      settingsNav.push({
+        component: CNavItem,
+        name: 'Profilo',
+        to: '/users/profile',
+        icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+      });
+    }
 
+    if (settingsNav.length > 0) {
       navigationArray.push({
         component: CNavGroup,
         toggler: 'Impostazioni',

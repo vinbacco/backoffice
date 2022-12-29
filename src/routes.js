@@ -90,12 +90,14 @@ const routes = [
   {
     path: '/regions',
     name: 'Regions',
+    roles: ['admin'],
     element: RegionsList,
   },
   {
     path: '/regions/:id',
     name: 'Regions Details',
     element: RegionsDetail,
+    roles: ['admin'],
   },
   {
     path: '/tags',
@@ -125,7 +127,6 @@ const routes = [
     roles: ['admin'],
     permissions: ['products_view', 'products_edit'],
   },
-
   {
     path: '/orders',
     name: 'Prenotazioni',
@@ -144,11 +145,13 @@ const routes = [
     path: '/zones',
     name: 'Zones',
     element: ZonesList,
+    roles: ['admin'],
   },
   {
     path: '/zones/:id',
     name: 'Zones Details',
     element: ZonesDetail,
+    roles: ['admin'],
   },
   {
     path: '/contact-categories',
