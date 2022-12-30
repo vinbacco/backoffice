@@ -20,7 +20,7 @@ import TimeTable from 'src/components/ui/TimeTable/TimeTable';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
 import ServicesCheckbox from 'src/components/ui/ServicesCheckbox/ServicesCheckbox';
 import LanguagesCheckbox from 'src/components/ui/LanguagesCheckbox/LanguagesCheckbox';
-import TastingTimesCheckbox from 'src/components/ui/TastingTimesCheckbox/TastingTimesCheckbox';
+import TimesCheckbox from 'src/components/ui/TimesCheckbox/TimesCheckbox';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -439,7 +439,9 @@ function ToursDetail() {
                     onChange={(value) => updateTimeTable(value)}
                   />
                   <hr />
-                  <TastingTimesCheckbox
+                  <TimesCheckbox
+                    title="Orari di degustazione"
+                    description="Seleziona gli orari in cui offri il tuo servizio di degustazione"
                     data={state?.model?.attributes?.tastingTimes}
                     onChange={(value) => updateTourTastingTime(value)}
                   />
