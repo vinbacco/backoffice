@@ -21,7 +21,7 @@ const WinesForm = ({
   } = useForm({
     defaultValues: defaultValues || {
       name: '',
-      type_tag: null,
+      wine_type_tag: null,
     },
   });
 
@@ -66,7 +66,7 @@ const WinesForm = ({
         const newData = {
           id: resolveId,
           name: parentProps?.target?.data?.name || '',
-          type_tag: parentProps?.target?.data?.type_tag || null,
+          wine_type_tag: parentProps?.target?.data?.wine_type_tag || null,
         };
         reset(newData);
       }
@@ -98,20 +98,20 @@ const WinesForm = ({
         </CCol>
         <CCol md={6} sm={12}>
           <Controller
-            name="type_tag"
+            name="wine_type_tag"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
               <>
-                <CFormLabel htmlFor="package-type_tag">Tipo di vino</CFormLabel>
+                <CFormLabel htmlFor="package-wine_type_tag">Tipo di vino</CFormLabel>
                 <AsyncSelect
-                  inputId="package-type_tag"
+                  inputId="package-wine_type_tag"
                   isClearable
                   defaultOptions
                   loadOptions={loadTags}
                   {...field}
                 />
-                {errors.type_tag ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.type_tag)}</div> : null}
+                {errors.wine_type_tag ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.wine_type_tag)}</div> : null}
               </>
             )}
           />
@@ -125,7 +125,7 @@ const WinesForm = ({
 WinesForm.propTypes = {
   defaultValues: PropTypes.shape({
     name: PropTypes.string,
-    type_tag: PropTypes.shape({
+    wine_type_tag: PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
     }),
@@ -137,7 +137,7 @@ WinesForm.propTypes = {
     target: PropTypes.shape({
       data: PropTypes.shape({
         name: PropTypes.string,
-        type_tag: PropTypes.shape({
+        wine_type_tag: PropTypes.shape({
           label: PropTypes.string,
           value: PropTypes.string,
         }),
@@ -150,7 +150,7 @@ WinesForm.propTypes = {
 WinesForm.defaultProps = {
   defaultValues: {
     name: '',
-    type_tag: null,
+    wine_type_tag: null,
   },
   parentProps: {},
 };

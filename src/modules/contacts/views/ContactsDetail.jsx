@@ -43,7 +43,6 @@ function ContactsDetail() {
     },
   });
   const [contactMediaContents, setContactMediaContents] = useState([]);
-  const [contactWineMediaContents, setContactWineMediaContents] = useState([]);
 
   const formatModel = (response) => {
     const contactResponseData = { ...response?.data || {} };
@@ -82,7 +81,6 @@ function ContactsDetail() {
           && contactModelData.media_contents.length > 0
         ) {
           setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
-          setContactWineMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
         }
       };
 
@@ -129,7 +127,6 @@ function ContactsDetail() {
           && contactModelData.media_contents.length > 0
         ) {
           setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
-          setContactWineMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_wine_image').sort((a, b) => a.order - b.order)]);
         }
         setState({ ...state, loading: false, model: contactModelData });
         resolve();
@@ -224,7 +221,7 @@ function ContactsDetail() {
           },
           {
             index: 'wine-tab',
-            label: 'DATI VINI',
+            label: 'VINI',
           },
           {
             index: 'services-tab',
@@ -232,15 +229,15 @@ function ContactsDetail() {
           },
           {
             index: 'experiences-tab',
-            label: 'ESPERIENZA',
+            label: 'TIPOLOGIA ESPERIENZA',
           },
           {
             index: 'activities-tab',
-            label: 'ATTIVITÀ',
+            label: 'ATTIVITÀ IN ZONA',
           },
           {
             index: 'image-tab',
-            label: 'FOTO GALLERIA',
+            label: 'GALLERIA FOTO',
           },
         ]}
         tabsContents={
@@ -508,7 +505,7 @@ function ContactsDetail() {
                   data={state?.model?.wines || []}
                   columns={[
                     { index: 'name', type: 'text' },
-                    { index: 'type', type: 'text' },
+                    { index: 'wine_type_tag', type: 'select' },
                   ]}
                 />
               ),
@@ -525,14 +522,6 @@ function ContactsDetail() {
                       title="Galleria della Cantina"
                       data={contactMediaContents}
                       onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
-                    />
-                    <Gallery
-                      contentId={id}
-                      contentType="contact_wine_image"
-                      Service={ContactsService}
-                      title="Galleria dei vini"
-                      data={contactWineMediaContents}
-                      onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
                     />
                   </CCol>
                 </CRow>
