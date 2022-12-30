@@ -42,7 +42,6 @@ function ContactsDetail() {
       contact_category_id: '',
     },
   });
-  const [contactMediaContents, setContactMediaContents] = useState([]);
 
   const formatModel = (response) => {
     const contactResponseData = { ...response?.data || {} };
@@ -61,9 +60,8 @@ function ContactsDetail() {
     contactModelData.commercial_ref_email = contactResponseData.commercial_ref_email;
     contactModelData.wines = contactResponseData?.wines || [];
     contactModelData.services = contactResponseData?.services || [];
-    contactModelData.experiences = contactResponseData?.experiences || [];
-    contactModelData.activities = contactResponseData?.activities || [];
-    contactModelData.media_contents = contactModelData?.media_contents || [];
+    contactModelData.experience_kinds = contactResponseData?.experience_kinds || [];
+    contactModelData.available_activities = contactResponseData?.available_activities || [];
 
     return contactModelData;
   };
@@ -76,12 +74,6 @@ function ContactsDetail() {
 
         reset(contactModelData);
         setState({ ...state, loading: false, model: contactModelData });
-        if (
-          Array.isArray(contactModelData.media_contents)
-          && contactModelData.media_contents.length > 0
-        ) {
-          setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
-        }
       };
 
       const koGetDetails = (error) => {
@@ -122,12 +114,6 @@ function ContactsDetail() {
       const okEditCallback = (response) => {
         const contactModelData = formatModel(response);
         reset(contactModelData);
-        if (
-          Array.isArray(contactModelData.media_contents)
-          && contactModelData.media_contents.length > 0
-        ) {
-          setContactMediaContents([...contactModelData.media_contents.filter((current) => current.type === 'contact_image').sort((a, b) => a.order - b.order)]);
-        }
         setState({ ...state, loading: false, model: contactModelData });
         resolve();
       };
@@ -234,10 +220,6 @@ function ContactsDetail() {
           {
             index: 'activities-tab',
             label: 'ATTIVITÀ IN ZONA',
-          },
-          {
-            index: 'image-tab',
-            label: 'GALLERIA FOTO',
           },
         ]}
         tabsContents={
@@ -511,23 +493,6 @@ function ContactsDetail() {
               ),
             },
             {
-              index: 'image-tab',
-              content: (
-                <CRow className="g-3">
-                  <CCol>
-                    <Gallery
-                      contentId={id}
-                      contentType="contact_image"
-                      Service={ContactsService}
-                      title="Galleria della Cantina"
-                      data={contactMediaContents}
-                      onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
-                    />
-                  </CCol>
-                </CRow>
-              ),
-            },
-            {
               index: 'services-tab',
               content: (
                 <CRow className="g-3">
@@ -548,10 +513,10 @@ function ContactsDetail() {
                 <CRow className="g-3">
                   <CCol>
                     <ServicesCheckbox
-                      serviceType="experiences"
+                      serviceType="experience_kinds"
                       label="Tipologia dell'esperienza"
-                      data={state?.model?.experiences}
-                      onChange={(value) => updateContactSelections('experiences', value)}
+                      data={state?.model?.experience_kinds}
+                      onChange={(value) => updateContactSelections('experience_kinds', value)}
                     />
                   </CCol>
                 </CRow>
@@ -563,10 +528,10 @@ function ContactsDetail() {
                 <CRow className="g-3">
                   <CCol>
                     <ServicesCheckbox
-                      serviceType="activities"
+                      serviceType="available_activities"
                       label="Attività disponibili"
-                      data={state?.model?.experiences}
-                      onChange={(value) => updateContactSelections('activities', value)}
+                      data={state?.model?.available_activities}
+                      onChange={(value) => updateContactSelections('available_activities', value)}
                     />
                   </CCol>
                 </CRow>

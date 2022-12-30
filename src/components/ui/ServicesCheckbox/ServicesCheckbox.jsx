@@ -28,17 +28,17 @@ function ServicesCheckbox(props) {
   }, []);
 
   const isServiceSelected = (serviceId) => {
-    const serviceIndex = selectedServices.findIndex((current) => current._id === serviceId);
+    const serviceIndex = selectedServices.findIndex((current) => current === serviceId);
     return serviceIndex >= 0;
   };
 
   const toggleSelectedService = (serviceData) => {
-    const serviceIndex = selectedServices.findIndex((current) => current._id === serviceData._id);
+    const serviceIndex = selectedServices.findIndex((current) => current === serviceData._id);
     const newSelectedServices = [...selectedServices];
     if (serviceIndex >= 0) {
       newSelectedServices.splice(serviceIndex, 1);
     } else {
-      newSelectedServices.push(serviceData);
+      newSelectedServices.push(serviceData._id);
     }
     setSelectedServices(newSelectedServices);
     onChange(newSelectedServices);
@@ -70,7 +70,7 @@ ServicesCheckbox.propTypes = {
   data: PropTypes.any,
   label: PropTypes.string,
   serviceType: PropTypes.oneOf([
-    'experiences', 'activities', 'tasting', 'tourServices',
+    'experience_kinds', 'available_activities', 'tasting', 'tourServices',
   ]).isRequired,
   onChange: PropTypes.func.isRequired,
 };

@@ -98,10 +98,10 @@ export default class TagsService extends ApiProxyService {
       let feedId = '';
 
       switch (tagType) {
-        case 'experiences':
+        case 'experience_kinds':
           feedId = this.TYPOLOGY_EXPERIENCE_TYPE_ID;
           break;
-        case 'activities':
+        case 'available_activities':
           feedId = this.ACTIVITIES_TYPE_ID;
           break;
         case 'tasting':
