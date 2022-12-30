@@ -547,7 +547,7 @@ function ContactsDetail() {
                       serviceType="tourServices"
                       label="Servizi della cantina"
                       data={state?.model?.services}
-                      onChange={(value) => updateContactSelections('contacts', value)}
+                      onChange={(value) => updateContactSelections('services', value)}
                     />
                   </CCol>
                 </CRow>
@@ -577,7 +577,7 @@ function ContactsDetail() {
                       serviceType="activities"
                       label="Attività disponibili"
                       data={state?.model?.experiences}
-                      onChange={(value) => updateContactSelections('experiences', value)}
+                      onChange={(value) => updateContactSelections('activities', value)}
                     />
                   </CCol>
                 </CRow>
