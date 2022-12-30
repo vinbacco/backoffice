@@ -440,6 +440,7 @@ function ToursDetail() {
                   />
                   <hr />
                   <TimesCheckbox
+                    maxSelection={6}
                     title="Orari di degustazione"
                     description="Seleziona gli orari in cui offri il tuo servizio di degustazione"
                     data={state?.model?.attributes?.tastingTimes}

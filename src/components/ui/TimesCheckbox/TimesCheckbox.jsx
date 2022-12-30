@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { CCol, CFormCheck, CRow } from '@coreui/react';
-import TourService from 'src/services/api/TourService';
 
 function TimesCheckbox(props) {
   const {
@@ -13,6 +12,8 @@ function TimesCheckbox(props) {
     title,
     description,
     options,
+    maxSelection,
+    disabled,
   } = props;
   const [selectedTimes, setSelectedTimes] = useState([]);
 
@@ -50,7 +51,11 @@ function TimesCheckbox(props) {
               <CFormCheck
                 key={`times_checkbox-${currentTime}`}
                 inline
-                disabled={!isTimeSelected(currentTime) && selectedTimes.length === 6}
+                disabled={
+                  disabled === true || (!isTimeSelected(currentTime) && (
+                    maxSelection > 0 && selectedTimes.length === maxSelection
+                  ))
+                }
                 id={`${currentTime}_tasting-time-checkbox`}
                 label={currentTime}
                 checked={isTimeSelected(currentTime)}
@@ -70,6 +75,8 @@ TimesCheckbox.propTypes = {
   description: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
+  maxSelection: PropTypes.number,
+  disabled: PropTypes.bool,
 };
 
 TimesCheckbox.defaultProps = {
@@ -81,6 +88,8 @@ TimesCheckbox.defaultProps = {
   ],
   title: 'Time',
   description: 'Select time',
+  maxSelection: 0,
+  disabled: false,
 };
 
 export default TimesCheckbox;

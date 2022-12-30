@@ -17,16 +17,34 @@ const TOUR_BOOKING_OPTIONS = [
 function TimeTable(props) {
   const { data, onChange } = props;
   const [timeTable, setTimeTable] = useState({
-    availableDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: false,
-      saturday: false,
-      sunday: false,
+    monday: {
+      closed: false,
+      timetable: [],
     },
-    availableHours: [],
+    tuesday: {
+      closed: false,
+      timetable: [],
+    },
+    wednesday: {
+      closed: false,
+      timetable: [],
+    },
+    thursday: {
+      closed: false,
+      timetable: [],
+    },
+    friday: {
+      closed: false,
+      timetable: [],
+    },
+    saturday: {
+      closed: false,
+      timetable: [],
+    },
+    sunday: {
+      closed: false,
+      timetable: [],
+    },
   });
 
   useEffect(() => {
@@ -36,17 +54,17 @@ function TimeTable(props) {
 
   const toggleDayAvailability = (dayName) => {
     const newTimeTable = { ...timeTable };
-    newTimeTable.availableDays[dayName] = !newTimeTable.availableDays[dayName];
+    newTimeTable[dayName].closed = !newTimeTable[dayName].closed;
     setTimeTable(newTimeTable);
     onChange(newTimeTable);
   };
 
   const handleChangeTimetable = (params) => {
     const {
-      value,
+      day, value,
     } = params;
     const newTimeTable = { ...timeTable };
-    newTimeTable.availableHours = value;
+    newTimeTable[day].timetable = value;
     setTimeTable(newTimeTable);
     onChange(newTimeTable);
   };
@@ -67,12 +85,26 @@ function TimeTable(props) {
                 inline
                 id="mondayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.monday}
+                checked={timeTable.monday.closed}
                 onChange={() => toggleDayAvailability('monday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.monday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.monday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'monday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>MARTEDÌ</h4>
@@ -82,12 +114,26 @@ function TimeTable(props) {
                 inline
                 id="tuesdayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.tuesday}
+                checked={timeTable.tuesday.closed}
                 onChange={() => toggleDayAvailability('tuesday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.tuesday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.tuesday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'tuesday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>MERCOLEDÌ</h4>
@@ -97,12 +143,26 @@ function TimeTable(props) {
                 inline
                 id="wednesdayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.wednesday}
+                checked={timeTable.wednesday.closed}
                 onChange={() => toggleDayAvailability('wednesday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.wednesday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.wednesday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'wednesday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>GIOVEDÌ</h4>
@@ -112,12 +172,26 @@ function TimeTable(props) {
                 inline
                 id="thursdayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.thursday}
+                checked={timeTable.thursday.closed}
                 onChange={() => toggleDayAvailability('thursday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.thursday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.thursday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'thursday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>VENERDÌ</h4>
@@ -127,12 +201,26 @@ function TimeTable(props) {
                 inline
                 id="fridayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.friday}
+                checked={timeTable.friday.closed}
                 onChange={() => toggleDayAvailability('friday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.friday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.friday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'friday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>SABATO</h4>
@@ -142,12 +230,26 @@ function TimeTable(props) {
                 inline
                 id="saturdayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.saturday}
+                checked={timeTable.saturday.closed}
                 onChange={() => toggleDayAvailability('saturday')}
               />
             </CCol>
           </CRow>
-          <hr />
+        </CCol>
+        <CCol md={8}>
+          <TimesCheckbox
+            disabled={timeTable.saturday.closed === true}
+            title="Orario"
+            description="Seleziona l'orario disponibile per le prenotazioni"
+            data={timeTable.saturday.timetable}
+            options={TOUR_BOOKING_OPTIONS}
+            onChange={(value) => handleChangeTimetable({ day: 'saturday', value })}
+          />
+        </CCol>
+      </CRow>
+      <hr />
+      <CRow className="pb-4">
+        <CCol md={4}>
           <CRow>
             <CCol md={6}>
               <h4>DOMENICA</h4>
@@ -157,7 +259,7 @@ function TimeTable(props) {
                 inline
                 id="sundayAvailableCheckbox"
                 label="Chiusura"
-                checked={timeTable.availableDays.sunday}
+                checked={timeTable.sunday.closed}
                 onChange={() => toggleDayAvailability('sunday')}
               />
             </CCol>
@@ -165,11 +267,12 @@ function TimeTable(props) {
         </CCol>
         <CCol md={8}>
           <TimesCheckbox
+            disabled={timeTable.sunday.closed === true}
             title="Orario"
             description="Seleziona l'orario disponibile per le prenotazioni"
-            data={timeTable.availableHours}
+            data={timeTable.sunday.timetable}
             options={TOUR_BOOKING_OPTIONS}
-            onChange={(value) => handleChangeTimetable({ value })}
+            onChange={(value) => handleChangeTimetable({ day: 'sunday', value })}
           />
         </CCol>
       </CRow>
