@@ -21,10 +21,10 @@ const Pagination = ({
       setTableData(newTableData);
     }
   };
-  const totalsText = `Pagina ${tableData.page} 
+  const totalsText = tableData.total ? `Pagina ${tableData.page} 
                       di ${Math.ceil(tableData.total / tableData.paginate)}
                       (${tableData.total} risultat${tableData.total === 1 ? 'o' : 'i'})
-  `;
+  ` : '';
   return (
     <CRow className="align-items-center mb-5">
       <CCol>
@@ -67,7 +67,7 @@ Pagination.propTypes = {
     order: PropTypes.oneOf(['asc', 'desc']),
     sort: PropTypes.string,
     search: PropTypes.string,
-    data: PropTypes.oneOfType([PropTypes.array, null]),
+    data: PropTypes.array || null,
   }),
   setSelectedItems: PropTypes.func.isRequired,
   setTableData: PropTypes.func.isRequired,

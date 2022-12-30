@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import {
@@ -21,10 +21,12 @@ import {
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import AppLoadingSpinner from '../AppLoadingSpinner';
+import ImagePlaceholder from 'src/assets/images/placeholder.png';
+import AppLoadingSpinner from '../../AppLoadingSpinner';
+import GalleryItem from './GalleryItem';
 
 const Gallery = ({
-  title, label, data, instructions, onUpdate, Service, contentId, contentType,
+  title, label, data, instructions, onUpdate, Service, contentId, contentType, changeTitle,
 }) => {
   const sectionService = new Service();
   const [currentPreview, setCurrentPreview] = useState(null);
@@ -38,28 +40,67 @@ const Gallery = ({
     error: null, executing: false, success: null, show: false, target: null,
   });
 
+  const changeImageName = (imageId, newName) => {
+    const imageIndexArray = data.findIndex((currentImage) => currentImage.child_id === imageId);
+    const imageData = data.find((currentImage) => currentImage.child_id === imageId);
+    if (
+      typeof imageData !== 'undefined' &&
+      imageIndexArray >= 0 &&
+      imageData.filename !== newName
+    ) {
+      const updatePromise = new Promise((resolve, reject) => {
+        setComponentDisable(true);
+        const newImageData = { ...imageData };
+        newImageData.filename = newName;
+        const okChangeNameMediaContent = (loadResponse) => {
+          const newArray = [...data];
+          newArray[imageIndexArray] = { ...loadResponse.data };
+          onUpdate(newArray);
+          setComponentDisable(false);
+          resolve();
+        };
+
+        const koChangeNameMediaContent = (error) => {
+          setComponentDisable(false);
+          reject();
+        };
+
+        sectionService
+          .updateMediaContentData(
+            contentId,
+            imageId,
+            newImageData,
+            okChangeNameMediaContent,
+            koChangeNameMediaContent,
+          );
+      });
+
+      toast.promise(updatePromise, {
+        loading: 'Attendere, salvando nome dell\'immagine...',
+        success: 'Nome dell\'immagine salvato con successo!',
+        error: 'Ops, si è verificato un errore nel cambio nome!',
+      }, {
+        success: {
+          duration: 5000,
+        },
+        error: {
+          duration: 5000,
+        },
+      });
+    }
+  };
+
   const processData = (incomingData) => incomingData.map((currentData) => ({
     id: `image-item-${currentData.child_id}`,
     content: (
-      <span className="gallery-item">
-        <CImage onClick={() => setCurrentPreview(currentData.path)} className="gallery-item-image" thumbnail src={currentData.path} />
-        <CButton
-          className="gallery-item-delete"
-          color="danger"
-          size="sm"
-          onClick={() => (
-            setDeleteState({
-              ...deleteState,
-              target: currentData.child_id,
-              show: true,
-              success: null,
-              error: null,
-            })
-          )}
-        >
-          <CIcon icon={cilX} />
-        </CButton>
-      </span>
+      <GalleryItem
+        changeTitle={changeTitle}
+        currentData={currentData}
+        setCurrentPreview={setCurrentPreview}
+        changeImageName={changeImageName}
+        deleteState={deleteState}
+        setDeleteState={setDeleteState}
+      />
     ),
     data: currentData,
   }));
@@ -82,17 +123,25 @@ const Gallery = ({
 
   const grid = 8;
 
-  const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
-    borderRadius: 15,
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
-    // styles we need to apply on draggables
-    ...draggableStyle,
-  });
+  const getItemStyle = (isDragging, draggableStyle, itemId) => {
+    let backgroundColor = 'grey';
+    if (currentPreview !== null && currentPreview.id === itemId) {
+      backgroundColor = 'green';
+    } else if (isDragging) {
+      backgroundColor = 'lightgreen';
+    }
+    return ({
+      // some basic styles to make the items look a bit nicer
+      userSelect: 'none',
+      padding: grid * 2,
+      margin: `0 0 ${grid}px 0`,
+      borderRadius: 15,
+      // change background colour if dragging
+      background: backgroundColor,
+      // styles we need to apply on draggables
+      ...draggableStyle,
+    });
+  };
 
   const getListStyle = () => ({
     background: 'lightgrey',
@@ -281,6 +330,20 @@ const Gallery = ({
     );
   };
 
+  useEffect(() => {
+    if (!!galleryState.items.length && galleryState.items.length > 0) {
+      let currentPreviewIndex = -1;
+      if (currentPreview !== null) {
+        currentPreviewIndex = galleryState.items.findIndex(
+          (currentGallery) => currentGallery.id === currentPreview.id,
+        );
+        if (currentPreviewIndex === -1) setCurrentPreview(galleryState.items[0]);
+      } else {
+        setCurrentPreview(galleryState.items[0]);
+      }
+    } else if (currentPreview !== null) setCurrentPreview(null);
+  }, [galleryState.items]);
+
   return (
     <>
       <div className="pt-4 pb-4">
@@ -330,6 +393,7 @@ const Gallery = ({
                                 style={getItemStyle(
                                   draggableSnapshot.isDragging,
                                   draggableProvided.draggableProps.style,
+                                  item.id,
                                 )}
                               >
                                 {item.content}
@@ -347,7 +411,9 @@ const Gallery = ({
           </CCol>
           <CCol lg={8} md={6} sm={12}>
             <h6 className="mt-4">Preview</h6>
-            <CImage className="div-gallery-preview" src={currentPreview} />
+            <div className="div-gallery-preview-container">
+              <CImage className="div-gallery-preview" src={currentPreview?.data?.path || ImagePlaceholder} />
+            </div>
           </CCol>
         </CRow>
       </div>
@@ -366,6 +432,7 @@ Gallery.propTypes = {
   label: PropTypes.string,
   instructions: PropTypes.string,
   onUpdate: PropTypes.func.isRequired,
+  changeTitle: PropTypes.bool,
 };
 
 Gallery.defaultProps = {
@@ -373,6 +440,7 @@ Gallery.defaultProps = {
   title: 'Galleria',
   label: 'Inserisci qui la tua immagine',
   instructions: "Trascina e rilascia le immagini per cambiare l'ordine",
+  changeTitle: false,
 };
 
 export default Gallery;

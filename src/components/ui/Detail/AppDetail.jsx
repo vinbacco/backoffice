@@ -48,7 +48,7 @@ const AppDetail = (props) => {
   const {
     name, urlFriendlyName, tabsContents, saveAction, tabsHeaders,
   } = props;
-  const [activeTab, setActiveTab] = useState(tabsHeaders[0]?.index || null);
+  const [activeTab, setActiveTab] = useState(tabsHeaders[0] || null);
 
   return (
     <div style={{ marginBottom: '4em' }}>
@@ -65,19 +65,39 @@ const AppDetail = (props) => {
           <Buttons saveAction={saveAction} />
         </CCardHeader>
         <CCardBody>
-          <CNav variant="pills" role="tablist">
-            {tabsHeaders.map((currentTab, tabIndex) => (
-              <CNavItem key={`app-detail-tab-header-${tabIndex}_${currentTab}`}>
-                <CNavLink
-                  className="cursor-pointer"
-                  active={activeTab === currentTab.index}
-                  onClick={() => setActiveTab(currentTab.index)}
-                >
-                  {currentTab.label}
-                </CNavLink>
-              </CNavItem>
-            ))}
-          </CNav>
+          <CRow>
+            <CCol className="d-lg-block d-md-none d-sm-none d-xs-none">
+              <CNav variant="pills" role="tablist" className="mb-4">
+                {tabsHeaders.map((currentTab, tabIndex) => (
+                  <CNavItem key={`app-detail-tab-header-${tabIndex}_${currentTab}`}>
+                    <CNavLink
+                      className="cursor-pointer nav-pill-border"
+                      active={activeTab.index === currentTab.index}
+                      onClick={() => setActiveTab(currentTab)}
+                    >
+                      {currentTab.label}
+                    </CNavLink>
+                  </CNavItem>
+                ))}
+              </CNav>
+            </CCol>
+            <CCol className="d-lg-none d-md-block d-sm-block d-xs-block">
+              <CDropdown direction="center" className="w-100 mb-4">
+                <CDropdownToggle color="primary"><span className="ps-2 pe-2">{activeTab.label}</span></CDropdownToggle>
+                <CDropdownMenu className="w-100">
+                  {tabsHeaders.map((currentTab, tabIndex) => (
+                    <CDropdownItem
+                      key={`app-detail-tab-header-dropdown-${tabIndex}_${currentTab}`}
+                      className="cursor-pointer"
+                      onClick={() => setActiveTab(currentTab)}
+                    >
+                      {currentTab.label}
+                    </CDropdownItem>
+                  ))}
+                </CDropdownMenu>
+              </CDropdown>
+            </CCol>
+          </CRow>
           <CTabContent>
             {tabsContents.map((currentTab, tabIndex) => (
               <CTabPane
@@ -85,7 +105,7 @@ const AppDetail = (props) => {
                 className="p-3"
                 role="tabpanel"
                 aria-labelledby="main-tab"
-                visible={activeTab === currentTab.index}
+                visible={activeTab.index === currentTab.index}
               >
                 {currentTab.content}
               </CTabPane>

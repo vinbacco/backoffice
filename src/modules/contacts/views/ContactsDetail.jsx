@@ -6,43 +6,40 @@ import AsyncSelect from 'react-select/async';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput, CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel,
+  CForm, CCol, CFormInput, CRow, CFormLabel,
 } from '@coreui/react';
 import toast from 'react-hot-toast';
 
-import ContactCategoriesService from 'src/services/api/ContactCategoriesService';
 import CitiesService from 'src/services/api/CitiesService';
 import ContactsService from 'src/services/api/ContactsService';
 
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import composeErrorFormType from 'src/utils/composeErrorFormType';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
+import ServicesCheckbox from 'src/components/ui/ServicesCheckbox/ServicesCheckbox';
 import WinesForm from './Wines/WinesForm';
 
 function ContactsDetail() {
   const { id } = useParams();
-  const [state, setState] = useState({ loading: true, error: null });
+  const [state, setState] = useState({ loading: true, error: null, model: null });
   const {
     control, handleSubmit, reset, getValues, setValue, formState: { errors },
   } = useForm({
     defaultValues: {
       business_name: '',
-      contact_category_id: '',
       holder: '',
       foundation_year: '',
       certified_email: '',
       registered_address: '',
-      registered_city_id: '',
+      registered_city: '',
       registered_zip_code: '',
       vat_code: '',
       commercial_ref_name: '',
       commercial_ref_phone: '',
       commercial_ref_email: '',
-      attributes: {
-        wines: [],
-      },
+      contact_category_id: '',
     },
   });
   const [contactMediaContents, setContactMediaContents] = useState([]);
@@ -54,18 +51,19 @@ function ContactsDetail() {
     contactModelData.business_name = contactResponseData.business_name;
     contactModelData.contact_category_id = contactResponseData.contact_category_id;
     contactModelData.holder = contactResponseData.holder;
-    contactModelData.foundation_year = contactResponseData.foundation_year;
+    contactModelData.foundation_year = contactResponseData.foundation_year || null;
     contactModelData.certified_email = contactResponseData.certified_email;
     contactModelData.registered_address = contactResponseData.registered_address;
-    contactModelData.registered_city_id = contactResponseData.registered_city_id;
+    contactModelData.registered_city = contactResponseData.registered_city;
     contactModelData.registered_zip_code = contactResponseData.registered_zip_code;
     contactModelData.vat_code = contactResponseData.vat_code;
     contactModelData.commercial_ref_name = contactResponseData.commercial_ref_name;
     contactModelData.commercial_ref_phone = contactResponseData.commercial_ref_phone;
     contactModelData.commercial_ref_email = contactResponseData.commercial_ref_email;
-    contactModelData.attributes = contactModelData?.attributes || {
-      wines: [],
-    };
+    contactModelData.wines = contactResponseData?.wines || [];
+    contactModelData.services = contactResponseData?.services || [];
+    contactModelData.experiences = contactResponseData?.experiences || [];
+    contactModelData.activities = contactResponseData?.activities || [];
     contactModelData.media_contents = contactModelData?.media_contents || [];
 
     return contactModelData;
@@ -78,7 +76,7 @@ function ContactsDetail() {
         const contactModelData = formatModel(response);
 
         reset(contactModelData);
-        setState({ ...state, loading: false });
+        setState({ ...state, loading: false, model: contactModelData });
         if (
           Array.isArray(contactModelData.media_contents)
           && contactModelData.media_contents.length > 0
@@ -97,29 +95,6 @@ function ContactsDetail() {
       contactService.getItem(id, okGetDetails, koGetDetails);
     }
   }, []);
-
-  const loadContactCategories = () => new Promise((resolve) => {
-    const contactCategoriesService = new ContactCategoriesService();
-    const okGetContactCategories = (response) => {
-      let responseData = [];
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        responseData = response.data.map((currentItem) => (
-          { value: currentItem._id, label: currentItem.category_name }
-        ));
-      }
-      resolve(responseData);
-    };
-    const koGetContactCategories = () => resolve([]);
-    const filters = {
-      paginate: 5,
-      page: 1,
-    };
-    contactCategoriesService.getList({
-      filters,
-      okCallback: (res) => okGetContactCategories(res),
-      koCallback: (err) => koGetContactCategories(err),
-    });
-  });
 
   const loadCities = () => new Promise((resolve) => {
     const citiesService = new CitiesService();
@@ -198,10 +173,9 @@ function ContactsDetail() {
     const newModel = { ...getValues() };
     const formatData = { ...data };
     delete formatData.id;
-    if (!newModel.attributes) newModel.attributes = { wines: [] };
-    if (!newModel.attributes.wines) newModel.attributes.wines = [];
-    newModel.attributes.wines.push(formatData);
-    setValue('attributes', newModel.attributes);
+    if (!newModel.wines) newModel.wines = [];
+    newModel.wines.push(formatData);
+    setValue('wines', newModel.wines);
     setState({ ...state, model: newModel });
     formProps.closeModal();
   };
@@ -211,8 +185,8 @@ function ContactsDetail() {
     if (typeof data.id === 'number' && data.id >= 0) {
       const formatData = { ...data };
       delete formatData.id;
-      newModel.attributes.wines[data.id] = (formatData);
-      setValue('attributes', newModel.attributes);
+      newModel.wines[data.id] = (formatData);
+      setValue('wines', newModel.wines);
       setState({ ...state, model: newModel });
     }
     formProps.closeModal();
@@ -221,10 +195,17 @@ function ContactsDetail() {
   const deleteWine = (data) => {
     const newModel = { ...getValues() };
     if (typeof data.id === 'number' && data.id >= 0) {
-      newModel.attributes.wines.splice(data.id, 1);
-      setValue('attributes', newModel.attributes);
+      newModel.wines.splice(data.id, 1);
+      setValue('wines', newModel.wines);
       setState({ ...state, model: newModel });
     }
+  };
+
+  const updateContactSelections = (field, selectionData) => {
+    const newModel = { ...getValues() };
+    newModel[field] = [...selectionData];
+    setValue(field, selectionData);
+    setState({ ...state, model: newModel });
   };
 
   if (state.loading === true) return <AppLoadingSpinner />;
@@ -239,11 +220,27 @@ function ContactsDetail() {
         tabsHeaders={[
           {
             index: 'main-tab',
-            label: 'Dati principali',
+            label: 'DATI PRINCIPALI',
           },
           {
-            index: 'other-tab',
-            label: 'Vini ed immagini',
+            index: 'wine-tab',
+            label: 'DATI VINI',
+          },
+          {
+            index: 'services-tab',
+            label: 'SERVIZI',
+          },
+          {
+            index: 'experiences-tab',
+            label: 'ESPERIENZA',
+          },
+          {
+            index: 'activities-tab',
+            label: 'ATTIVITÀ',
+          },
+          {
+            index: 'image-tab',
+            label: 'FOTO GALLERIA',
           },
         ]}
         tabsContents={
@@ -270,26 +267,6 @@ function ContactsDetail() {
                           placeholder="Inserisci nome cantina"
                           {... field}
                         />
-                      )}
-                    />
-                  </CCol>
-                  <CCol md={6}>
-                    <Controller
-                      name="contact_category_id"
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <>
-                          <CFormLabel htmlFor="new-contact-category">Categoria contatto</CFormLabel>
-                          <AsyncSelect
-                            inputId="new-contact-category"
-                            isClearable
-                            defaultOptions
-                            loadOptions={loadContactCategories}
-                            {...field}
-                          />
-                          {errors.contact_category_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.contact_category_id)}</div> : null}
-                        </>
                       )}
                     />
                   </CCol>
@@ -377,20 +354,20 @@ function ContactsDetail() {
                   </CCol>
                   <CCol md={6}>
                     <Controller
-                      name="registered_city_id"
+                      name="registered_city"
                       control={control}
                       rules={{ required: true }}
                       render={({ field }) => (
                         <>
-                          <CFormLabel htmlFor="new-contact-registered_city_id">Città (sede legale)</CFormLabel>
+                          <CFormLabel htmlFor="new-contact-registered_city">Città (sede legale)</CFormLabel>
                           <AsyncSelect
-                            inputId="new-contact-registered_city_id"
+                            inputId="new-contact-registered_city"
                             isClearable
                             defaultOptions
                             loadOptions={loadCities}
                             {...field}
                           />
-                          {errors.registered_city_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.registered_city_id)}</div> : null}
+                          {errors.registered_city_id ? <div className="invalid-feedback d-block">{composeErrorFormType(errors.registered_city)}</div> : null}
                         </>
                       )}
                     />
@@ -502,60 +479,108 @@ function ContactsDetail() {
               ),
             },
             {
-              index: 'other-tab',
+              index: 'wine-tab',
               content: (
-                <>
-                  <AppMultiData
-                    className="mb-4"
-                    title="Vini"
-                    item="Vino"
-                    modalSize="xl"
-                    formId="vino-cantina"
-                    createFormComponent={(CreateFormProps) => WinesForm({
-                      formId: 'create_vino-cantina',
-                      submit: (data) => insertWine(data, CreateFormProps),
-                      parentProps: {
-                        show: CreateFormProps.show,
-                      },
-                    })}
-                    editFormComponent={(EditFormProps) => WinesForm({
-                      formId: 'edit_vino-cantina',
-                      submit: (data) => editWine(data, EditFormProps),
-                      parentProps: {
-                        show: EditFormProps.show,
-                        target: EditFormProps.target,
-                      },
-                    })}
-                    deleteFunction={(deleteProps) => deleteWine({
-                      id: deleteProps.target,
-                    })}
-                    data={state?.model?.attributes?.wines || null}
-                    columns={[
-                      { index: 'name', type: 'text' },
-                      { index: 'type', type: 'text' },
-                    ]}
-                  />
-                  <CRow className="g-3">
-                    <CCol>
-                      <Gallery
-                        contentId={id}
-                        contentType="contact_image"
-                        Service={ContactsService}
-                        title="Galleria della Cantina"
-                        data={contactMediaContents}
-                        onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
-                      />
-                      <Gallery
-                        contentId={id}
-                        contentType="contact_wine_image"
-                        Service={ContactsService}
-                        title="Galleria dei vini"
-                        data={contactWineMediaContents}
-                        onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
-                      />
-                    </CCol>
-                  </CRow>
-                </>
+                <AppMultiData
+                  className="mb-4"
+                  title="Vini"
+                  item="Vino"
+                  modalSize="xl"
+                  formId="vino-cantina"
+                  createFormComponent={(CreateFormProps) => WinesForm({
+                    formId: 'create_vino-cantina',
+                    submit: (data) => insertWine(data, CreateFormProps),
+                    parentProps: {
+                      show: CreateFormProps.show,
+                    },
+                  })}
+                  editFormComponent={(EditFormProps) => WinesForm({
+                    formId: 'edit_vino-cantina',
+                    submit: (data) => editWine(data, EditFormProps),
+                    parentProps: {
+                      show: EditFormProps.show,
+                      target: EditFormProps.target,
+                    },
+                  })}
+                  deleteFunction={(deleteProps) => deleteWine({
+                    id: deleteProps.target,
+                  })}
+                  data={state?.model?.wines || []}
+                  columns={[
+                    { index: 'name', type: 'text' },
+                    { index: 'type', type: 'text' },
+                  ]}
+                />
+              ),
+            },
+            {
+              index: 'image-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <Gallery
+                      contentId={id}
+                      contentType="contact_image"
+                      Service={ContactsService}
+                      title="Galleria della Cantina"
+                      data={contactMediaContents}
+                      onUpdate={(imagesArray) => setContactMediaContents(imagesArray)}
+                    />
+                    <Gallery
+                      contentId={id}
+                      contentType="contact_wine_image"
+                      Service={ContactsService}
+                      title="Galleria dei vini"
+                      data={contactWineMediaContents}
+                      onUpdate={(imagesArray) => setContactWineMediaContents(imagesArray)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'services-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <ServicesCheckbox
+                      serviceType="tourServices"
+                      label="Servizi della cantina"
+                      data={state?.model?.services}
+                      onChange={(value) => updateContactSelections('services', value)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'experiences-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <ServicesCheckbox
+                      serviceType="experiences"
+                      label="Tipologia dell'esperienza"
+                      data={state?.model?.experiences}
+                      onChange={(value) => updateContactSelections('experiences', value)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'activities-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <ServicesCheckbox
+                      serviceType="activities"
+                      label="Attività disponibili"
+                      data={state?.model?.experiences}
+                      onChange={(value) => updateContactSelections('activities', value)}
+                    />
+                  </CCol>
+                </CRow>
               ),
             },
           ]

@@ -9,18 +9,23 @@ import {
   CRow,
   CCol,
   CFormInput,
+  CAlert,
+  CAlertHeading,
 } from '@coreui/react';
 // SERVICES
-import FeedsService from 'src/services/api/FeedsService';
+import ContactCategoriesService from 'src/services/api/ContactCategoriesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
+import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
+import composeErrorFormType from 'src/utils/composeErrorFormType';
 
-const FeedsDetail = () => {
+const ContactCategoriesDetail = () => {
   const { id } = useParams();
   const {
     control,
     handleSubmit,
     setValue,
     reset,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       name: '',
@@ -32,7 +37,7 @@ const FeedsDetail = () => {
     model: null,
   });
 
-  const feedsService = new FeedsService();
+  const contactCategoriesService = new ContactCategoriesService();
 
   const onSubmit = (data) => {
     const savePromise = new Promise((resolve, reject) => {
@@ -46,7 +51,7 @@ const FeedsDetail = () => {
         reject();
       };
 
-      feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      contactCategoriesService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
     });
 
     toast.promise(savePromise, {
@@ -71,7 +76,6 @@ const FeedsDetail = () => {
     if (id) {
       const okGetCallback = (response) => {
         setValue('name', response.data.name);
-        setValue('code', response.data.code);
         setState({ ...state, loading: false, model: { ...response.data } });
       };
 
@@ -81,50 +85,74 @@ const FeedsDetail = () => {
         throw new Error(errorMessage);
       };
 
-      feedsService.getItem(id, okGetCallback, koGetCallback);
+      contactCategoriesService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
 
+  if (state.loading === true) return <AppLoadingSpinner />;
+
+  if (state.error) {
+    return (
+      <CAlert color="danger">
+        <CAlertHeading tag="h4">Si è verificato un errore!</CAlertHeading>
+        <p>{state.error}</p>
+      </CAlert>
+    );
+  }
+
   return (
     <AppBaseDetail
-      type="feed"
+      type="categoria contatto"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >
-      <section id="feeds-detail">
+      <section id="contact-categories-detail">
         <CForm
           className="row g-3"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <CRow>
+          <CRow className="mt-3">
             <CCol md={6}>
               <Controller
                 name="name"
                 control={control}
+                rules={{ required: true }}
+                defaultValue=""
                 render={({ field }) => (
                   <CFormInput
+                    invalid={!!errors.name}
+                    feedback={errors?.name ? composeErrorFormType(errors.name) : null}
+                    type="text"
+                    id="contact-category-name"
                     label="Nome"
-                    {...field}
+                    placeholder="Inserisci nome"
+                    {... field}
+                  />
+                )}
+              />
+            </CCol>
+            <CCol md={6}>
+              <Controller
+                name="category_name"
+                control={control}
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field }) => (
+                  <CFormInput
+                    invalid={!!errors.category_name}
+                    feedback={errors?.category_name
+                      ? composeErrorFormType(errors.category_name)
+                      : null}
+                    type="text"
+                    id="contact-category-category_name"
+                    label="Categoria contatto"
+                    placeholder="Inserisci categoria contatto"
+                    {... field}
                   />
                 )}
               />
             </CCol>
             <div className="mb-3" />
-          </CRow>
-          <CRow>
-            <CCol md={6}>
-              <Controller
-                name="code"
-                control={control}
-                defaultValue={state?.model?.code}
-                render={({ field }) => (
-                  <CFormInput
-                    label="Codice"
-                    {...field}
-                  />
-                )}
-              />
-            </CCol>
           </CRow>
         </CForm>
       </section>
@@ -132,4 +160,4 @@ const FeedsDetail = () => {
   );
 };
 
-export default FeedsDetail;
+export default ContactCategoriesDetail;

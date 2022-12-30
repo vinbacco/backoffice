@@ -1,7 +1,8 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
-export default class ContactCategoriesService extends ApiProxyService {
-  BASE_PATH = '/contact_categories';
+export default class OrdersService extends ApiProxyService {
+  BASE_PATH = '/orders';
 
   getList({
     paginate,
@@ -13,7 +14,7 @@ export default class ContactCategoriesService extends ApiProxyService {
     koCallback,
   }) {
     let queryParams = {
-      paginate, page, order_by: order, sort_by: sort,
+      paginate, page, order_by: order, sort_by: sort, lookup: '[user_id]',
     };
     if (filters) {
       queryParams = { ...queryParams, ...filters };
@@ -24,7 +25,8 @@ export default class ContactCategoriesService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[user_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {

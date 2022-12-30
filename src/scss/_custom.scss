@@ -17,6 +17,10 @@ h1,h2,h3,h4,h5,h6 {
   font-weight: 700;
 }
 
+.d-xs-none {
+  display: none;
+}
+
 #root {
   width: 100%;
   height: 100%;
@@ -93,7 +97,7 @@ h1,h2,h3,h4,h5,h6 {
     box-sizing: border-box;
     position: relative;
     width: 150px;
-    height: 100px;
+    height: 130px;
     & > .gallery-item-delete {
       position: absolute;
       top: 10px;
@@ -103,6 +107,13 @@ h1,h2,h3,h4,h5,h6 {
       width: 150px;
       height: 100px;
       object-fit: contain;
+    }
+    & > .gallery-item-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
     }
   }
   .div-gallery-drag-drop {
@@ -143,6 +154,35 @@ h1,h2,h3,h4,h5,h6 {
     border: 1px solid darkgray;
     border-radius: 15px;
   }
+
+  .table-placeholder {
+    display: block;
+    box-sizing: border-box;
+    margin-bottom: 2em;
+    height: auto;
+    width: 100%;
+    overflow-x: auto;
+    & > .table-scrollable {
+      min-width: 800px;
+    }
+  }
+}
+
+.checkbox-container-grid {
+  width: 100%;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fill, 1fr);
+  grid-row-gap: 1em;
+  grid-column-gap: 1em;
+  grid-auto-flow: column;
+  overflow-y: auto;
+}
+
+.nav-pill-border {
+  border: 1px solid #dedede !important;
+  margin-right: 5px;
+  margin-top: 5px;
 }
 
 @media screen and (min-width: 992px) {
@@ -152,3 +192,5 @@ h1,h2,h3,h4,h5,h6 {
     }
   }
 }
+
+@import './ui/time-input.scss';

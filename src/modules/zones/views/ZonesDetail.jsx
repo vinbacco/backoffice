@@ -19,7 +19,7 @@ import {
 import ProductCategoriesService from 'src/services/api/ProductCategoriesService';
 import ZonesService from 'src/services/api/ZonesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
 const ZonesDetail = () => {
@@ -38,17 +38,32 @@ const ZonesDetail = () => {
   const zonesService = new ZonesService();
 
   const onSubmit = (data) => {
-    const okEditCallback = (response) => {
-      setState({ loading: false, model: { ...response.data } });
-      toast.success('Dato modificato con successo!');
-    };
+    const savePromise = new Promise((resolve, reject) => {
+      const okEditCallback = (response) => {
+        setState({ loading: false, model: { ...response.data } });
+        resolve();
+      };
 
-    const koEditCallback = (response) => {
-      setState({ loading: false, error: response?.error });
-      toast.error('Ops, si è verificato un errore!');
-    };
+      const koEditCallback = (response) => {
+        setState({ loading: false, error: response?.error });
+        reject();
+      };
 
-    zonesService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      zonesService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando le modifiche...',
+      success: 'Dato modificato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
   };
 
   const handleReset = () => {

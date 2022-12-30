@@ -13,7 +13,7 @@ import {
   CAlertHeading,
 } from '@coreui/react';
 // SERVICES
-import FeedsService from 'src/services/api/FeedsService';
+import ProductTypesService from 'src/services/api/ProductTypesService';
 import AppBaseDetail from 'src/components/ui/Detail/AppBaseDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 
@@ -34,20 +34,35 @@ const ProductTypeDetail = () => {
     model: null,
   });
 
-  const feedsService = new FeedsService();
+  const productTypesService = new ProductTypesService();
 
   const onSubmit = (data) => {
-    const okEditCallback = (response) => {
-      setState({ loading: false, model: { ...response.data } });
-      toast.success('Dato modificato con successo!');
-    };
+    const savePromise = new Promise((resolve, reject) => {
+      const okEditCallback = (response) => {
+        setState({ loading: false, model: { ...response.data } });
+        resolve();
+      };
 
-    const koEditCallback = (response) => {
-      setState({ loading: false, error: response?.error });
-      toast.error('Ops, si è verificato un errore!');
-    };
+      const koEditCallback = (response) => {
+        setState({ loading: false, error: response?.error });
+        reject();
+      };
 
-    feedsService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+      productTypesService.updateItem(state.model['_id'], data, okEditCallback, koEditCallback);
+    });
+
+    toast.promise(savePromise, {
+      loading: 'Attendere, salvando le modifiche...',
+      success: 'Dato modificato con successo!',
+      error: 'Ops, si è verificato un errore!',
+    }, {
+      success: {
+        duration: 5000,
+      },
+      error: {
+        duration: 5000,
+      },
+    });
   };
 
   const handleReset = () => {
@@ -67,7 +82,7 @@ const ProductTypeDetail = () => {
         throw new Error(errorMessage);
       };
 
-      feedsService.getItem(id, okGetCallback, koGetCallback);
+      productTypesService.getItem(id, okGetCallback, koGetCallback);
     }
   }, [id]);
 
@@ -84,7 +99,7 @@ const ProductTypeDetail = () => {
 
   return (
     <AppBaseDetail
-      type="tipologia prodotto"
+      type="Tipologia prodotto"
       saveAction={handleSubmit(onSubmit)}
       resetAction={handleReset}
     >

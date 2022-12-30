@@ -115,6 +115,7 @@ function ZonesList() {
   return (
     <section id="zones">
       <AppList
+        sectionId="zones"
         sectionTitle="Lista Zone"
         SectionServiceClass={ZonesService}
         sectionPath="/zones"

@@ -4,6 +4,14 @@ import utils from './utils/utils';
 export default class TagsService extends ApiProxyService {
   BASE_PATH = '/tags';
 
+  TOUR_SERVICES_TYPE_ID = '63a35d7fa0de56247399109f';
+
+  TYPOLOGY_EXPERIENCE_TYPE_ID = '63a35e2da0de5624739910b1';
+
+  ACTIVITIES_TYPE_ID = '63a35c45a0de562473991099';
+
+  TASTING_TYPE_ID = '63a35b35a0de562473991094';
+
   getList({
     paginate,
     page,
@@ -80,5 +88,42 @@ export default class TagsService extends ApiProxyService {
   deleteMediaContent(itemId, mediaId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}/media_contents/${mediaId}`;
     super.deleteItem(path, okCallback, koCallback);
+  }
+
+  getGenericTags(tagType, okCallback, koCallback) {
+    // FIXME: Rimuovere filtro manuale, usare quello della chiamata una volta torna funzionale.
+    const handleOkCallback = (res) => {
+      const { data } = res;
+
+      let feedId = '';
+
+      switch (tagType) {
+        case 'experiences':
+          feedId = this.TYPOLOGY_EXPERIENCE_TYPE_ID;
+          break;
+        case 'activities':
+          feedId = this.ACTIVITIES_TYPE_ID;
+          break;
+        case 'tasting':
+          feedId = this.TASTING_TYPE_ID;
+          break;
+        case 'tourServices':
+        default:
+          feedId = this.TOUR_SERVICES_TYPE_ID;
+          break;
+      }
+
+      const filterServices = data.filter(
+        (current) => current.feed_id === feedId,
+      );
+
+      return okCallback(filterServices);
+    };
+
+    const queryParams = {
+      // feed_id: this.TOUR_PRODUCT_TYPE_ID,
+    };
+    const path = '/tags';
+    super.getList(path, queryParams, handleOkCallback, koCallback);
   }
 }

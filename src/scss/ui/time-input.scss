@@ -1,0 +1,40 @@
+@import '../variables';
+
+.time-input-container {
+  padding: 5px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  & > .time-input-label {
+    margin-bottom: 0.75em;
+  }
+  & > .time-input-fields {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    & > .time-input-field-hour,
+    & > .time-input-field-minute {
+      flex: 1 1;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      font-size: 16px;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      border: 1px solid $primary-base;
+      &:disabled {
+        background-color: #dedede;
+        border-color: #646464;
+      }
+    }
+    & > .time-input-field-separator {
+      margin: 0 5px;
+    }
+  }
+}

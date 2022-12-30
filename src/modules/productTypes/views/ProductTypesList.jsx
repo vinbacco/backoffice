@@ -63,6 +63,7 @@ function ProductTypesList() {
   return (
     <section id="product-types">
       <AppList
+        sectionId="product_types"
         sectionTitle="Lista Tipi Prodotti"
         SectionServiceClass={ProductTypesService}
         sectionPath="/product-types"

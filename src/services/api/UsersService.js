@@ -1,7 +1,29 @@
 import ApiProxyService from './apiProxyService';
+import utils from './utils/utils';
 
-export default class ContactCategoriesService extends ApiProxyService {
-  BASE_PATH = '/contact_categories';
+export const USER_GROUPS = [
+  {
+    value: 'admin',
+    label: 'Amministratore',
+  },
+  {
+    value: 'winery',
+    label: 'Cantina',
+  },
+  {
+    value: 'publisher',
+    label: 'Publisher',
+  },
+  {
+    value: 'customer',
+    label: 'Cliente',
+  },
+];
+
+export const getUserGroup = (value) => (USER_GROUPS.find((current) => current.value === value));
+
+export default class UsersService extends ApiProxyService {
+  BASE_PATH = '/users';
 
   getList({
     paginate,
@@ -13,7 +35,7 @@ export default class ContactCategoriesService extends ApiProxyService {
     koCallback,
   }) {
     let queryParams = {
-      paginate, page, order_by: order, sort_by: sort,
+      paginate, page, order_by: order, sort_by: sort, lookup: '[contact_id]',
     };
     if (filters) {
       queryParams = { ...queryParams, ...filters };
@@ -24,17 +46,34 @@ export default class ContactCategoriesService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    super.getItem(path, okCallback, koCallback);
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_id]' });
+    super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
     const path = `${this.BASE_PATH}`;
-    super.addItem(path, body, okCallback, koCallback);
+
+    const creationData = { ...body };
+    creationData.name = `${creationData.first_name} ${creationData.last_name}`;
+    creationData.user_group = creationData?.user_group?.value || null;
+    creationData.contact_id = creationData.contact?.value || null;
+
+    super.addItem(path, creationData, okCallback, koCallback);
   }
 
   updateItem(id, body, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${id}`;
-    super.updateItem(path, body, okCallback, koCallback);
+
+    const creationData = { ...body };
+    creationData.name = `${creationData.first_name} ${creationData.last_name}`;
+    creationData.user_group = creationData?.user_group?.value || null;
+    creationData.contact_id = creationData.contact?.value || null;
+
+    const handleOkCallback = (response) => {
+      this.getItem(id, okCallback, okCallback(response));
+    };
+
+    super.updateItem(path, creationData, handleOkCallback, koCallback);
   }
 
   deleteItem(deleteInfo, okCallback, koCallback) {

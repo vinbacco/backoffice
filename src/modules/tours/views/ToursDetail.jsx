@@ -6,7 +6,8 @@ import toast from 'react-hot-toast';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  CForm, CCol, CFormInput, CRow, CFormTextarea, CInputGroupText, CInputGroup, CFormLabel,
+  CForm, CCol, CFormInput,
+  CRow, CFormTextarea,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -14,8 +15,12 @@ import TourService from 'src/services/api/TourService';
 import AppDetail from 'src/components/ui/Detail/AppDetail';
 import AppLoadingSpinner from 'src/components/ui/AppLoadingSpinner';
 import AppMultiData from 'src/components/ui/MultiData/AppMultiData';
-import Gallery from 'src/components/ui/Images/Gallery';
+import Gallery from 'src/components/ui/Images/Gallery/Gallery';
+import TimeTable from 'src/components/ui/TimeTable/TimeTable';
 import ImageWithPreview from 'src/components/ui/Images/ImageWithPreview';
+import ServicesCheckbox from 'src/components/ui/ServicesCheckbox/ServicesCheckbox';
+import LanguagesCheckbox from 'src/components/ui/LanguagesCheckbox/LanguagesCheckbox';
+import TastingTimesCheckbox from 'src/components/ui/TastingTimesCheckbox/TastingTimesCheckbox';
 import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
@@ -38,6 +43,7 @@ function ToursDetail() {
       tour_warnings: '',
       attributes: {
         purchase_options: [],
+        TimeTable: {},
       },
       media_contents: [],
       tags: [],
@@ -63,6 +69,7 @@ function ToursDetail() {
     tourModelData.category_name = tourResponseData?.product_category?.name;
     tourModelData.attributes = tourResponseData?.attributes || {
       purchase_options: [],
+      timeTable: {},
     };
     tourModelData.tags = tourResponseData?.tags || [];
     tourModelData.media_contents = tourResponseData?.media_contents || [];
@@ -196,6 +203,30 @@ function ToursDetail() {
     }
   };
 
+  const updateTimeTable = (timeTableData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.timeTable = { ...timeTableData };
+    setState({ ...state, model: newModel });
+  };
+
+  const updateToursSelections = (field, selectionData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes[field] = [...selectionData];
+    setState({ ...state, model: newModel });
+  };
+
+  const updateTourLanguages = (tourLanguagesData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.languages = [...tourLanguagesData];
+    setState({ ...state, model: newModel });
+  };
+
+  const updateTourTastingTime = (tourTastingTimesData) => {
+    const newModel = { ...getValues() };
+    newModel.attributes.tastingTimes = [...tourTastingTimesData];
+    setState({ ...state, model: newModel });
+  };
+
   const handleChangePreviewImage = (response) => {
     if (response.job === 'delete') return setTourPreviewImage(null);
     return setTourPreviewImage(response.response.data);
@@ -213,49 +244,43 @@ function ToursDetail() {
         urlFriendlyName={getValues('url_friendly_name')}
         tabsHeaders={[
           {
+            index: 'package-tab',
+            label: 'PACCHETTI TOUR',
+          },
+          {
+            index: 'datetime-tab',
+            label: 'ORARI E GIORNI',
+          },
+          {
             index: 'main-tab',
-            label: 'Dati principali',
+            label: 'DESCRIZIONE',
+          },
+          {
+            index: 'cover-tab',
+            label: 'FOTO COPERTINA',
+          },
+          {
+            index: 'gallery-tab',
+            label: 'FOTO GALLERIA',
+          },
+          {
+            index: 'tasting-tab',
+            label: 'DEGUSTAZIONI',
+          },
+          {
+            index: 'language-tab',
+            label: 'LINGUA TOUR',
           },
           {
             index: 'web-tab',
-            label: 'Dati web',
+            label: 'META DATI SEO',
           },
         ]}
         tabsContents={[
           {
-            index: 'main-tab',
+            index: 'package-tab',
             content: (
-              <CRow className="g-3">
-                <CCol md={6} sm={12}>
-                  <Controller
-                    name="category_name"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-category_name" label="Zona" {... field} />}
-                  />
-                </CCol>
-                <CCol md={6} sm={12}>
-                  <Controller
-                    name="contact_name"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => <CFormInput readOnly disabled type="text" id="tour-contact_name" label="Cantina" {... field} />}
-                  />
-                </CCol>
-                <CCol md={6} sm={12}>
-                  <CFormLabel htmlFor="tour-base_price">Prezzo base</CFormLabel>
-                  <CInputGroup>
-                    <Controller
-                      name="base_price"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <CFormInput readOnly disabled className="text-align-end" id="tour-base_price" aria-describedby="tour-base_price_append" type="number" label="" {... field} />
-                      )}
-                    />
-                    <CInputGroupText id="tour-base_price_append">€</CInputGroupText>
-                  </CInputGroup>
-                </CCol>
+              <CRow>
                 <CCol md={12}>
                   <AppMultiData
                     title="Pacchetti"
@@ -284,6 +309,41 @@ function ToursDetail() {
                       { index: 'price_type_tag', type: 'select' },
                     ]}
                     data={state?.model?.attributes?.purchase_options || null}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'cover-tab',
+            content: (
+              <CRow>
+                <CCol>
+                  <ImageWithPreview
+                    contentId={id}
+                    contentType="tour_preview_image"
+                    Service={TourService}
+                    title="Copertina del tour"
+                    data={tourPreviewImage}
+                    onUpdate={(data) => handleChangePreviewImage(data)}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'gallery-tab',
+            content: (
+              <CRow>
+                <CCol>
+                  <Gallery
+                    contentId={id}
+                    contentType="tour_image"
+                    Service={TourService}
+                    title="Galleria del tour"
+                    data={tourMediaContents}
+                    onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
+                    changeTitle
                   />
                 </CCol>
               </CRow>
@@ -319,14 +379,15 @@ function ToursDetail() {
                       <small>Non superare i 160 caratteri</small>
                     </CCol>
                   </CRow>
-                  <ImageWithPreview
-                    contentId={id}
-                    contentType="tour_preview_image"
-                    Service={TourService}
-                    title="Immagine di anteprima"
-                    data={tourPreviewImage}
-                    onUpdate={(data) => handleChangePreviewImage(data)}
-                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'main-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
                   <h4>Contenuto</h4>
                   <CRow className="g-3 mb-4">
                     <CCol md={12}>
@@ -351,13 +412,51 @@ function ToursDetail() {
                       />
                     </CCol>
                   </CRow>
-                  <Gallery
-                    contentId={id}
-                    contentType="tour_image"
-                    Service={TourService}
-                    title="Galleria del tour"
-                    data={tourMediaContents}
-                    onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'language-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <LanguagesCheckbox
+                    data={state?.model?.attributes?.languages}
+                    onChange={(value) => updateTourLanguages(value)}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'datetime-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <TimeTable
+                    data={state?.model?.attributes?.timeTable}
+                    onChange={(value) => updateTimeTable(value)}
+                  />
+                  <hr />
+                  <TastingTimesCheckbox
+                    data={state?.model?.attributes?.tastingTimes}
+                    onChange={(value) => updateTourTastingTime(value)}
+                  />
+                </CCol>
+              </CRow>
+            ),
+          },
+          {
+            index: 'tasting-tab',
+            content: (
+              <CRow className="g-3">
+                <CCol>
+                  <ServicesCheckbox
+                    serviceType="tasting"
+                    label="Tipologia degustazione"
+                    data={state?.model?.attributes?.tastingTypes}
+                    onChange={(value) => updateToursSelections('tastingTypes', value)}
                   />
                 </CCol>
               </CRow>
