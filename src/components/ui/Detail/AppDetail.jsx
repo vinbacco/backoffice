@@ -46,7 +46,7 @@ Buttons.propTypes = {
 
 const AppDetail = (props) => {
   const {
-    name, urlFriendlyName, tabsContents, saveAction, tabsHeaders,
+    name, urlFriendlyName, tabsContents, actions, saveAction, tabsHeaders,
   } = props;
   const [activeTab, setActiveTab] = useState(tabsHeaders[0] || null);
 
@@ -62,7 +62,9 @@ const AppDetail = (props) => {
               )}
             </CCol>
           </CRow>
-          <Buttons saveAction={saveAction} />
+          {actions === true && (
+            <Buttons saveAction={saveAction} />
+          )}
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -112,10 +114,12 @@ const AppDetail = (props) => {
             ))}
           </CTabContent>
         </CCardBody>
-        <CCardFooter>
-          <div className="mt-4" />
-          <Buttons saveAction={saveAction} />
-        </CCardFooter>
+        {actions === true && (
+          <CCardFooter>
+            <div className="mt-4" />
+            <Buttons saveAction={saveAction} />
+          </CCardFooter>
+        )}
       </CCard>
     </div>
   );
@@ -124,7 +128,8 @@ const AppDetail = (props) => {
 AppDetail.propTypes = {
   name: PropTypes.string,
   urlFriendlyName: PropTypes.string,
-  saveAction: PropTypes.func.isRequired,
+  actions: PropTypes.bool,
+  saveAction: PropTypes.func,
   tabsHeaders: PropTypes.arrayOf(PropTypes.shape({
     index: PropTypes.string,
     label: PropTypes.string,
@@ -137,6 +142,8 @@ AppDetail.propTypes = {
 
 AppDetail.defaultProps = {
   name: null,
+  actions: true,
+  saveAction: () => null,
   urlFriendlyName: null,
 };
 

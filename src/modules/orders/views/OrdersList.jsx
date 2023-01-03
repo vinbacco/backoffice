@@ -30,24 +30,6 @@ function OrdersList() {
       _props: { scope: 'col' },
     },
     {
-      key: 'date',
-      label: 'Data tour',
-      sortable: true,
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'tour_name',
-      label: 'Nome tour',
-      sortable: true,
-      _props: { scope: 'col' },
-    },
-    {
-      key: 'guests',
-      label: 'Numero di persone',
-      sortable: true,
-      _props: { scope: 'col' },
-    },
-    {
       key: 'price_person',
       label: 'Totale a persona',
       sortable: true,
@@ -76,10 +58,6 @@ function OrdersList() {
   const buildRowsFn = (item) => ({
     _id: item._id,
     user_name: item.name,
-    date: item.date,
-    tour_name: item.tour_name,
-    guests: item.guests,
-    price_person: item.price_person,
     user_email: item.user_email,
     user_phone: item.user_phone,
     order_status: (
@@ -88,7 +66,6 @@ function OrdersList() {
   });
 
   const mapListFn = (item) => {
-    const tourData = item.products[0];
     const orderStatus = {
       label: 'In lavorazione',
       color: 'warning',
@@ -102,15 +79,9 @@ function OrdersList() {
       orderStatus.color = 'danger';
     }
 
-    const tourDate = '-';
-    console.log(tourData.variants);
     return ({
       _id: item._id,
       name: item.user?.name || '-',
-      date: tourDate,
-      tour_name: tourData.name,
-      guests: tourData.product_quantity,
-      price_person: tourData.base_price,
       user_email: item.invoice_data?.email || '-',
       user_phone: item.invoice_data?.phone || '-',
       order_status: orderStatus,

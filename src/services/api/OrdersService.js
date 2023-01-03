@@ -25,7 +25,7 @@ export default class OrdersService extends ApiProxyService {
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
-    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[user_id]' });
+    const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[user_id,purchase_option_id]' });
     super.getItem(pathWithQueryParams, okCallback, koCallback);
   }
 
@@ -62,5 +62,26 @@ export default class OrdersService extends ApiProxyService {
         if (rejectedPromises.length <= 0) okCallback();
         else koCallback([...rejectedPromises]);
       });
+  }
+
+  acceptOrderProductVariant(callParams, okCallback, koCallback) {
+    const { orderId, childId, selectedVariant } = callParams;
+    const path = `${this.BASE_PATH}/contact_confirmation`;
+    const callBody = {
+      order_id: orderId,
+      child_id: childId,
+      selected_variant: selectedVariant,
+    };
+    super.postItem(path, callBody, okCallback, koCallback);
+  }
+
+  rejectOrderProductVariant(callParams, okCallback, koCallback) {
+    const { orderId, childId } = callParams;
+    const path = `${this.BASE_PATH}/contact_rejection`;
+    const callBody = {
+      order_id: orderId,
+      child_id: childId,
+    };
+    super.postItem(path, callBody, okCallback, koCallback);
   }
 }
