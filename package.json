@@ -71,7 +71,7 @@
     "sass": "^1.54.4"
   },
   "engines": {
-    "node": "19.0.1",
+    "node": "18.x",
     "npm": "8.19.2"
   },
   "browserslist": {
