@@ -71,7 +71,7 @@ function ContactsList() {
   const mapListFn = (item) => ({
     _id: item._id,
     business_name: item.business_name,
-    holder: item.holder,
+    holder: item.holder || '-',
     registered_address: item.registered_address,
   });
 

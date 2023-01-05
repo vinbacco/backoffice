@@ -22,14 +22,35 @@ export default class ContactsService extends ApiProxyService {
       queryParams = { ...queryParams, ...filters };
     }
     const path = this.BASE_PATH;
-    super.getList(path, queryParams, okCallback, koCallback);
+
+    const okHandler = (response) => {
+      const newResponse = { ...response };
+      newResponse.data = response.data.map((currentData) => {
+        const newCurrentData = { ...currentData };
+        if (newCurrentData.holder && newCurrentData.holder.toUpperCase() === 'FAKE') {
+          newCurrentData.holder = null;
+        }
+        return newCurrentData;
+      });
+      return okCallback(newResponse);
+    };
+
+    super.getList(path, queryParams, okHandler, koCallback);
   }
 
   getItem(itemId, okCallback, koCallback) {
     const path = `${this.BASE_PATH}/${itemId}`;
     const pathWithQueryParams = utils.buildPathWithQueryParams(path, { lookup: '[contact_category_id,registered_city_id]' });
 
-    super.getItem(pathWithQueryParams, okCallback, koCallback);
+    const okHandler = (response) => {
+      const newResponse = { ...response };
+      if (response.data && response.data.holder && response.data.holder.toUpperCase() === 'FAKE') {
+        newResponse.data.holder = '';
+      }
+      return okCallback(newResponse);
+    };
+
+    super.getItem(pathWithQueryParams, okHandler, koCallback);
   }
 
   addItem(body, okCallback, koCallback) {
