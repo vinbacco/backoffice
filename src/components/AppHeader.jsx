@@ -13,7 +13,7 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilMenu } from '@coreui/icons';
 
-import logo from 'src/assets/images/logo/logo_lg_white.svg';
+import logo from 'src/assets/images/logo/logo_lg.svg';
 import { toggleSidebar } from 'src/redux/slices/app.slice';
 import { AppBreadcrumb } from './index';
 import AppHeaderDropdown from './header/index';
@@ -23,7 +23,7 @@ function AppHeader() {
 
   return (
     <CHeader position="sticky" className="mb-4">
-      <CContainer fluid>
+      <CContainer fluid style={{ flexWrap: 'nowrap' }}>
         <CHeaderToggler
           className="ps-1"
           onClick={() => dispatch(toggleSidebar())}
@@ -31,9 +31,9 @@ function AppHeader() {
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
         <CHeaderBrand className="mx-auto d-md-none" to="/">
-          <CImage src={logo} height={35} alt="Logo" />
+          <CImage fluid src={logo} height={35} alt="Logo" />
         </CHeaderBrand>
-        <CHeaderNav className="ms-3">
+        <CHeaderNav>
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>

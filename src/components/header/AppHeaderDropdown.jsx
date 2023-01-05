@@ -31,12 +31,12 @@ function AppHeaderDropdown() {
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
         <span className="d-flex align-items-center">
           {/* <CAvatar className="me-2" src={avatar8} size="md" /> */}
-          <p className="m-0">
-            <small>
-              <b>{`${userData.name} `}</b>
-              <br />
+          <p className="m-0 ms-4 text-align-end" style={{ whiteSpace: 'nowrap' }}>
+            <b>{`${userData.name} `}</b>
+            <br />
+            <span className="d-xs-none d-md-block">
               {userData.email}
-            </small>
+            </span>
           </p>
         </span>
       </CDropdownToggle>
