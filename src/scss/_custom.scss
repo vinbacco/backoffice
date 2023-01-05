@@ -75,9 +75,6 @@ h1,h2,h3,h4,h5,h6 {
   }
   .list-actions {
     text-align: right;
-    & > *:not(:last-child) {
-    margin-right: 15px;
-    }
   }
   .pagination {
     margin: 0;
@@ -185,12 +182,37 @@ h1,h2,h3,h4,h5,h6 {
   margin-top: 5px;
 }
 
+@media screen and (max-width: 993px) {
+  .vinbacco {
+    .list-actions {
+      display: grid;
+      grid-template-rows: auto;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 6px;
+    }
+  }
+}
+
 @media screen and (min-width: 992px) {
   .vinbacco {
     .div-gallery-preview {
       height: 500px;
     }
+    .list-actions {
+      & > * {
+          margin-bottom: 5px;
+        &:not(:last-child) {
+          margin-right: 15px;
+        }
+      }
+    }
   }
 }
 
+
+
 @import './ui/time-input.scss';
+
+/*
+
+*/
