@@ -23,7 +23,6 @@ function GalleryItem(props) {
       <CImage onClick={() => setCurrentPreview({ id: `image-item-${currentData.child_id}`, data: currentData })} className="gallery-item-image" thumbnail src={currentData.path} />
       <CButton
         className="gallery-item-delete"
-        color="danger"
         size="sm"
         onClick={() => (
           setDeleteState({

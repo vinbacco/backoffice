@@ -125,10 +125,10 @@ const Gallery = ({
 
   const getItemStyle = (isDragging, draggableStyle, itemId) => {
     let backgroundColor = 'grey';
-    if (currentPreview !== null && currentPreview.id === itemId) {
-      backgroundColor = 'green';
-    } else if (isDragging) {
-      backgroundColor = 'lightgreen';
+    if (isDragging) {
+      backgroundColor = '#32D794';
+    } else if (currentPreview !== null && currentPreview.id === itemId) {
+      backgroundColor = '#2CC889';
     }
     return ({
       // some basic styles to make the items look a bit nicer
