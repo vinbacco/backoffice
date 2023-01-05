@@ -75,7 +75,7 @@ Pagination.propTypes = {
 
 Pagination.defaultProps = {
   tableData: {
-    paginate: 10,
+    paginate: 30,
     page: 1,
     total: 0,
     order: 'asc',
