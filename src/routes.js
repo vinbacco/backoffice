@@ -63,14 +63,14 @@ const routes = [
     path: '/winery',
     name: 'Cantine',
     element: ContactsList,
-    roles: ['admin'],
+    roles: ['admin', 'winery'],
     permissions: ['contacts_view'],
   },
   {
     path: '/winery/:id',
     name: 'Dettaglio cantina',
     element: ContactsDetail,
-    roles: ['admin'],
+    roles: ['admin', 'winery'],
     permissions: ['contacts_view', 'contacts_edit'],
   },
   {
@@ -117,14 +117,14 @@ const routes = [
     path: '/tours',
     name: 'Tours',
     element: ToursList,
-    roles: ['admin'],
+    roles: ['admin', 'winery'],
     permissions: ['products_view'],
   },
   {
     path: '/tours/:id',
     name: 'Dettaglio Tour',
     element: ToursDetail,
-    roles: ['admin'],
+    roles: ['admin', 'winery'],
     permissions: ['products_view', 'products_edit'],
   },
   {

@@ -28,7 +28,7 @@ const nav = () => {
   ];
   if (Array.isArray(userData.permissions) && userData.permissions.length > 0) {
     // Tours
-    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'products_view') !== undefined) {
+    if ((userData.user_group === 'admin' || userData.user_group === 'winery') && userData.permissions.find((current) => current === 'products_view') !== undefined) {
       navigationArray.push({
         component: CNavItem,
         name: 'Tours',
@@ -37,7 +37,7 @@ const nav = () => {
       });
     }
     // Contacts
-    if (userData.user_group === 'admin' && userData.permissions.find((current) => current === 'contacts_view') !== undefined) {
+    if ((userData.user_group === 'admin' || userData.user_group === 'winery') && userData.permissions.find((current) => current === 'contacts_view') !== undefined) {
       navigationArray.push({
         component: CNavItem,
         name: 'Cantine',
