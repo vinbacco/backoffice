@@ -70,7 +70,7 @@ export default class OrdersService extends ApiProxyService {
     const callBody = {
       order_id: orderId,
       child_id: childId,
-      selected_variant: selectedVariant,
+      confirmed_dt: selectedVariant,
     };
     super.postItem(path, callBody, okCallback, koCallback);
   }

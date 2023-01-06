@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-empty-pattern */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   CButton,
@@ -59,9 +59,22 @@ Buttons.defaultProps = {
 
 const AppDetail = (props) => {
   const {
-    name, urlFriendlyName, tabsContents, actions, saveAction, tabsHeaders, previewPage,
+    name, urlFriendlyName, tabsContents, actions,
+    saveAction, tabsHeaders, previewPage, currentActiveTab, onTabChange,
   } = props;
   const [activeTab, setActiveTab] = useState(tabsHeaders[0] || null);
+
+  useEffect(() => {
+    if (activeTab.index !== currentActiveTab) {
+      const newActiveTab = (tabsHeaders.find((tabData) => tabData.index === currentActiveTab));
+      if (newActiveTab) setActiveTab(newActiveTab);
+    }
+  }, [currentActiveTab]);
+
+  const handleTabChange = (tab) => {
+    onTabChange(tab.index);
+    setActiveTab(tab);
+  };
 
   return (
     <div style={{ marginBottom: '4em' }}>
@@ -89,7 +102,7 @@ const AppDetail = (props) => {
                     <CNavLink
                       className="cursor-pointer nav-pill-border"
                       active={activeTab.index === currentTab.index}
-                      onClick={() => setActiveTab(currentTab)}
+                      onClick={() => handleTabChange(currentTab)}
                     >
                       {currentTab.label}
                     </CNavLink>
@@ -105,7 +118,7 @@ const AppDetail = (props) => {
                     <CDropdownItem
                       key={`app-detail-tab-header-dropdown-${tabIndex}_${currentTab}`}
                       className="cursor-pointer"
-                      onClick={() => setActiveTab(currentTab)}
+                      onClick={() => handleTabChange(currentTab)}
                     >
                       {currentTab.label}
                     </CDropdownItem>
@@ -153,6 +166,8 @@ AppDetail.propTypes = {
     index: PropTypes.string,
     content: PropTypes.element,
   })).isRequired,
+  currentActiveTab: PropTypes.string,
+  onTabChange: PropTypes.func,
 };
 
 AppDetail.defaultProps = {
@@ -161,6 +176,8 @@ AppDetail.defaultProps = {
   saveAction: () => null,
   previewPage: () => null,
   urlFriendlyName: null,
+  currentActiveTab: '',
+  onTabChange: () => null,
 };
 
 export default AppDetail;

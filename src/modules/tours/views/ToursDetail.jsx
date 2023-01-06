@@ -7,7 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
   CForm, CCol, CFormInput,
-  CRow, CFormTextarea,
+  CRow, CFormTextarea, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton,
 } from '@coreui/react';
 
 import TourService from 'src/services/api/TourService';
@@ -25,7 +25,8 @@ import PackageForm from './Packages/PackageForm';
 
 function ToursDetail() {
   const { id } = useParams();
-  const [state, setState] = useState({ loading: true, error: null });
+  const [state, setState] = useState({ loading: true, error: null, currentActiveTab: 'package-tab' });
+  const [notificationsModal, setNotificationsModal] = useState({ show: false, text: '', tabTarget: 'package-tab' });
   const {
     control, reset, getValues, setValue,
   } = useForm({
@@ -132,10 +133,28 @@ function ToursDetail() {
       const formData = getValues();
       switch (type) {
         case 'publish':
-          resolve(); // TODO: Azione pubblica
+          if (tourMediaContents.length >= 7) {
+            resolve(); // TODO: Azione pubblica
+          } else {
+            setNotificationsModal({
+              text: 'Per poter pubblicare il tour, si devono caricare 7 immagini della galleria Tour.',
+              show: true,
+              tabTarget: 'gallery-tab',
+            });
+            reject();
+          }
           break;
         case 'publishNow':
-          resolve(); // TODO: Azione pubblica ora
+          if (tourMediaContents.length >= 7) {
+            resolve(); // TODO: Azione pubblica ora
+          } else {
+            setNotificationsModal({
+              text: 'Per poter pubblicare il tour, si devono caricare 7 immagini della galleria Tour.',
+              show: true,
+              tabTarget: 'gallery-tab',
+            });
+            reject();
+          }
           break;
         case 'save':
         default:
@@ -236,243 +255,279 @@ function ToursDetail() {
     return setTourPreviewImage(response.response.data);
   };
 
+  const changeCurrentTab = (tabIndex) => {
+    if (tabIndex !== state.currentActiveTab) setState({ ...state, currentActiveTab: tabIndex });
+  };
+
+  const onCloseNotificationsModal = () => {
+    setNotificationsModal({
+      ...notificationsModal,
+      show: false,
+    });
+    setState({ ...state, currentActiveTab: notificationsModal.tabTarget });
+  };
+
+  const renderNotificationsModal = () => (
+    <CModal backdrop="static" visible={notificationsModal.show}>
+      <CModalHeader closeButton={false}>
+        <CModalTitle>Avviso</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        {notificationsModal.text}
+      </CModalBody>
+      <CModalFooter>
+        <CButton
+          color="secondary"
+          onClick={() => onCloseNotificationsModal()}
+        >
+          Chiudi
+        </CButton>
+      </CModalFooter>
+    </CModal>
+  );
+
   if (state.loading === true) return <AppLoadingSpinner />;
 
   if (state.error) return <p>NO DATA</p>;
 
   return (
-    <CForm>
-      <AppDetail
-        previewPage={previewPage}
-        saveAction={saveAction}
-        name={getValues('name')}
-        urlFriendlyName={getValues('url_friendly_name')}
-        tabsHeaders={[
-          {
-            index: 'package-tab',
-            label: 'PACCHETTI TOUR',
-          },
-          {
-            index: 'datetime-tab',
-            label: 'ORARI E GIORNI',
-          },
-          {
-            index: 'main-tab',
-            label: 'DESCRIZIONE',
-          },
-          {
-            index: 'cover-tab',
-            label: 'FOTO COPERTINA',
-          },
-          {
-            index: 'gallery-tab',
-            label: 'FOTO GALLERIA',
-          },
-          {
-            index: 'tasting-tab',
-            label: 'DEGUSTAZIONI',
-          },
-          {
-            index: 'language-tab',
-            label: 'LINGUA TOUR',
-          },
-          {
-            index: 'web-tab',
-            label: 'META DATI SEO',
-          },
-        ]}
-        tabsContents={[
-          {
-            index: 'package-tab',
-            content: (
-              <CRow>
-                <CCol md={12}>
-                  <AppMultiData
-                    title="Pacchetti"
-                    item="Pacchetto"
-                    modalSize="xl"
-                    formId="pacchetto"
-                    createFormComponent={(formProps) => PackageForm({
-                      formId: 'create_pacchetto',
-                      submit: (data) => insertPackage(data, formProps),
-                      parentProps: {
-                        show: formProps.show,
-                      },
-                    })}
-                    editFormComponent={(formProps) => PackageForm({
-                      formId: 'edit_pacchetto',
-                      submit: (data) => editPackage(data, formProps),
-                      parentProps: {
-                        show: formProps.show,
-                        target: formProps.target,
-                      },
-                    })}
-                    deleteFunction={(deleteData) => deletePackage(deleteData)}
-                    columns={[
-                      { index: 'name_tag', type: 'select' },
-                      { index: 'price', type: 'currency' },
-                      { index: 'price_type_tag', type: 'select' },
-                    ]}
-                    data={state?.model?.attributes?.purchase_options || null}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'cover-tab',
-            content: (
-              <CRow>
-                <CCol>
-                  <ImageWithPreview
-                    contentId={id}
-                    contentType="tour_preview_image"
-                    Service={TourService}
-                    title="Copertina del tour"
-                    data={tourPreviewImage}
-                    onUpdate={(data) => handleChangePreviewImage(data)}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'gallery-tab',
-            content: (
-              <CRow>
-                <CCol>
-                  <Gallery
-                    contentId={id}
-                    contentType="tour_image"
-                    Service={TourService}
-                    title="Galleria del tour"
-                    data={tourMediaContents}
-                    onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
-                    changeTitle
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'web-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <h4>Intestazione</h4>
-                  <CRow className="g-3 mb-4">
-                    <CCol md={6} sm={12}>
-                      <Controller
-                        name="meta_title"
-                        control={control}
-                        render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-meta_title" {...field} />}
-                      />
-                    </CCol>
-                    <CCol md={6} sm={12}>
-                      <Controller
-                        name="meta_keywords"
-                        control={control}
-                        render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-meta_keywords" {...field} />}
-                      />
-                    </CCol>
-                    <CCol md={12}>
-                      <Controller
-                        name="meta_description"
-                        control={control}
-                        render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta_description" rows="3" {...field} />}
-                      />
-                      <small>Non superare i 160 caratteri</small>
-                    </CCol>
-                  </CRow>
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'main-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <h4>Contenuto</h4>
-                  <CRow className="g-3 mb-4">
-                    <CCol md={12}>
-                      <Controller
-                        name="abstract"
-                        control={control}
-                        render={({ field }) => <CFormTextarea label="Descrizione breve del tour" id="tour-abstract" rows="3" {...field} />}
-                      />
-                    </CCol>
-                    <CCol md={12}>
-                      <Controller
-                        name="description"
-                        control={control}
-                        render={({ field }) => <CFormTextarea label="Descrizione completa del tour" id="tour-description" rows="5" {...field} />}
-                      />
-                    </CCol>
-                    <CCol md={12}>
-                      <Controller
-                        name="tour_warnings"
-                        control={control}
-                        render={({ field }) => <CFormTextarea label="Avvertenze" id="tour-warnings" rows="5" {...field} />}
-                      />
-                    </CCol>
-                  </CRow>
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'language-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <LanguagesCheckbox
-                    data={state?.model?.attributes?.languages}
-                    onChange={(value) => updateTourLanguages(value)}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'datetime-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <TimeTable
-                    data={state?.model?.attributes?.timeTable}
-                    onChange={(value) => updateTimeTable(value)}
-                  />
-                  <hr />
-                  <TimesCheckbox
-                    maxSelection={6}
-                    title="Orari di degustazione"
-                    description="Seleziona gli orari in cui offri il tuo servizio di degustazione"
-                    data={state?.model?.attributes?.tastingTimes}
-                    onChange={(value) => updateTourTastingTime(value)}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-          {
-            index: 'tasting-tab',
-            content: (
-              <CRow className="g-3">
-                <CCol>
-                  <ServicesCheckbox
-                    serviceType="tasting"
-                    label="Tipologia degustazione"
-                    data={state?.model?.attributes?.tastingTypes}
-                    onChange={(value) => updateToursSelections('tastingTypes', value)}
-                  />
-                </CCol>
-              </CRow>
-            ),
-          },
-        ]}
-      />
-    </CForm>
+    <>
+      <CForm>
+        <AppDetail
+          previewPage={previewPage}
+          saveAction={saveAction}
+          name={getValues('name')}
+          urlFriendlyName={getValues('url_friendly_name')}
+          currentActiveTab={state.currentActiveTab}
+          onTabChange={changeCurrentTab}
+          tabsHeaders={[
+            {
+              index: 'package-tab',
+              label: 'PACCHETTI TOUR',
+            },
+            {
+              index: 'datetime-tab',
+              label: 'ORARI E GIORNI',
+            },
+            {
+              index: 'main-tab',
+              label: 'DESCRIZIONE',
+            },
+            {
+              index: 'cover-tab',
+              label: 'FOTO COPERTINA',
+            },
+            {
+              index: 'gallery-tab',
+              label: 'FOTO GALLERIA',
+            },
+            {
+              index: 'tasting-tab',
+              label: 'DEGUSTAZIONI',
+            },
+            {
+              index: 'language-tab',
+              label: 'LINGUA TOUR',
+            },
+            {
+              index: 'web-tab',
+              label: 'META DATI SEO',
+            },
+          ]}
+          tabsContents={[
+            {
+              index: 'package-tab',
+              content: (
+                <CRow>
+                  <CCol md={12}>
+                    <AppMultiData
+                      title="Pacchetti"
+                      item="Pacchetto"
+                      modalSize="xl"
+                      formId="pacchetto"
+                      createFormComponent={(formProps) => PackageForm({
+                        formId: 'create_pacchetto',
+                        submit: (data) => insertPackage(data, formProps),
+                        parentProps: {
+                          show: formProps.show,
+                        },
+                      })}
+                      editFormComponent={(formProps) => PackageForm({
+                        formId: 'edit_pacchetto',
+                        submit: (data) => editPackage(data, formProps),
+                        parentProps: {
+                          show: formProps.show,
+                          target: formProps.target,
+                        },
+                      })}
+                      deleteFunction={(deleteData) => deletePackage(deleteData)}
+                      columns={[
+                        { index: 'name_tag', type: 'select' },
+                        { index: 'price', type: 'currency' },
+                        { index: 'price_type_tag', type: 'select' },
+                      ]}
+                      data={state?.model?.attributes?.purchase_options || null}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'cover-tab',
+              content: (
+                <CRow>
+                  <CCol>
+                    <ImageWithPreview
+                      contentId={id}
+                      contentType="tour_preview_image"
+                      Service={TourService}
+                      title="Copertina del tour"
+                      data={tourPreviewImage}
+                      onUpdate={(data) => handleChangePreviewImage(data)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'gallery-tab',
+              content: (
+                <CRow>
+                  <CCol>
+                    <Gallery
+                      contentId={id}
+                      contentType="tour_image"
+                      Service={TourService}
+                      title="Galleria del tour"
+                      data={tourMediaContents}
+                      onUpdate={(imagesArray) => setTourMediaContents(imagesArray)}
+                      changeTitle
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'web-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <h4>Intestazione</h4>
+                    <CRow className="g-3 mb-4">
+                      <CCol md={6} sm={12}>
+                        <Controller
+                          name="meta_title"
+                          control={control}
+                          render={({ field }) => <CFormInput label="Titolo" placeholder="Inserisce titolo" id="tour-meta_title" {...field} />}
+                        />
+                      </CCol>
+                      <CCol md={6} sm={12}>
+                        <Controller
+                          name="meta_keywords"
+                          control={control}
+                          render={({ field }) => <CFormInput label="Keywords" placeholder="Inserisce le parole separate da virgole" id="tour-meta_keywords" {...field} />}
+                        />
+                      </CCol>
+                      <CCol md={12}>
+                        <Controller
+                          name="meta_description"
+                          control={control}
+                          render={({ field }) => <CFormTextarea label="Meta descrizione" placeholder="Inserisce qui la meta descrizione" id="tour-meta_description" rows="3" {...field} />}
+                        />
+                        <small>Non superare i 160 caratteri</small>
+                      </CCol>
+                    </CRow>
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'main-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <h4>Contenuto</h4>
+                    <CRow className="g-3 mb-4">
+                      <CCol md={12}>
+                        <Controller
+                          name="abstract"
+                          control={control}
+                          render={({ field }) => <CFormTextarea label="Descrizione breve del tour" id="tour-abstract" rows="3" {...field} />}
+                        />
+                      </CCol>
+                      <CCol md={12}>
+                        <Controller
+                          name="description"
+                          control={control}
+                          render={({ field }) => <CFormTextarea label="Descrizione completa del tour" id="tour-description" rows="5" {...field} />}
+                        />
+                      </CCol>
+                      <CCol md={12}>
+                        <Controller
+                          name="tour_warnings"
+                          control={control}
+                          render={({ field }) => <CFormTextarea label="Avvertenze" id="tour-warnings" rows="5" {...field} />}
+                        />
+                      </CCol>
+                    </CRow>
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'language-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <LanguagesCheckbox
+                      data={state?.model?.attributes?.languages}
+                      onChange={(value) => updateTourLanguages(value)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'datetime-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <TimeTable
+                      data={state?.model?.attributes?.timeTable}
+                      onChange={(value) => updateTimeTable(value)}
+                    />
+                    <hr />
+                    <TimesCheckbox
+                      maxSelection={6}
+                      title="Orari di degustazione"
+                      description="Seleziona gli orari in cui offri il tuo servizio di degustazione"
+                      data={state?.model?.attributes?.tastingTimes}
+                      onChange={(value) => updateTourTastingTime(value)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+            {
+              index: 'tasting-tab',
+              content: (
+                <CRow className="g-3">
+                  <CCol>
+                    <ServicesCheckbox
+                      serviceType="tasting"
+                      label="Tipologia degustazione"
+                      data={state?.model?.attributes?.tastingTypes}
+                      onChange={(value) => updateToursSelections('tastingTypes', value)}
+                    />
+                  </CCol>
+                </CRow>
+              ),
+            },
+          ]}
+        />
+      </CForm>
+      {renderNotificationsModal()}
+    </>
   );
 }
 
