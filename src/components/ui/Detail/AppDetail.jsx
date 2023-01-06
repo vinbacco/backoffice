@@ -23,12 +23,18 @@ import {
   CTabPane,
 } from '@coreui/react';
 
-const Buttons = ({ saveAction }) => (
+const Buttons = ({ saveAction, urlFriendlyName, previewPage }) => (
   <CRow className="mb-4 justify-content-end">
     <CCol xs="auto">
       <CDropdown direction="center">
         <CDropdownToggle color="primary"><span className="ps-2 pe-2">Scegli azione</span></CDropdownToggle>
         <CDropdownMenu>
+          {urlFriendlyName !== null && (
+            <>
+              <CDropdownItem className="cursor-pointer" onClick={() => previewPage(urlFriendlyName)}>Anteprima pagina</CDropdownItem>
+              <CDropdownDivider />
+            </>
+          )}
           <CDropdownItem className="cursor-pointer" onClick={() => saveAction('save')}>Salva bozza</CDropdownItem>
           <CDropdownDivider />
           <CDropdownItem className="cursor-pointer" onClick={() => saveAction('publish')}>Pubblica</CDropdownItem>
@@ -42,11 +48,18 @@ const Buttons = ({ saveAction }) => (
 
 Buttons.propTypes = {
   saveAction: PropTypes.func.isRequired,
+  previewPage: PropTypes.func,
+  urlFriendlyName: PropTypes.string,
+};
+
+Buttons.defaultProps = {
+  urlFriendlyName: null,
+  previewPage: () => null,
 };
 
 const AppDetail = (props) => {
   const {
-    name, urlFriendlyName, tabsContents, actions, saveAction, tabsHeaders,
+    name, urlFriendlyName, tabsContents, actions, saveAction, tabsHeaders, previewPage,
   } = props;
   const [activeTab, setActiveTab] = useState(tabsHeaders[0] || null);
 
@@ -57,13 +70,14 @@ const AppDetail = (props) => {
           <CRow className="mb-4">
             <CCol>
               <h2>{name}</h2>
-              {!!urlFriendlyName && (
-                <small>{`Pagina sito: /${urlFriendlyName}`}</small>
-              )}
             </CCol>
           </CRow>
           {actions === true && (
-            <Buttons saveAction={saveAction} />
+            <Buttons
+              urlFriendlyName={urlFriendlyName}
+              saveAction={saveAction}
+              previewPage={previewPage}
+            />
           )}
         </CCardHeader>
         <CCardBody>
@@ -130,6 +144,7 @@ AppDetail.propTypes = {
   urlFriendlyName: PropTypes.string,
   actions: PropTypes.bool,
   saveAction: PropTypes.func,
+  previewPage: PropTypes.func,
   tabsHeaders: PropTypes.arrayOf(PropTypes.shape({
     index: PropTypes.string,
     label: PropTypes.string,
@@ -144,6 +159,7 @@ AppDetail.defaultProps = {
   name: null,
   actions: true,
   saveAction: () => null,
+  previewPage: () => null,
   urlFriendlyName: null,
 };
 

@@ -103,6 +103,10 @@ function ToursDetail() {
     }
   }, []);
 
+  const previewPage = (urlPage) => {
+    console.log(`Navigate to ${urlPage}`);
+  };
+
   const saveAction = (type) => {
     const savePromise = new Promise((resolve, reject) => {
       const okEditCallback = (response) => {
@@ -239,6 +243,7 @@ function ToursDetail() {
   return (
     <CForm>
       <AppDetail
+        previewPage={previewPage}
         saveAction={saveAction}
         name={getValues('name')}
         urlFriendlyName={getValues('url_friendly_name')}
