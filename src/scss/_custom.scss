@@ -125,6 +125,22 @@ h1,h2,h3,h4,h5,h6 {
     }
   }
 
+  .btn-success {
+    background-color: #2CC889;
+    color: #160836;
+    &:hover {
+      background-color: #62cfa4;
+    }
+  }
+
+  .btn-danger {
+    background-color: #E01E51;
+    color: #ffffff;
+    &:hover {
+      background-color: #d85c7d;
+    }
+  }
+
   .div-image-preview-placeholder {
     display: inline-block;
     width: 200px;
