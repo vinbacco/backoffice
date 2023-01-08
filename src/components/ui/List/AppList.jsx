@@ -72,7 +72,7 @@ function AppList({
     },
   });
   const initialTableData = {
-    paginate: null,
+    paginate: 30,
     page: null,
     total: 0,
     order: null,
